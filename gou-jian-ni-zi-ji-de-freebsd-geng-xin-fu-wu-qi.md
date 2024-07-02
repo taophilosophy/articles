@@ -1,59 +1,60 @@
-# Build Your Own FreeBSD Update Server
+# 构建你自己的 FreeBSD 更新服务器
 
-Copyright © 2009-2011, 2013 Jason Helfman
+# 构建您自己的 FreeBSD 更新服务器
 
-<details open=""><summary>trademarks</summary>
+版权 © 2009-2011 年，2013 年 Jason Helfman
 
-FreeBSD is a registered trademark of the FreeBSD Foundation.
+<details open="" data-immersive-translate-walked="8eb17343-6bcf-4045-87b8-91174c0afece"><summary data-immersive-translate-walked="8eb17343-6bcf-4045-87b8-91174c0afece" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
 
-AMD, AMD Athlon, AMD Opteron, AMD Phenom, AMD Sempron, AMD Turion, Athlon, Élan, Opteron, and PCnet are trademarks of Advanced Micro Devices, Inc.
+FreeBSD 是 FreeBSD 基金会的注册商标。
 
-Intel, Celeron, Centrino, Core, EtherExpress, i386, i486, Itanium, Pentium, and Xeon are trademarks or registered trademarks of Intel Corporation or its subsidiaries in the United States and other countries.
+AMD，AMD Athlon，AMD Opteron，AMD Phenom，AMD Sempron，AMD Turion，Athlon，Élan，Opteron 和 PCnet 是 Advanced Micro Devices, Inc. 的商标。
 
-Many of the designations used by manufacturers and sellers to distinguish their products are claimed as trademarks. Where those designations appear in this document, and the FreeBSD Project was aware of the trademark claim, the designations have been followed by the “™” or the “®” symbol.
+Intel，Celeron，Centrino，Core，EtherExpress，i386，i486，Itanium，Pentium 和 Xeon 是 Intel Corporation 或其子公司在美国及其他国家/地区的商标或注册商标。
+
+许多制造商和销售商用来区分其产品的命名被视为商标。在本文档中出现这些命名时，FreeBSD 项目已知商标声明的情况下，这些命名后面会标注“™”或“®”符号。
 
 </details>
 
-|  | The instructions in this article refer to an older version of FreeBSD and may not work properly on recent versions of the OS. With the availability of pkgbase, the freebsd-update utility is scheduled to be removed from FreeBSD in the future. When that happens, this article is either updated to reflect the new procedures or removed entirely. |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  | 本文中的指令适用于旧版本的 FreeBSD，在新版本的操作系统上可能无法正常工作。随着 pkgbase 的可用性，freebsd-update 实用程序计划将从 FreeBSD 中移除。届时，本文将更新以反映新的过程，或完全移除。 |
+| -- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
-Abstract
+ 摘要
 
-This article describes building an internal FreeBSD Update Server. The [freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) is written by `Colin Percival <<a href="mailto:cperciva@FreeBSD.org">cperciva@FreeBSD.org</a>>`, Security Officer Emeritus of FreeBSD. For users that think it is convenient to update their systems against an official update server, building their own FreeBSD Update Server may help to extend its functionality by supporting manually-tweaked FreeBSD releases or by providing a local mirror that will allow faster updates for a number of machines.
+本文介绍了构建内部 FreeBSD Update Server。freebsd-update-server 由 FreeBSD 的名誉安全官 Colin Percival <<a href="mailto:cperciva@FreeBSD.org">cperciva@FreeBSD.org</a>> 编写。对于那些认为通过官方更新服务器更新系统方便的用户来说，构建自己的 FreeBSD Update Server 可能有助于通过支持手动调整的 FreeBSD 版本或提供本地镜像来扩展其功能，从而更快地更新多台机器。
 
 ---
 
-## 1. Acknowledgments
+## 1. 致谢
 
-This article was subsequently printed at [BSD Magazine](https://people.freebsd.org/~jgh/files/fus/BSD_03_2010_EN.pdf).
+这篇文章随后在 BSD Magazine 上发表。
 
-## 2. Introduction
+## 2. 介绍
 
-Experienced users or administrators are often responsible for several machines or environments. They understand the difficult demands and challenges of maintaining such an infrastructure. Running a FreeBSD Update Server makes it easier to deploy security and software patches to selected test machines before rolling them out to production. It also means a number of systems can be updated from the local network rather than a potentially slower Internet connection. This article outlines the steps involved in creating an internal FreeBSD Update Server.
+经验丰富的用户或管理员经常负责多台机器或环境。他们了解维护这种基础架构所面临的困难需求和挑战。运行 FreeBSD Update Server 可以更轻松地将安全和软件补丁部署到选定的测试机器，然后再将其推向生产环境。这也意味着可以从本地网络而不是潜在较慢的互联网连接更新多个系统。本文概述了创建内部 FreeBSD Update Server 所涉及的步骤。
 
-## 3. Prerequisites
+## 先决条件
 
-To build an internal FreeBSD Update Server some requirements should be met.
+要构建内部 FreeBSD Update Server，必须满足一些要求。
 
-* | A running FreeBSD system. |  |
-  |  | At a minimum, updates require building on a FreeBSD release greater than or equal to the target release version for distribution. |
-  | --------------------------- | -- |
-* A user account with at least 4 GB of available space. This will allow the creation of updates for 7.1 and 7.2, but the exact space requirements may change from version to version.
-* An [ssh(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh&sektion=1&format=html) account on a remote machine to upload distributed updates.
-* A web server, like [Apache](https://docs.freebsd.org/en/books/handbook/#network-apache), with over half of the space required for the build. For instance, test builds for 7.1 and 7.2 consume a total amount of 4 GB, and the webserver space needed to distribute these updates is 2.6 GB.
-* Basic knowledge of shell scripting with Bourne shell, [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html).
+* 一个正在运行的 FreeBSD 系统。||||至少需要在大于或等于目标发行版本的 FreeBSD 版本上进行构建来进行更新。|
+  | --| -----------------------------------------------------------------------|
+* 一个至少有 4GB 可用空间的用户账户。这将允许创建 7.1 和 7.2 版本的更新，但确切的空间要求可能会因版本而异。
+* 在远程机器上具有 ssh(1)账户，用于上传分布式更新。
+* 像 Apache 这样的 Web 服务器，其所需的构建空间超过一半。例如，7.1 和 7.2 的测试构建总共消耗了 4 GB，用于分发这些更新的 Web 服务器空间需求为 2.6 GB。
+* 掌握使用 Bourne Shell（sh(1)）进行基本的shell脚本编写知识。
 
-## 4. Configuration: Installation & Setup
+## 4. 配置：安装与设置
 
-Download the [freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) software by installing [devel/git](https://cgit.freebsd.org/ports/tree/devel/git/) and [security/ca_root_nss](https://cgit.freebsd.org/ports/tree/security/ca_root_nss/), and execute:
+安装 devel/git 和 security/ca_root_nss 软件包以下载 freebsd-update-server 软件，并执行：
 
 ```
 % git clone https://github.com/freebsd/freebsd-update-build.git freebsd-update-server
 ```
 
-Update scripts/build.conf appropriately. It is sourced during all build operations.
+更新 scripts/build.conf 配置文件。它在所有构建操作期间被引用。
 
-Here is the default build.conf, which should be modified to suit your environment.
+这里是默认的 build.conf，需要根据您的环境进行修改。
 
 ```
 # Main configuration file for FreeBSD Update builds.  The
@@ -79,23 +80,23 @@ MASTERACCT=builder@wadham.daemonology.net
 MASTERDIR=update-master.freebsd.org 
 ```
 
-Parameters for consideration would be:
+考虑的参数如下：
 
-|  | This is the location where ISO images are downloaded from (by the `fetchiso()` subroutine of scripts/build.subr). The location configured is not limited to FTP URIs. Any URI scheme supported by standard [fetch(1)](https://man.freebsd.org/cgi/man.cgi?query=fetch&sektion=1&format=html) utility should work fine. Customizations to the `fetchiso()` code can be installed by copying the default build.subr script to the release and architecture-specific area at scripts/RELEASE/ARCHITECTURE/build.subr and applying local changes. |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  | The name of the build host. This information will be displayed on updated systems when issuing:<br /><br />`% uname -v`                                                                                                                                                                                                                                                                                                                                  |
-|  | The SSH key for uploading files to the update server. A key pair can be created by typing `ssh-keygen -t dsa`. This parameter is optional; standard password authentication will be used as a fallback authentication method when `SSHKEY` is not defined. The [ssh-keygen(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-keygen&sektion=1&format=html) manual page has more detailed information about SSH and the appropriate steps for creating and using one.                                                                                       |
-|  | Account for uploading files to the update server.                                                                                                                                                                                                                                                                                                                                                                                    |
-|  | Directory on the update server where files are uploaded to.                                                                                                                                                                                                                                                                                                                                                                          |
+|  | 这是 ISO 镜像下载的位置（由 scripts/build.subr 的 fetchiso() 子程序下载）。配置的位置不限于 FTP URI。任何标准 fetch(1) 实用工具支持的 URI 方案都应该正常工作。可以通过将默认的 build.subr 脚本复制到 release 和特定架构区域的 scripts/RELEASE/ARCHITECTURE/build.subr，并应用本地更改来安装对 fetchiso() 代码的定制。 |
+| -- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  | 构建主机的名称。此信息将在更新的系统上执行以下操作时显示：<br /><br />`% uname -v`                                                                                                                                                                                                                                                        |
+|  | 用于向更新服务器上传文件的 SSH 密钥。可以通过输入 ssh-keygen -t dsa 创建密钥对。当未定义 SSHKEY 时，将使用标准密码身份验证作为备用身份验证方法。有关 SSH 的更详细信息和创建及使用 SSH 密钥的适当步骤，请参阅 ssh-keygen(1) 手册页。                                                                                   |
+|  | 用于向更新服务器上传文件的帐户。                                                                                                                                                                                                                                                                                      |
+|  | 更新服务器上用于上传文件的目录。                                                                                                                                                                                                                                                                                      |
 
-The default build.conf shipped with the freebsd-update-server sources is suitable for building i386 releases of FreeBSD. As an example of building an update server for other architectures, the following steps outline the configuration changes needed for amd64:
+FreeBSD-update-server 源代码中附带的默认 build.conf 适用于构建 FreeBSD 的 i386 版本。作为构建其他架构更新服务器的示例，以下步骤概述了配置 amd64 所需的配置更改：
 
-1. Create a build environment for amd64:
+1. 为 amd64 创建一个构建环境：
 
     ```
     % mkdir -p /usr/local/freebsd-update-server/scripts/7.2-RELEASE/amd64
     ```
-2. Install a build.conf in the newly created build directory. The build configuration options for FreeBSD 7.2-RELEASE on amd64 should be similar to:
+2. 将构建配置文件.conf 安装到新创建的构建目录中。在 amd64 上，FreeBSD 7.2-RELEASE 的构建配置选项应该是类似的：
 
     ```
     # SHA256 hash of RELEASE disc1.iso image.
@@ -111,13 +112,13 @@ The default build.conf shipped with the freebsd-update-server sources is suitabl
     export EOL=1275289200 
     ```
 
-    |  | The [sha256(1)](https://man.freebsd.org/cgi/man.cgi?query=sha256&sektion=1&format=html) hash key for the desired release, is published within the respective [release announcement](https://www.freebsd.org/releases/).                                                                                                                               |
-    | -- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    |  | To generate the "End of Life" number for build.conf, refer to the "Estimated EOL" posted on the [FreeBSD Security Website](https://www.freebsd.org/security/security/). The value of `EOL` can be derived from the date listed on the web site, using the [date(1)](https://man.freebsd.org/cgi/man.cgi?query=date&sektion=1&format=html) utility, for example:<br /><br />`% date -j -f '%Y%m%d-%H%M%S' '20090401-000000' '+%s'` |
+    |  | 所需版本的 sha256(1)哈希键在各自的发布公告中发布。                                                                                                             |
+    | -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    |  | 要生成 build.conf 的“终身期限”数字，请参考 FreeBSD 安全网站上发布的“预计终身期限”。 EOL 的值可以通过网站上列出的日期使用 date(1)实用程序来推导，例如：<br /><br />`% date -j -f '%Y%m%d-%H%M%S' '20090401-000000' '+%s'` |
 
-## 5. Building Update Code
+## 构建更新代码
 
-The first step is to run scripts/make.sh. This will build some binaries, create directories, and generate an RSA signing key used for approving builds. In this step, a passphrase will have to be supplied for the final creation of the signing key.
+第一步是运行 scripts/make.sh。这将构建一些二进制文件，创建目录，并生成用于批准构建的 RSA 签名密钥。在此步骤中，需要提供一个密码来最终创建签名密钥。
 
 ```
 # sh scripts/make.sh
@@ -141,17 +142,17 @@ enter aes-256-cbc encryption password:
 Verifying - enter aes-256-cbc encryption password:
 ```
 
-|  | Keep a note of the generated key fingerprint. This value is required in /etc/freebsd-update.conf for binary updates. |
-| -- | ---------------------------------------------------------------------------------------------------------------------- |
+|  | 记下生成的密钥指纹。此值在 /etc/freebsd-update.conf 中用于二进制更新。 |
+| -- | ------------------------------------------------------------------------ |
 
-At this point, we are ready to stage a build.
+到了这一步，我们已经准备好进行构建。
 
 ```
 # cd /usr/local/freebsd-update-server
 # sh scripts/init.sh amd64 7.2-RELEASE
 ```
 
-What follows is a sample of an *initial* build run.
+接下来是初始构建运行的示例。
 
 ```
 # sh scripts/init.sh amd64 7.2-RELEASE
@@ -194,10 +195,10 @@ world|base|/usr/lib/libalias_ftp.a
 ...
 ```
 
-Then the build of the world is performed again, with world patches. A more detailed explanation may be found in scripts/build.subr.
+然后再次执行世界的构建，使用世界补丁。更详细的解释可以在 scripts/build.subr 中找到。
 
-|  | During this second build cycle, the network time protocol daemon, [ntpd(8)](https://man.freebsd.org/cgi/man.cgi?query=ntpd&sektion=8&format=html), is turned off. Per `Colin Percival <<a href="mailto:cperciva@FreeBSD.org">cperciva@FreeBSD.org</a>>`, Security Officer Emeritus of FreeBSD, "the [freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) build code needs to identify timestamps which are stored in files so that they can be ignored when comparing builds to determine which files need to be updated. This timestamp-finding works by doing two builds 400 days apart and comparing the results." |
-| -- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  | 在这第二个构建周期期间，网络时间协议守护程序 ntpd(8)已关闭。根据 FreeBSD 的安全主任 Emeritus ，"freebsd-update-server 的构建代码需要识别存储在文件中的时间戳，以便在比较构建以确定哪些文件需要更新时可以忽略它们。这种时间戳查找的工作方式是间隔 400 天进行两次构建，然后比较结果。" |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 ```
 Mon Aug 24 17:54:07 PDT 2009 Extracting world+src for FreeBSD/amd64 7.2-RELEASE
@@ -235,7 +236,7 @@ world|base|/usr/lib/libalias_ftp.a
 ...
 ```
 
-Finally, the build completes.
+最后，构建完成。
 
 ```
 Values of build stamps, excluding library archive headers:
@@ -272,7 +273,7 @@ they look sensible, then run
 to sign the release.
 ```
 
-Approve the build if everything is correct. More information on determining this can be found in the distributed source file named USAGE. Execute scripts/approve.sh, as directed. This will sign the release, and move components into a staging area suitable for uploading.
+如果一切正确，请批准构建。有关如何确定这一点的更多信息，请参阅名为 USAGE 的分发源文件。按照指示执行 scripts/approve.sh。这将签署发布，并将组件移动到适合上传的暂存区。
 
 ```
 # cd /usr/local/freebsd-update-server
@@ -288,7 +289,7 @@ Wed Aug 26 12:50:07 PDT 2009 Updating databases for FreeBSD/amd64 7.2-RELEASE
 Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 ```
 
-After the approval process is complete, the upload procedure may be started.
+在审批过程完成后，可以开始上传过程。
 
 ```
 # cd /usr/local/freebsd-update-server
@@ -300,55 +301,55 @@ After the approval process is complete, the upload procedure may be started.
 # touch -t 200801010101.01 uploaded
 ```
 
-The uploaded files will need to be in the document root of the webserver in order for updates to be distributed. The exact configuration will vary depending on the web server used. For the Apache web server, please refer to the [Configuration of Apache servers](https://docs.freebsd.org/en/books/handbook/#network-apache) section in the Handbook.
+上传的文件需要放在网页服务器的文档根目录中，才能进行更新分发。具体配置会根据所使用的网页服务器而有所不同。对于 Apache 网页服务器，请参考手册中的 Apache 服务器配置部分。
 
-Update client’s `KeyPrint` and `ServerName` in /etc/freebsd-update.conf, and perform updates as instructed in the [FreeBSD Update](https://docs.freebsd.org/en/books/handbook/#updating-upgrading-freebsdupdate) section of the Handbook.
+更新客户端的 KeyPrint 和 ServerName 在 /etc/freebsd-update.conf，并按照手册中 FreeBSD 更新部分的说明进行更新。
 
-|  | In order for FreeBSD Update Server to work properly, updates for both the *current* release and the release *one wants to upgrade to* need to be built. This is necessary for determining the differences of files between releases. For example, when upgrading a FreeBSD system from 7.1-RELEASE to 7.2-RELEASE, updates will need to be built and uploaded to your distribution server for both versions. |
-| -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  | 为了使 FreeBSD Update Server 正常工作，需要构建当前版本和想要升级到的版本的更新内容。这对于确定不同版本之间文件差异是必要的。例如，当将 FreeBSD 系统从 7.1-RELEASE 升级到 7.2-RELEASE 时，需要构建并上传两个版本的更新内容到您的分发服务器。 |
+| -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
-For reference, the entire run of [init.sh](https://docs.freebsd.org/en/source/articles/freebsd-update-server/init.txt) is attached.
+供参考，init.sh 的整个运行附在此处。
 
-## 6. Building a Patch
+## 6. 构建补丁
 
-Every time a [security advisory](https://www.freebsd.org/security/advisories/) or [security notice](https://www.freebsd.org/security/notices/) is announced, a patch update can be built.
+每当发布安全咨询或安全通知时，可以构建补丁更新。
 
-For this example, 7.1-RELEASE will be used.
+例如，将使用 7.1-RELEASE。
 
-A couple of assumptions are made for a different release build:
+对于不同版本构建，做出了一些假设。
 
-* Setup the correct directory structure for the initial build.
-* Perform an initial build for 7.1-RELEASE.
+* 设置初始构建的正确目录结构。
+* 为 7.1-RELEASE 执行初始构建。
 
-Create the patch directory of the respective release under /usr/local/freebsd-update-server/patches/.
+在/usr/local/freebsd-update-server/patches/下为相应版本的发布创建补丁目录。
 
 ```
 % mkdir -p /usr/local/freebsd-update-server/patches/7.1-RELEASE/
 % cd /usr/local/freebsd-update-server/patches/7.1-RELEASE
 ```
 
-As an example, take the patch for [named(8)](https://man.freebsd.org/cgi/man.cgi?query=named&sektion=8&format=html). Read the advisory, and grab the necessary file from [FreeBSD Security Advisories](https://www.freebsd.org/security/advisories/). More information on interpreting the advisory, can be found in the [FreeBSD Handbook](https://docs.freebsd.org/en/books/handbook/#security-advisories).
+例如，以 named(8)的补丁为例。阅读公告，并从 FreeBSD 安全公告中获取所需文件。关于如何解释公告的更多信息，请参阅 FreeBSD 手册。
 
-In the [security brief](https://security.freebsd.org/advisories/FreeBSD-SA-09:12.bind.asc), this advisory is called `SA-09:12.bind`. After downloading the file, it is required to rename the file to an appropriate patch level. It is suggested to keep this consistent with official FreeBSD patch levels, but its name may be freely chosen. For this build, let us follow the currently established practice of FreeBSD and call this `p7`. Rename the file:
+在安全摘要中，此公告称为 SA-09:12.bind 。下载文件后，需要将文件重命名为适当的补丁级别。建议与官方 FreeBSD 补丁级别保持一致，但名称可以自由选择。对于此构建，请遵循当前已建立的 FreeBSD 惯例，称其为 p7 。重命名文件：
 
 ```
 % cd /usr/local/freebsd-update-server/patches/7.1-RELEASE/; mv bind.patch 7-SA-09:12.bind
 ```
 
-|  | When running a patch level build, it is assumed that previous patches are in place. When a patch build is run, it will run all patches contained in the patch directory.<br /><br />There can be custom patches added to any build. Use the number zero, or any other number. |
-| -- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  | 运行补丁级别构建时，假定已存在先前的补丁。当运行补丁构建时，它将运行补丁目录中包含的所有补丁。<br /><br />可以向任何构建添加定制补丁。使用零号或任何其他数字。 |
+| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
-|  | It is up to the administrator of the FreeBSD Update Server to take appropriate measures to verify the authenticity of every patch. |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------ |
+|  | 由 FreeBSD 更新服务器管理员采取适当措施验证每个补丁的真实性。 |
+| -- | --------------------------------------------------------------- |
 
-At this point, a *diff* is ready to be built. The software checks first to see if a scripts/init.sh has been run on the respective release prior to running the diff build.
+此时，diff 已准备好进行构建。软件在运行 diff 构建之前首先检查是否在相应的版本发布前运行了 scripts/init.sh。
 
 ```
 # cd /usr/local/freebsd-update-server
 # sh scripts/diff.sh amd64 7.1-RELEASE 7
 ```
 
-What follows is a sample of a *differential* build run.
+以下是差异生成运行的示例。
 
 ```
 # sh -e scripts/diff.sh amd64 7.1-RELEASE 7
@@ -424,7 +425,7 @@ Wed Aug 26 17:20:39 UTC 2009
 ...
 ```
 
-Updates are printed, and approval is requested.
+更新已打印，并请求批准。
 
 ```
 New updates:
@@ -445,7 +446,7 @@ files to confirm that they look sensible, then run
 to sign the build.
 ```
 
-Follow the same process as noted before for approving a build:
+对于批准生成，遵循之前指定的相同过程：
 
 ```
 # sh -e scripts/approve.sh amd64 7.1-RELEASE
@@ -462,18 +463,18 @@ to unmount the decrypted key once you have finished signing all
 the new builds.
 ```
 
-After approving the build, upload the software:
+批准构建后，上传软件：
 
 ```
 # cd /usr/local/freebsd-update-server
 # sh scripts/upload.sh amd64 7.1-RELEASE
 ```
 
-For reference, the entire run of [diff.sh](https://docs.freebsd.org/en/source/articles/freebsd-update-server/diff.txt) is attached.
+供参考，diff.sh 的完整运行已附上。
 
-## 7. Tips
+## 7. 提示
 
-* If a custom release is built using the native `make release` [procedure](https://docs.freebsd.org/en/articles/releng/#release-build), freebsd-update-server code will work from your release. As an example, a release without ports or documentation can be built by clearing functionality pertaining to documentation subroutines `findextradocs ()`, `addextradocs ()` and altering the download location in `fetchiso ()`, respectively, in scripts/build.subr. As a last step, change the [sha256(1)](https://man.freebsd.org/cgi/man.cgi?query=sha256&sektion=1&format=html) hash in build.conf under your respective release and architecture and you are ready to build off your custom release.
+* 如果使用本地 make release 过程构建定制发行版，freebsd-update-server 代码将适用于您的发行版。举例来说，可以通过清除与文档子程序 findextradocs () 、 addextradocs () 相关的功能，并在 scripts/build.subr 中分别更改下载位置来构建没有 ports 或文档的发行版。最后一步，修改 build.conf 中相应发行版和架构下的 sha256(1) 哈希值，即可基于您的定制发行版进行构建。
 
   ```
   # Compare ${WORKDIR}/release and ${WORKDIR}/$1, identify which parts
@@ -485,7 +486,7 @@ For reference, the entire run of [diff.sh](https://docs.freebsd.org/en/source/ar
   addextradocs () {
   }
   ```
-* Adding `-j<span> </span><em>NUMBER</em>` flags to `buildworld` and `obj` targets in the scripts/build.subr script may speed up processing depending on the hardware used, however it is not necessary. Using these flags in other targets is not recommended, as it may cause the build to become unreliable.
+* 在 scripts/build.subr 脚本中向 buildworld 和 obj 目标添加 -j<span> </span><em>NUMBER</em> 标志可能会根据使用的硬件加快处理速度，但这不是必须的。不建议在其他目标中使用这些标志，因为这可能导致构建变得不可靠。
 
   ```
                 # Build the world
@@ -498,7 +499,7 @@ For reference, the entire run of [diff.sh](https://docs.freebsd.org/en/source/ar
   		   make -j 2 obj &&
   		   make ${COMPATFLAGS} release.1 release.2 2>&1
   ```
-* Create an appropriate [DNS](https://docs.freebsd.org/en/books/handbook/#network-dns) SRV record for the update server, and put others behind it with variable weights. Using this facility will provide update mirrors, however this tip is not necessary unless you wish to provide a redundant service.
+* 为更新服务器创建适当的 DNS SRV 记录，并将其他服务器放在其后面，设置不同的权重。使用此功能将提供更新镜像，但除非您希望提供冗余服务，否则此技巧不是必须的。
 
   ```
   _http._tcp.update.myserver.com.		IN SRV   0 2 80   host1.myserver.com.
