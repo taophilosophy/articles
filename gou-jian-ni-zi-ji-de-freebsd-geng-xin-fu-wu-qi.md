@@ -1,7 +1,5 @@
 # 构建你自己的 FreeBSD 更新服务器
 
-# 构建您自己的 FreeBSD 更新服务器
-
 版权 © 2009-2011 年，2013 年 Jason Helfman
 
 <details open="" data-immersive-translate-walked="8eb17343-6bcf-4045-87b8-91174c0afece"><summary data-immersive-translate-walked="8eb17343-6bcf-4045-87b8-91174c0afece" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
