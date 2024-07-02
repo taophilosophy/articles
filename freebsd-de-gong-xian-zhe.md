@@ -3660,7 +3660,7 @@ FreeBSD 项目感谢所有捐赠者！
 * [Siemens AG](http://www.siemens.de/) via Andre Albsmeier <[andre.albsmeier@mchp.siemens.de](mailto:andre.albsmeier@mchp.siemens.de)>.
 * Chris Silva <[ras@interaccess.com](mailto:ras@interaccess.com)>.
 
-### 9.3. Hardware contributors
+### 9.3. 硬件捐献者
 
 以下个人和企业为测试和设备驱动程序开发/支持慷慨捐赠了硬件：
 
@@ -3675,8 +3675,10 @@ FreeBSD 项目感谢所有捐赠者！
 * Larry M. Augustin 不仅提供了一块 Symbios Sym8751S SCSI 卡，还提供了一套数据手册，其中包括即将推出的支持 Ultra-2 和 LVD 的 Sym53c895 芯片，以及最新的编程手册，其中介绍了如何安全使用最新 Symbios SCSI 芯片的高级功能。非常感谢！
 * Christoph P. Kukulies <[kuku@FreeBSD.org](mailto:kuku@FreeBSD.org)> 捐赠了一个 FX120 12 速 Mitsumi CDROM 驱动器，用于 IDE CDROM 驱动程序的开发。
 * Mike Tancsa <[mike@sentex.ca](mailto:mike@sentex.ca)> 捐赠了四块不同的 ATM PCI 卡，以帮助增加对这些卡的支持，并帮助支持 netatm ATM 栈的开发工作。
-### 9.4. Special contributors
+### 9.4. 特殊贡献者
 
 * [BSDi](http://www.osd.bsdi.com/)（前身是 Walnut Creek CDROM）的捐赠几乎比我们能说的还要多（更多细节请参见 [FreeBSD 手册](https://docs.freebsd.org/en/books/handbook/) 的 "关于 FreeBSD 项目 "部分）。我们尤其要感谢他们为我们的主要开发机器 "freefall.FreeBSD.org "以及测试和构建工具箱 "thud.FreeBSD.org "提供的原始硬件。我们也要感谢他们多年来对不同贡献者的资助，并为我们提供无限制地使用他们的 T1 连接到互联网。
 * 德累斯顿的 interface business GmbH](http://www.interface-business.de/)一直耐心地支持着 Jörg Wunsch <[joerg@FreeBSD.org](mailto:joerg@FreeBSD.org)> ，他经常宁愿做 FreeBSD 的工作也不愿做有报酬的工作，每当他的私人网络连接变得太慢或不稳定而无法使用时，他就会求助于他们（相当昂贵的）EUnet 网络连接。
 * [Berkeley Software Design, Inc.](http://www.bsdi.com/)向其余的 BSD 世界贡献了他们的 DOS 仿真器代码，这些代码被用于 `doscmd` 命令。
+
+
