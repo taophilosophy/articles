@@ -1,7 +1,7 @@
 # Table of contents
 
 * [articles](README.md)
-* [为 FreeBSD 做贡献](wei-freebsd-zuo-gong-xian.md)
+* [参与 FreeBSD](wei-freebsd-zuo-gong-xian.md)
 * [提交者指南](ti-jiao-zhe-zhi-nan.md)
 * [构建你自己的 FreeBSD 更新服务器](gou-jian-ni-zi-ji-de-freebsd-geng-xin-fu-wu-qi.md)
 * [使用 FreeBSD 开发产品](shi-yong-freebsd-kai-fa-chan-pin.md)
