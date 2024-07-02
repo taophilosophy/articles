@@ -1,5 +1,3 @@
-# 为 FreeBSD 做贡献
-
 # 参与 FreeBSD
 
  商标
