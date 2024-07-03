@@ -11,7 +11,7 @@
 * [BSD 简介](jie-shi-bsd.md)
 * [桥接过滤器](filtering-bridges.md)
 * [字体与 FreeBSD](zi-ti-yu-freebsd.md)
-* [针对 FreeBSD 和 UNIX® 的新用户](zhen-dui-freebsd-he-unix-de-xin-yong-hu.md)
+* [针对 FreeBSD 和 UNIX® 的新用户的简介](zhen-dui-freebsd-he-unix-de-xin-yong-hu.md)
 * [FreeBSD 和固态硬盘](freebsd-he-gu-tai-ying-pan.md)
 * [FreeBSD 许可政策](freebsd-xu-ke-zheng-ce.md)
 * [面向 Linux® 用户的 FreeBSD 快速入门指南](mian-xiang-linux-yong-hu-de-freebsd-kuai-su-ru-men-zhi-nan.md)
