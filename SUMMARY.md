@@ -9,7 +9,7 @@
 * [FreeBSD 上的打印服务器（CUPS）](freebsd-shang-de-cups.md)
 * [FreeBSD 虚拟内存系统设计要素](freebsd-xu-ni-ji-xi-tong-she-ji-yao-su.md)
 * [BSD 简介](jie-shi-bsd.md)
-* [Filtering Bridges](filtering-bridges.md)
+* [桥接过滤器](filtering-bridges.md)
 * [字体与 FreeBSD](zi-ti-yu-freebsd.md)
 * [针对 FreeBSD 和 UNIX® 的新用户](zhen-dui-freebsd-he-unix-de-xin-yong-hu.md)
 * [FreeBSD 和固态硬盘](freebsd-he-gu-tai-ying-pan.md)
