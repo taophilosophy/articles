@@ -1,7 +1,5 @@
 # FreeBSD 上的打印服务器（CUPS）
 
-# FreeBSD 上的 CUPS
-
 <details open="" data-immersive-translate-walked="e7dd97af-87af-4a4b-b80e-b22f7c4e3d03"><summary data-immersive-translate-walked="e7dd97af-87af-4a4b-b80e-b22f7c4e3d03" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
 
 FreeBSD 是 FreeBSD 基金会的注册商标。
