@@ -1,4 +1,4 @@
-# FreeBSD VM 系统设计要素
+# FreeBSD 虚拟内存系统设计要素
 
 
 <details open="" data-immersive-translate-walked="8bc458a5-bf4b-4880-a77a-a1279ebbba0e"><summary data-immersive-translate-walked="8bc458a5-bf4b-4880-a77a-a1279ebbba0e" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
