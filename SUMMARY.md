@@ -7,7 +7,7 @@
 * [使用 FreeBSD 开发产品](shi-yong-freebsd-kai-fa-chan-pin.md)
 * [FreeBSD 的贡献者](freebsd-de-gong-xian-zhe.md)
 * [FreeBSD 上的打印服务器（CUPS）](freebsd-shang-de-cups.md)
-* [FreeBSD VM 系统设计要素](freebsd-xu-ni-ji-xi-tong-she-ji-yao-su.md)
+* [FreeBSD 虚拟内存系统设计要素](freebsd-xu-ni-ji-xi-tong-she-ji-yao-su.md)
 * [解释 BSD](jie-shi-bsd.md)
 * [Filtering Bridges](filtering-bridges.md)
 * [字体与 FreeBSD](zi-ti-yu-freebsd.md)
