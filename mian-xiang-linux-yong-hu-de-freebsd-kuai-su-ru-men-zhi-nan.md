@@ -240,8 +240,8 @@ proc                /proc           procfs  rw,noauto       0       0
 
 | Linux® 命令 (Red Hat/Debian) | FreeBSD 等效 | 目的                 |
 | ------------------------------- | -------------- | ---------------------- |
-| `yum install<span> </span><em>package</em>` / `apt-get install<span> </span><em>package</em>`                           | `pkg install<span> </span><em>package</em>`             | 从远程仓库安装软件包 |
-| `rpm -ivh<span> </span><em>package</em>` / `dpkg -i<span> </span><em>package</em>`                           | `pkg add<span> </span><em>package</em>`             | 安装本地软件包       |
+| `yum install package` / `apt-get install package`                           | `pkg install package`             | 从远程仓库安装软件包 |
+| `rpm -ivh package` / `dpkg -i package`                           | `pkg add package`             | 安装本地软件包       |
 | `rpm -qa` / `dpkg -l`                           | `pkg info`             | 列出已安装的软件包   |
 | `lspci`                              | `pciconf`             | 列出 PCI 设备        |
 | `lsmod`                              | `kldstat`             | 列出已加载的内核模块 |
