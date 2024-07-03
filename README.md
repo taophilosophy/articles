@@ -1,2 +1,4 @@
-# articles
-FreeBSD articles Chinese
+# FreeBSD 文章简体中文版 翻译项目
+
+**正在施工**
+
