@@ -1,5 +1,6 @@
 # FreeBSD 发布工程
 
+
 <details open="" data-immersive-translate-walked="98272659-72e6-4d59-b2dd-08cbeaddb9dc"><summary data-immersive-translate-walked="98272659-72e6-4d59-b2dd-08cbeaddb9dc" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
 
 FreeBSD 是 FreeBSD 基金会的注册商标。
@@ -275,15 +276,15 @@ ALPHA 构建背后的想法是在创建 stable/ 分支之前提供定期的 Free
 % git checkout -b releng/13.0
 ```
 
-| 要编辑的文件 | 变更什么                                                  |
-| -------------- | ----------------------------------------------------------- |
-| `sys/conf/newvers.sh`             | 将 BETA<em>X</em> 更改为 RC1                              |
-| `sys/sys/param.h`             | 更新 __FreeBSD_version                                    |
-| `sys/conf/kern.opts.mk`             | Move `REPRODUCIBLE_BUILD` from `<em>DEFAULT_NO_OPTIONS</em>` *to* `DEFAULT_YES_OPTIONS`                                             |
-| `etc/pkg/FreeBSD.conf`             | Replace `latest` with `quarterly` as the default package repository location |
-| `release/pkg_repos/release-dvd.conf`             | Replace `latest` with `quarterly` as the default package repository location |
-| `sys/conf/newvers.sh`             | 用 PRERELEASE 更新 BETA<em>X</em>                         |
-| `sys/sys/param.h`             | 更新 __FreeBSD_version                                    |
+| 要编辑的文件 | 变更什么                                                                        |
+| -------------- | --------------------------------------------------------------------------------- |
+| `sys/conf/newvers.sh`             | 将 BETA<em>X</em> 更改为 RC1                                                    |
+| `sys/sys/param.h`             | 更新 __FreeBSD_version                                                          |
+| `sys/conf/kern.opts.mk`             | 将 REPRODUCIBLE_BUILD 从 <em>DEFAULT_NO_OPTIONS</em> 移动到 DEFAULT_YES_OPTIONS |
+| `etc/pkg/FreeBSD.conf`             | 将 latest 替换为 quarterly 作为默认的软件包仓库位置                             |
+| `release/pkg_repos/release-dvd.conf`             | 将 latest 替换为 quarterly 作为默认的软件包仓库位置                             |
+| `sys/conf/newvers.sh`             | 用 PRERELEASE 更新 BETA<em>X</em>                                               |
+| `sys/sys/param.h`             | 更新 __FreeBSD_version                                                          |
 
 然后，gitadm@FreeBSD.org 为 releng 分支添加新的批准者，如同为 stable 分支所做的那样。
 
@@ -398,12 +399,12 @@ KERNEL="GENERIC64"
 
 本节描述了一般的发布后任务。
 
-### 9.1. Post-Release Errata Notices
+### 9.1. 发布后勘误通告
 
-As the release cycle approaches conclusion, it is common to have several EN (Errata Notice) candidates to address issues that were discovered late in the cycle. Following the release, the FreeBSD Release Engineering Team and the FreeBSD Security Team revisit changes that were not approved prior to the final release, and depending on the scope of the change in question, may issue an EN.
+随着发布周期接近尾声，通常会出现几个 EN（勘误通知）候选项，以解决在周期末期发现的问题。在发布后，FreeBSD 发布工程团队和 FreeBSD 安全团队会重新审视在最终发布之前未经批准的更改，根据问题的范围，可能会发布 EN。
 
-|  | The actual process of issuing ENs is handled by the FreeBSD Security Team. |
-| -- | ---------------------------------------------------------------------------- |
+|  | 实际发布 EN 的过程由 FreeBSD 安全团队处理。 |
+| -- | --------------------------------------------- |
 
 完成发布周期后，开发人员应填写勘误通知模板，特别是 Background 、 Problem Description 、 Impact 部分，如适用， Workaround 部分。
 
