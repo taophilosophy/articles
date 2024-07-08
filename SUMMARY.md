@@ -1,6 +1,6 @@
 # Table of contents
 
-* [articles](README.md)
+* [FreeBSD 文章简体中文版 翻译项目](README.md)
 * [参与 FreeBSD](wei-freebsd-zuo-gong-xian.md)
 * [提交者指南](ti-jiao-zhe-zhi-nan.md)
 * [构建你自己的 FreeBSD 更新服务器](gou-jian-ni-zi-ji-de-freebsd-geng-xin-fu-wu-qi.md)
