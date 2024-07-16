@@ -1,5 +1,6 @@
 # Table of contents
 
+* [编辑日志](bian-ji-ri-zhi.md)
 * [FreeBSD 文章简体中文版 翻译项目](README.md)
 * [参与 FreeBSD](wei-freebsd-zuo-gong-xian.md)
 * [提交者指南](ti-jiao-zhe-zhi-nan.md)
