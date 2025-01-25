@@ -24,9 +24,9 @@ FreeBSD 状态报告每季度发布，为公众提供项目进展的一般视图
 
 此部分提供了来自技术撰写经验丰富的 David Chisnall 的一些建议，内容包括如何撰写状态报告条目的说明。还提供了提交条目的指导。
 
-如果您不是以英语为母语，不用担心。状态团队将检查您的条目拼写和语法，并为您进行修正。
+如果你不是以英语为母语，不用担心。状态团队将检查你的条目拼写和语法，并为你进行修正。
 
-### 1.1. 介绍您的工作
+### 1.1. 介绍你的工作
 
 *不要假设阅读报告的人了解你的项目。*
 
@@ -43,9 +43,9 @@ A new driver, abc(4), was added to the tree, bringing support for
 Yoyodyne's range of Frobnicator network interfaces.
 ```
 
-现在读者知道 abc 是一个网络接口驱动程序。即使他们不使用任何 Yoyodyne 产品，您也已经传达了 FreeBSD 对网络设备的支持正在改善。
+现在读者知道 abc 是一个网络接口驱动程序。即使他们不使用任何 Yoyodyne 产品，你也已经传达了 FreeBSD 对网络设备的支持正在改善。
 
-### 1.2. 展示您工作的重要性
+### 1.2. 展示你工作的重要性
 
 *状态报告不仅仅是告诉每个人事情已经完成，还需要解释为什么要这样做。*
 
@@ -67,7 +67,7 @@ We imported Cyberdyne Systems T800 into the tree.
 
 *不要忘记你的赞助商。*
 
-如果您或您的项目收到赞助，来自某人的奖学金，或者您已经在公司担任承包商或雇员，请包括在内。赞助商始终会感激您感谢他们的资助，但这对他们来说也是有益的，以此方式展示他们正在积极支持该项目。最后，但并非最不重要的，这有助于 FreeBSD 了解其重要的消费者。
+如果你或你的项目收到赞助，来自某人的奖学金，或者你已经在公司担任承包商或雇员，请包括在内。赞助商始终会感激你感谢他们的资助，但这对他们来说也是有益的，以此方式展示他们正在积极支持该项目。最后，但并非最不重要的，这有助于 FreeBSD 了解其重要的消费者。
 
 ### 1.5. 未完成事项
 
@@ -81,9 +81,9 @@ We imported Cyberdyne Systems T800 into the tree.
 
 提交报告有以下几种方法可供选择：
 
-* 提交一个 Phabricator 评审，并将组状态添加到评审者列表中。如果缺少适当的子目录 doc/website/content/en/status/ ，请将您的报告放入其中（如有需要请创建）；
-* 通过其 GitHub 镜像向文档存储库提交拉取请求。您应该将报告放在 doc/website/content/en/status 的适当子目录中（如果缺少则创建）;
-* 发送电子邮件至 status-submissions@FreeBSD.org，包括您的报告。
+* 提交一个 Phabricator 评审，并将组状态添加到评审者列表中。如果缺少适当的子目录 doc/website/content/en/status/ ，请将你的报告放入其中（如有需要请创建）；
+* 通过其 GitHub 镜像向文档存储库提交拉取请求。你应该将报告放在 doc/website/content/en/status 的适当子目录中（如果缺少则创建）;
+* 发送电子邮件至 status-submissions@FreeBSD.org，包括你的报告。
 
 AsciiDoc 示例报告模板可用。
 
@@ -137,7 +137,7 @@ AsciiDoc 示例报告模板可用。
 0      0       1,15,24 3,6,9,12        *       cd ~/doc/tools/sendcalls && git pull && ./sendcalls -s 'Lorenzo Salvadore'
 ```
 
->如果您负责发送状态报告和确实使用 cron 作业，请在 freefall 上运行它，并用您的名字签名，以便在出现问题时可以推断出是谁配置了 cron 作业。另请使用您的名字更新上面的示例，作为额外的安全措施。 
+>如果你负责发送状态报告和确实使用 cron 作业，请在 freefall 上运行它，并用你的名字签名，以便在出现问题时可以推断出是谁配置了 cron 作业。另请使用你的名字更新上面的示例，作为额外的安全措施。 
 
 也许也值得在论坛上要求报告，就像过去做过的那样。
 
@@ -182,6 +182,6 @@ w3m(1)拥有完整的 Unicode 支持。 -dump 只是简单地输出 HTML 代码�
 
 * 一封发送到 freebsd-announce@FreeBSD.org；
 
->这封邮件必须被批准，因此如果您负责发送此邮件，请确保有人批准（如果时间过长，请联系邮件管理员）。 
+>这封邮件必须被批准，因此如果你负责发送此邮件，请确保有人批准（如果时间过长，请联系邮件管理员）。 
 
 * 一封邮件发送至 freebsd-hackers@FreeBSD.org，抄送 freebsd-current@FreeBSD.org 和 freebsd-stable@FreeBSD.org，密送 developers@FreeBSD.org 。

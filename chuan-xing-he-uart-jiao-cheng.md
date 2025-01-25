@@ -342,9 +342,9 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
 1. 你需要安装内核源码以便重新编译必要的选项，或者你需要别人为你编译。2.0.5 默认内核不启用多端口支持，无论如何你都需要为每个 port 添加设备条目。
 2. 其次，你需要知道 Boca 板卡的中断和 IO 设置，以便在内核中正确设置这些选项。
 
-重要提示- Boca 16 的实际 UART 芯片位于连接器盒中，而不在内部主板上。因此，如果您将其拔下，那些 ports 的探针会失败。我从未测试过断开盒子然后将其重新插入并启动，我建议您也不要这样做。
+重要提示- Boca 16 的实际 UART 芯片位于连接器盒中，而不在内部主板上。因此，如果你将其拔下，那些 ports 的探针会失败。我从未测试过断开盒子然后将其重新插入并启动，我建议你也不要这样做。
 
-如果您尚未设置自定义内核配置文件，请参考 FreeBSD 手册的内核配置章节了解一般程序。以下是针对 Boca 16 板的具体事项，假定您正在使用内核名称 MYKERNEL，并使用 vi 进行编辑。
+如果你尚未设置自定义内核配置文件，请参考 FreeBSD 手册的内核配置章节了解一般程序。以下是针对 Boca 16 板的具体事项，假定你正在使用内核名称 MYKERNEL，并使用 vi 进行编辑。
 
 1. 添加该行
 
@@ -354,7 +354,7 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
 
    到配置文件。
 
-2. 在当前的 device sio<em>n</em> 行处，您需要添加 16 个设备。以下示例是针对一个中断为 3、基 IO 地址为 100h 的 Boca 板。每个 port 的 IO 地址是从前一个 port 加 8 个十六进制数，因此是 100h、108h、110h……地址。
+2. 在当前的 device sio<em>n</em> 行处，你需要添加 16 个设备。以下示例是针对一个中断为 3、基 IO 地址为 100h 的 Boca 板。每个 port 的 IO 地址是从前一个 port 加 8 个十六进制数，因此是 100h、108h、110h……地址。
 
    ```sh
    device sio1 at isa? port 0x100 flags 0x1005
@@ -366,7 +366,7 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
    device sio16 at isa? port 0x178 flags 0x1005 irq 3
    ```
 
-   除非您使用完全相同的 sio 分配，否则必须更改 flags 条目。标志根据 0x <em>MYY</em> 设置，其中 M 表示主 port 的次要编号（最后一个 port 在 Boca 16 上），YY 表示是否启用 FIFO（启用）、是否使用 IRQ 共享（是）以及是否有 AST/4 兼容的 IRQ 控制寄存器（否）。在这个例子中，
+   除非你使用完全相同的 sio 分配，否则必须更改 flags 条目。标志根据 0x <em>MYY</em> 设置，其中 M 表示主 port 的次要编号（最后一个 port 在 Boca 16 上），YY 表示是否启用 FIFO（启用）、是否使用 IRQ 共享（是）以及是否有 AST/4 兼容的 IRQ 控制寄存器（否）。在这个例子中，
 
    ```sh
     flags
@@ -375,7 +375,7 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
 
    指示主 port 是 sio16。如果我添加另一个板，并分配 sio17 到 sio28，则该板上的所有 16 个 ports 的标志将为 0x1C05，其中 1C 表示主 port 的次要编号。不要改变 05 设置。
 
-3. 保存并完成内核配置，重新编译，安装并重新启动。假设您已成功安装了重新编译的内核，并已将其设置为正确的地址和 IRQ，则您的引导消息应指示成功探测到 Boca ports 如下：（显然 sio 号码，IO 和 IRQ 可能不同）
+3. 保存并完成内核配置，重新编译，安装并重新启动。假设你已成功安装了重新编译的内核，并已将其设置为正确的地址和 IRQ，则你的引导消息应指示成功探测到 Boca ports 如下：（显然 sio 号码，IO 和 IRQ 可能不同）
 
    ```sh
    sio1 at 0x100-0x107 flags 0x1005 on isa
@@ -420,7 +420,7 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
 
    会显示引导消息。
 
-4. 接下来，必须使用/dev/MAKEDEV 脚本为设备制作适当的条目。如果您正在运行具有 devfs(5)支持编译的内核的 FreeBSD 5.X，则可以省略此步骤。如果您确实需要创建/dev 条目，请按照以下内容操作：
+4. 接下来，必须使用/dev/MAKEDEV 脚本为设备制作适当的条目。如果你正在运行具有 devfs(5)支持编译的内核的 FreeBSD 5.X，则可以省略此步骤。如果你确实需要创建/dev 条目，请按照以下内容操作：
 
    ```sh
    # cd /dev
@@ -432,7 +432,7 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
    # ./MAKEDEV cuag
    ```
 
-   如果由于某种原因您不想要或不需要呼叫设备，可以不制作 cua*设备。
+   如果由于某种原因你不想要或不需要呼叫设备，可以不制作 cua*设备。
 
 5. 如果你想快速而草率地确保设备正常工作，你可以简单地将调制解调器插入每个 port（作为 root 用户）。
 
@@ -440,15 +440,15 @@ device          sio11   at isa? port 0x138 flags 0xb05 irq 9
    # echo at > ttyd*
    ```
 
-   对于您制作的每个设备。您应该看到每个正常 port 的 RX 指示灯闪烁。
+   对于你制作的每个设备。你应该看到每个正常 port 的 RX 指示灯闪烁。
 
 ### 2.3. 支持廉价的多 UART 卡
 
 由 Helge Oldach hmo@sep.hamburg.com 贡献，1999 年 9 月
 
-您是否曾想过关于 FreeBSD 支持您的 20 美元多 I/O 卡，带有两个（或更多）COM ports，共享 IRQs？以下是解决方法：
+你是否曾想过关于 FreeBSD 支持你的 20 美元多 I/O 卡，带有两个（或更多）COM ports，共享 IRQs？以下是解决方法：
 
-通常，支持此类板卡的唯一选项是为每个 port 使用不同的 IRQ。例如，如果您的 CPU 板上有一个内置的 COM1 port（又名 sio0-I/O 地址 0x3F8 和 IRQ 4），您有一个带有两个 UART 的扩展板，通常需要将它们配置为 COM2（又名 sio1-I/O 地址 0x2F8 和 IRQ 3），以及第三个 port（又名 sio2）作为 I/O 0x3E8 和 IRQ 5。显然，这是对 IRQ 资源的浪费，因为基本上应该能够在前几节中描述的配置中使用单个 IRQ 运行两个扩展板 ports。
+通常，支持此类板卡的唯一选项是为每个 port 使用不同的 IRQ。例如，如果你的 CPU 板上有一个内置的 COM1 port（又名 sio0-I/O 地址 0x3F8 和 IRQ 4），你有一个带有两个 UART 的扩展板，通常需要将它们配置为 COM2（又名 sio1-I/O 地址 0x2F8 和 IRQ 3），以及第三个 port（又名 sio2）作为 I/O 0x3E8 和 IRQ 5。显然，这是对 IRQ 资源的浪费，因为基本上应该能够在前几节中描述的配置中使用单个 IRQ 运行两个扩展板 ports。
 
 这种便宜的 I/O 板通常有一个 4x3 跳线矩阵用于 COM ports，类似于下图：
 
@@ -465,7 +465,7 @@ IRQ         2  3  4  5
 
 可以得出结论，使用手工制作的覆盖 IRQ 3 列中所有三个连接点的跳线将两个 ports 接线到 IRQ 3 会解决问题，但事实并非如此。你不能复制 IRQ 3，因为每个 UART 的输出驱动器都以“图腾柱”方式连接，所以如果其中一个 UART 驱动 IRQ 3，输出信号将不会如你所期望的那样。根据扩展板或主板的实现，IRQ 3 线将一直保持高电平或始终保持低电平。
 
-您需要将两个 UART 的 IRQ 驱动程序解耦，这样，只有当两个 UART 中的一个断言 IRQ 时，板的 IRQ 线才会上升，并且否则保持低电平。 Joerg Wunsch 提出了解决方案 j@ida.interface-business.de：焊接由两个二极管（强烈建议使用 Germanium 或 Schottky 类型）和一个 1 kOhm 电阻组成的有线"或"。这是从上面的 4x3 跳线字段开始的原理图：
+你需要将两个 UART 的 IRQ 驱动程序解耦，这样，只有当两个 UART 中的一个断言 IRQ 时，板的 IRQ 线才会上升，并且否则保持低电平。 Joerg Wunsch 提出了解决方案 j@ida.interface-business.de：焊接由两个二极管（强烈建议使用 Germanium 或 Schottky 类型）和一个 1 kOhm 电阻组成的有线"或"。这是从上面的 4x3 跳线字段开始的原理图：
 
 ```
                           Diode
@@ -494,7 +494,7 @@ device          sio1    at isa? port "IO_COM2" flags 0x205
 device          sio2    at isa? port "IO_COM3" flags 0x205 irq 3
 ```
 
-注意，sio1 和 sio2 的 flags 设置确实至关重要；有关详细信息，请参阅 sio(4)。(通常，“flags”属性中的 2 指的是 sio 2 ，其中包含 IRQ，您肯定希望为 5 低四位。)打开内核详细模式后，这应产生类似于以下内容：
+注意，sio1 和 sio2 的 flags 设置确实至关重要；有关详细信息，请参阅 sio(4)。(通常，“flags”属性中的 2 指的是 sio 2 ，其中包含 IRQ，你肯定希望为 5 低四位。)打开内核详细模式后，这应产生类似于以下内容：
 
 ```
 sio0: irq maps: 0x1 0x11 0x1 0x1
@@ -508,7 +508,7 @@ sio2 at 0x3e8-0x3ef irq 3 flags 0x205 on isa
 sio2: type 16550A (multiport master)
 ```
 
-尽管/sys/i386/isa/sio.c 在使用上有点神秘，使用上面的“irq maps”数组，基本思想是您在第一、第三和第四位置观察到 0x1 。这意味着相应的 IRQ 在输出时被设置并在之后被清除，这正是我们所期望的。如果您的内核不显示这种行为，则很可能是您的连线有问题。
+尽管/sys/i386/isa/sio.c 在使用上有点神秘，使用上面的“irq maps”数组，基本思想是你在第一、第三和第四位置观察到 0x1 。这意味着相应的 IRQ 在输出时被设置并在之后被清除，这正是我们所期望的。如果你的内核不显示这种行为，则很可能是你的连线有问题。
 
 ## 3. 配置 cy 驱动程序
 
@@ -516,7 +516,7 @@ _由 Alex Nash 贡献。1996 年 6 月 6 日。_
 
 Cyclades 多端口卡基于 cy 驱动程序，而不是其他多端口卡使用的常规 sio 驱动程序。配置很简单：
 
-1. 将 cy 设备添加到内核配置中（请注意，您的 irq 和 iomem 设置可能有所不同）。
+1. 将 cy 设备添加到内核配置中（请注意，你的 irq 和 iomem 设置可能有所不同）。
 
    ```
    device cy0 at isa? irq 10 iomem 0xd4000 iosiz 0x2000
@@ -556,13 +556,13 @@ Specialix SI/XIO 和 SX 多端口卡使用 si 驱动程序。单台机器最多�
 
 虽然 SX 和 SI/XIO 主机卡看起来有很大不同，但它们的功能基本上是相同的。主机卡不使用 I/O 位置，而是需要 32K 内存块。ISA 卡的出厂配置将其放在 0xd0000-0xd7fff 。它们还需要一个 IRQ。PCI 卡当然会自动配置。
 
-您可以连接最多 4 个外部模块到每个主机卡。外部模块包含 4 个或 8 个串行 ports。它们有以下几种类型：
+你可以连接最多 4 个外部模块到每个主机卡。外部模块包含 4 个或 8 个串行 ports。它们有以下几种类型：
 
 - SI 4 或 8 个 port 模块。每个 port 支持的最大速率为 57600 bps。
 - XIO 8 port 模块。每个 port 支持最高 115200 bps。一种类型的 XIO 模块有 7 个串行和 1 个并行 port。
 - SXDC 8 port 模块。每个 port 支持最高 921600 bps。与 XIO 类似，一个模块也可用一种并行 port。
 
-要配置 ISA 主机卡，请将以下行添加到您的内核配置文件中，并根据需要更改数字：
+要配置 ISA 主机卡，请将以下行添加到你的内核配置文件中，并根据需要更改数字：
 
 ```
 device si0 at isa? iomem 0xd0000 irq 11
@@ -576,11 +576,11 @@ device si0 at isa? iomem 0xd0000 irq 11
 device si0
 ```
 
-在添加配置项之后，重新构建并安装您的新内核。
+在添加配置项之后，重新构建并安装你的新内核。
 
 >以下步骤，在使用 FreeBSD 5.X 中的 devfs(5)时不必要。 
 
-在使用新内核重新启动后，您需要在/dev 目录中创建设备节点。MAKEDEV 脚本会为您处理这个问题。计算您有多少个 ports，然后输入：
+在使用新内核重新启动后，你需要在/dev 目录中创建设备节点。MAKEDEV 脚本会为你处理这个问题。计算你有多少个 ports，然后输入：
 
 ```
 # cd /dev
@@ -589,7 +589,7 @@ device si0
 
 （其中 nn 是 ports 的数量）
 
-如果你想在这些 ports 上显示登录提示，您需要向/etc/ttys 添加类似这样的行：
+如果你想在这些 ports 上显示登录提示，你需要向/etc/ttys 添加类似这样的行：
 
 ```
 ttyA01  "/usr/libexec/getty std.9600"   vt100   on insecure

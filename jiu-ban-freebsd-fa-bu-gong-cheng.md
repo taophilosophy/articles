@@ -174,7 +174,7 @@ Sysinstall 应该更新以注明可用的 ports 数量和 Ports 所需的磁盘�
 
 ## 3. 发布构建
 
-FreeBSD “发布版”可以由任何拥有快速计算机和访问源代码库的人构建（这应该是每个人，因为我们提供子版本访问！请参阅手册中的子版本部分获取详细信息）。唯一的特殊要求是 md(4) 设备必须可用。如果设备未加载到您的内核中，则在创建引导媒体过程中执行 mdconfig(8) 时应自动加载内核模块。构建发布所需的所有工具都可以从 src/release 中的子版本存储库中获得。这些工具旨在提供构建 FreeBSD 发行版的一致方法。实际上只需一个命令就可以构建完整的发布版，包括创建适合刻录到 CDROM 或 DVD 的 ISO 映像文件以及 FTP 安装目录。release(7) 充分记录了用于构建发布版的脚本。 generate-release.sh 是围绕 Makefile 目标的包装器： make release 。
+FreeBSD “发布版”可以由任何拥有快速计算机和访问源代码库的人构建（这应该是每个人，因为我们提供子版本访问！请参阅手册中的子版本部分获取详细信息）。唯一的特殊要求是 md(4) 设备必须可用。如果设备未加载到你的内核中，则在创建引导媒体过程中执行 mdconfig(8) 时应自动加载内核模块。构建发布所需的所有工具都可以从 src/release 中的子版本存储库中获得。这些工具旨在提供构建 FreeBSD 发行版的一致方法。实际上只需一个命令就可以构建完整的发布版，包括创建适合刻录到 CDROM 或 DVD 的 ISO 映像文件以及 FTP 安装目录。release(7) 充分记录了用于构建发布版的脚本。 generate-release.sh 是围绕 Makefile 目标的包装器： make release 。
 
 ### 3.1. 构建一个发布
 
@@ -226,7 +226,7 @@ FreeBSD Ports 是一个包含超过 36000 个第三方软件包的，可用于 F
 
 第一张磁盘几乎完全由 make release 创建。对 disc1 目录应进行的唯一更改是添加一个 tools 目录，并尽可能多地添加第三方流行软件包以适应磁盘。tools 目录包含允许用户从其他操作系统创建安装软盘的软件。应使此磁盘可引导，以便现代 PC 用户不需要创建安装软盘。
 
-如果要包含 FreeBSD 的定制内核，则必须更新 bsdinstall(8) 和 release(7) 以包括安装说明。相关代码包含在 src/release 和 src/usr.sbin/bsdinstall 中。具体来说，需要在 src/usr.sbin/bsdinstall 下更新 src/release/Makefile、dist.c、dist.h、menus.c、install.c 和 Makefile 文件。可选地，您可以选择更新 bsdinstall.8。
+如果要包含 FreeBSD 的定制内核，则必须更新 bsdinstall(8) 和 release(7) 以包括安装说明。相关代码包含在 src/release 和 src/usr.sbin/bsdinstall 中。具体来说，需要在 src/usr.sbin/bsdinstall 下更新 src/release/Makefile、dist.c、dist.h、menus.c、install.c 和 Makefile 文件。可选地，你可以选择更新 bsdinstall.8。
 
 #### 3.3.2. 磁盘 2
 

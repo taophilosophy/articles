@@ -12,7 +12,7 @@ Sun、Sun Microsystems、Java、Java 虚拟机、JDK、JRE、JSP、JVM、Netra�
 
 摘要
 
-本文列出了对 FreeBSD 有贡献的个人和组织。要查看当前的 FreeBSD Committers 列表，您可以访问下面的 [list](https://docs.freebsd.org/en/articles/contributors/#staff-committers)。
+本文列出了对 FreeBSD 有贡献的个人和组织。要查看当前的 FreeBSD Committers 列表，你可以访问下面的 [list](https://docs.freebsd.org/en/articles/contributors/#staff-committers)。
 
 ---
 

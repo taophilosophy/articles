@@ -68,7 +68,7 @@ Povray.ttf
 
 ## 设置虚拟控制台为 80x60 行模式
 
-首先，必须加载 8x8 字体。为此，/etc/rc.conf 文件应包含以下行（将字体名称更改为适合您所在地区的恰当名称）:
+首先，必须加载 8x8 字体。为此，/etc/rc.conf 文件应包含以下行（将字体名称更改为适合你所在地区的恰当名称）:
 
 ```
 font8x8="iso-8x8"		# font 8x8 from /usr/share/syscons/fonts/* (or NO).
@@ -129,7 +129,7 @@ Maintain an index to cross reference the fonts
   foundry  family  weight   slant  width  additional style
 ```
 
-每个新字体都需要创建一个新名称。如果您从字体附带的文档中获取了一些信息，那么可以用它作为创建名称的基础。如果没有信息，那么您可以通过对字体文件使用 strings(1)来获取一些想法。例如：
+每个新字体都需要创建一个新名称。如果你从字体附带的文档中获取了一些信息，那么可以用它作为创建名称的基础。如果没有信息，那么你可以通过对字体文件使用 strings(1)来获取一些想法。例如：
 
 ```
 % strings showboat.pfb | more
@@ -356,13 +356,13 @@ To print it
 
 ttf2pf TrueType 到 PostScript 转换实用程序。这允许将 TrueType 字体转换为 ascii 字体度量 (.afm) 文件。
 
-目前可在 http://sunsite.icm.edu.pl/pub/GUST/contrib/BachoTeX98/ttf2pf/ 获取。注意：这些文件是 PostScript 程序，必须通过在单击链接时按住 Shift 键来下载到磁盘。否则，您的浏览器可能会尝试启动 ghostview 来查看它们。
+目前可在 http://sunsite.icm.edu.pl/pub/GUST/contrib/BachoTeX98/ttf2pf/ 获取。注意：这些文件是 PostScript 程序，必须通过在单击链接时按住 Shift 键来下载到磁盘。否则，你的浏览器可能会尝试启动 ghostview 来查看它们。
 
 感兴趣的文件为：
 
 - GS_TTF.PS
 - [PF2AFM.PS](http://PF2AFM.PS)
-- ttf2pf.ps 有趣的大/小写是因为它们也用于 DOSshells。ttf2pf.ps 利用其他部分作为大写字母，因此任何重命名都必须与此保持一致。(实际上，GS_TTF.PS 和 PFS2AFM.PS 据说是 Ghostscript 分发的一部分，但将它们用作独立工具同样方便。FreeBSD 似乎不包含后者。) 您还可能希望将这些安装到 /usr/local/share/groff_font/devps(?)。
+- ttf2pf.ps 有趣的大/小写是因为它们也用于 DOSshells。ttf2pf.ps 利用其他部分作为大写字母，因此任何重命名都必须与此保持一致。(实际上，GS_TTF.PS 和 PFS2AFM.PS 据说是 Ghostscript 分发的一部分，但将它们用作独立工具同样方便。FreeBSD 似乎不包含后者。) 你还可能希望将这些安装到 /usr/local/share/groff_font/devps(?)。
 
 afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通常位于目录 /usr/src/contrib/groff/afmtodit 中，需要一些工作才能开始使用。
 
@@ -375,9 +375,9 @@ afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通
 # make -f Makefile.sub afmtodit
 ```
 
-您可能还需要将 /usr/contrib/groff/devps/generate/textmap 复制到 /usr/share/groff_font/devps/generate，如果它尚不存在。
+你可能还需要将 /usr/contrib/groff/devps/generate/textmap 复制到 /usr/share/groff_font/devps/generate，如果它尚不存在。
 
-一旦所有这些实用程序就位，您就可以开始了：
+一旦所有这些实用程序就位，你就可以开始了：
 
 1. 通过输入以下内容创建 .afm:
 
@@ -385,7 +385,7 @@ afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通
    % gs -dNODISPLAY -q -- ttf2pf.ps TTF_name PS_font_name AFM_name
    ```
 
-   在此处，TTF_name 是您的 TrueType 字体文件，PS_font_name 是.pfa 文件的文件名，AFM_name 是.afm 文件的名称。如果您没有指定.pfa 或.afm 文件的输出文件名，则将从 TrueType 字体文件名生成默认名称。
+   在此处，TTF_name 是你的 TrueType 字体文件，PS_font_name 是.pfa 文件的文件名，AFM_name 是.afm 文件的名称。如果你没有指定.pfa 或.afm 文件的输出文件名，则将从 TrueType 字体文件名生成默认名称。
 
    这也会生成一个.pfa 文件，即 ASCII 格式的 PostScript 字体度量文件（.pfb 为其二进制形式）。这不是必需的，但可能对字体服务器有用（我认为）。
 
@@ -399,7 +399,7 @@ afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通
    Converting 3of9.ttf to 3of9.pfa and 3of9.afm.
    ```
 
-   如果您希望将转换后的字体存储在 A.pfa 和 B.afm 中，请使用以下命令：
+   如果你希望将转换后的字体存储在 A.pfa 和 B.afm 中，请使用以下命令：
 
    ```
    % gs -dNODISPLAY -- ttf2pf.ps 3of9.ttf A B
@@ -409,13 +409,13 @@ afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通
    Converting 3of9.ttf to A.pfa and B.afm.
    ```
 
-2. 创建 groff PostScript 文件：切换到 /usr/share/groff_font/devps 目录，以便更轻松地执行以下命令。您可能需要 root 权限才能执行此操作。（或者，如果您对在这里工作感到不安全，请确保引用文件 DESC、text.enc 和 generate/textmap 存储在该目录中。）
+2. 创建 groff PostScript 文件：切换到 /usr/share/groff_font/devps 目录，以便更轻松地执行以下命令。你可能需要 root 权限才能执行此操作。（或者，如果你对在这里工作感到不安全，请确保引用文件 DESC、text.enc 和 generate/textmap 存储在该目录中。）
 
    ```
    % afmtodit -d DESC -e text.enc file.afm generate/textmap PS_font_name
    ```
 
-   其中，file.afm 是由上述 ttf2pf.ps 创建的 AFM 名称，而 PS_font_name 是从该命令中使用的字体名称，也是 groff(1) 引用此字体的名称。例如，假设您使用了上述第一个 tiff2pf.ps ，则可以使用以下命令创建 3of9 条形码字体：
+   其中，file.afm 是由上述 ttf2pf.ps 创建的 AFM 名称，而 PS_font_name 是从该命令中使用的字体名称，也是 groff(1) 引用此字体的名称。例如，假设你使用了上述第一个 tiff2pf.ps ，则可以使用以下命令创建 3of9 条形码字体：
 
    ```
    % afmtodit -d DESC -e text.enc 3of9.afm generate/textmap 3of9
@@ -423,7 +423,7 @@ afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通
 
    确保生成的 PS_font_name 文件（例如，上面的 3of9 示例）位于/usr/share/groff_font/devps 目录中，通过复制或移动它到那里。
 
-   请注意，如果 ttf2pf.ps 使用 TrueType 字体文件中找到的字体名称，并且您希望使用不同的名称，您必须在运行 afmtodit 之前编辑.afm 文件。该名称还必须与 Fontmap 文件中使用的名称匹配，如果您希望将 groff(1)传输到 gs(1)中的话。
+   请注意，如果 ttf2pf.ps 使用 TrueType 字体文件中找到的字体名称，并且你希望使用不同的名称，你必须在运行 afmtodit 之前编辑.afm 文件。该名称还必须与 Fontmap 文件中使用的名称匹配，如果你希望将 groff(1)传输到 gs(1)中的话。
 
 ## 9. 可以将 TrueType 字体与其他程序一起使用吗？
 

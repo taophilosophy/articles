@@ -112,7 +112,7 @@ http://server-name-or-ip:631/printers/printername
 
 ## 6. CUPS 故障排除
 
-CUPS 的困难通常在于权限问题。首先，请仔细检查上述提到的 devfs(8) 权限。接下来，请检查文件系统中创建的设备的实际权限。还有帮助的是确保您的用户是 cups 组的成员。如果在 CUPS Web 界面的管理部分中的权限检查框似乎无法正常工作，另一个修复方法可能是手动备份位于 /usr/local/etc/cups/cupsd.conf 的主 CUPS 配置文件，并编辑各种配置选项并尝试不同的配置选项组合。以下列出了一个样本 /usr/local/etc/cups/cupsd.conf 供测试。请注意，这个样本 cupsd.conf 为了更简单的配置而牺牲了安全性；一旦管理员成功连接到 CUPS 服务器并配置客户端，建议重新审视此配置文件并开始限制访问。
+CUPS 的困难通常在于权限问题。首先，请仔细检查上述提到的 devfs(8) 权限。接下来，请检查文件系统中创建的设备的实际权限。还有帮助的是确保你的用户是 cups 组的成员。如果在 CUPS Web 界面的管理部分中的权限检查框似乎无法正常工作，另一个修复方法可能是手动备份位于 /usr/local/etc/cups/cupsd.conf 的主 CUPS 配置文件，并编辑各种配置选项并尝试不同的配置选项组合。以下列出了一个样本 /usr/local/etc/cups/cupsd.conf 供测试。请注意，这个样本 cupsd.conf 为了更简单的配置而牺牲了安全性；一旦管理员成功连接到 CUPS 服务器并配置客户端，建议重新审视此配置文件并开始限制访问。
 
 ```
 # Log general information in error_log - change "info" to "debug" for

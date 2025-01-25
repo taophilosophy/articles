@@ -51,7 +51,7 @@ Intel，Celeron，Centrino，Core，EtherExpress，i386，i486，Itanium，Penti
 
 更新 scripts/build.conf 配置文件。它在所有构建操作期间被引用。
 
-这里是默认的 build.conf，需要根据您的环境进行修改。
+这里是默认的 build.conf，需要根据你的环境进行修改。
 
 ```
 # Main configuration file for FreeBSD Update builds.  The
@@ -299,7 +299,7 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 
 更新客户端的 KeyPrint 和 ServerName 在 /etc/freebsd-update.conf，并按照手册中 FreeBSD 更新部分的说明进行更新。
 
->为了使 FreeBSD Update Server 正常工作，需要构建当前版本和想要升级到的版本的更新内容。这对于确定不同版本之间文件差异是必要的。例如，当将 FreeBSD 系统从 7.1-RELEASE 升级到 7.2-RELEASE 时，需要构建并上传两个版本的更新内容到您的分发服务器。 
+>为了使 FreeBSD Update Server 正常工作，需要构建当前版本和想要升级到的版本的更新内容。这对于确定不同版本之间文件差异是必要的。例如，当将 FreeBSD 系统从 7.1-RELEASE 升级到 7.2-RELEASE 时，需要构建并上传两个版本的更新内容到你的分发服务器。 
 
 供参考，init.sh 的整个运行附在此处。
 
@@ -467,7 +467,7 @@ the new builds.
 
 ## 7. 提示
 
-* 如果使用本地 make release 过程构建定制发行版，freebsd-update-server 代码将适用于您的发行版。举例来说，可以通过清除与文档子程序 findextradocs () 、 addextradocs () 相关的功能，并在 scripts/build.subr 中分别更改下载位置来构建没有 ports 或文档的发行版。最后一步，修改 build.conf 中相应发行版和架构下的 sha256(1) 哈希值，即可基于您的定制发行版进行构建。
+* 如果使用本地 make release 过程构建定制发行版，freebsd-update-server 代码将适用于你的发行版。举例来说，可以通过清除与文档子程序 findextradocs () 、 addextradocs () 相关的功能，并在 scripts/build.subr 中分别更改下载位置来构建没有 ports 或文档的发行版。最后一步，修改 build.conf 中相应发行版和架构下的 sha256(1) 哈希值，即可基于你的定制发行版进行构建。
 
   ```
   # Compare ${WORKDIR}/release and ${WORKDIR}/$1, identify which parts
@@ -492,7 +492,7 @@ the new builds.
   		   make -j 2 obj &&
   		   make ${COMPATFLAGS} release.1 release.2 2>&1
   ```
-* 为更新服务器创建适当的 DNS SRV 记录，并将其他服务器放在其后面，设置不同的权重。使用此功能将提供更新镜像，但除非您希望提供冗余服务，否则此技巧不是必须的。
+* 为更新服务器创建适当的 DNS SRV 记录，并将其他服务器放在其后面，设置不同的权重。使用此功能将提供更新镜像，但除非你希望提供冗余服务，否则此技巧不是必须的。
 
   ```
   _http._tcp.update.myserver.com.		IN SRV   0 2 80   host1.myserver.com.
