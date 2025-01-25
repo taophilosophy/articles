@@ -210,11 +210,11 @@ ports 需要进行维护的首要原因是为了将第三方软件的最新功�
 - 与其他用户、维护者和开发者互动。作为维护者的一部分是承担支持角色。你不需要提供一般支持（但如果你选择这样做，我们欢迎）。你应该提供的是一个协调点，解决关于你 ports 的 FreeBSD 特定问题。
 - Bug 追踪。port 可能会受到 FreeBSD 特定的 bug 影响。你需要在这些 bug 报告时进行调查、找到并修复这些 bug。在 port 进入 Ports Collection 之前，彻底测试以发现问题更好。
 - ports 基础设施和政策的变化。偶尔，用于构建 ports 和软件包的系统会更新，或对基础设施产生影响的新建议出台。你应当了解这些变化，以防你的 ports 受到影响并需要更新。
-- FreeBSD is under constant development. Changes to software, libraries, the kernel or even policy changes can cause flow-on change requirements to ports.
+- FreeBSD 正在持续开发中。软件、库、内核甚至政策的变化都可能导致端口的后续变更需求。
 
-#### 3.2.2. Maintainer responsibilities
+#### 3.2.2. 维护者职责
 
-##### 3.2.2.1. Keep your ports up to date
+##### 3.2.2.1. 保持更新你的 Ports 
 
 本节概述了保持你的 ports 最新的流程。
 
