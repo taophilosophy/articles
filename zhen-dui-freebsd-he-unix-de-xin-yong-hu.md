@@ -1,7 +1,5 @@
 # 针对 FreeBSD 和 UNIX® 的新用户的简介
 
-# 对于对 FreeBSD 和 UNIX®都是新手的人
-
 <details open="" data-immersive-translate-walked="ca13c054-15b3-4ac4-955c-43510d8c7b2b"><summary data-immersive-translate-walked="ca13c054-15b3-4ac4-955c-43510d8c7b2b" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
 
 FreeBSD 是 FreeBSD 基金会的注册商标。
@@ -16,7 +14,7 @@ Motif、OSF/1 和 UNIX 是 The Open Group 在美国和其他国家的注册商�
 
 </details>
 
- 摘要
+摘要
 
 恭喜你安装了 FreeBSD！这份介绍是为 FreeBSD 和 UNIX® 新手准备的，因此从基础开始讲起。
 
@@ -32,7 +30,7 @@ Motif、OSF/1 和 UNIX 是 The Open Group 在美国和其他国家的注册商�
 # exit
 ```
 
-根据需要频繁执行。是的，在命令后按回车，并记住 UNIX®区分大小写- exit ，而不是 EXIT 。
+根据需要频繁执行。是的，在命令后按回车，并记住 UNIX® 区分大小写- exit ，而不是 EXIT 。
 
 关闭机器请输入
 
@@ -46,7 +44,7 @@ Motif、OSF/1 和 UNIX 是 The Open Group 在美国和其他国家的注册商�
 # /sbin/shutdown -r now
 ```
 
- 或
+或
 
 ```
 # /sbin/reboot
@@ -92,7 +90,7 @@ pwd 显示当前工作目录在哪里。
 
 ls 列出当前目录中的文件。
 
-ls -F 列出当前目录中的文件，可执行文件后面加上 *，目录后面加上 / ，符号链接后面加上 @ 。
+ls -F 列出当前目录中的文件，可执行文件后面加上 \*，目录后面加上 / ，符号链接后面加上 @ 。
 
 ls -l 以长格式列出文件-大小、日期、权限。
 
@@ -112,17 +110,17 @@ cat<span> </span><em>filename</em> 在屏幕上显示文件名。如果文件名
 
 apropos<span> </span><em>text</em> 包含字符串文本的所有内容 whatis database 。
 
-man<span> </span><em>text</em> 文本的手册页面。这是 UNIX®系统的主要文档来源。 man ls 将告诉您如何使用 ls 的所有方法。按 Enter 键向前移动文本，按 Ctrl+B 返回上一页，按 Ctrl+F 前进，按 q 或 Ctrl+C 退出。
+man<span> </span><em>text</em> 文本的手册页面。这是 UNIX® 系统的主要文档来源。 man ls 将告诉您如何使用 ls 的所有方法。按 Enter 键向前移动文本，按 Ctrl+B 返回上一页，按 Ctrl+F 前进，按 q 或 Ctrl+C 退出。
 
 which<span> </span><em>text</em> 告诉您命令文本在用户路径中的位置。
 
 locate<span> </span><em>text</em> 文本字符串被发现的所有路径。
 
-whatis<span> </span><em>text</em> 告诉您命令文本的作用及其手册页。键入 whatis * 将告诉您当前目录中的所有二进制文件。
+whatis<span> </span><em>text</em> 告诉您命令文本的作用及其手册页。键入 whatis \* 将告诉您当前目录中的所有二进制文件。
 
 whereis<span> </span><em>text</em> 查找文件文本，提供完整路径。
 
-你可能想尝试在一些常用实用命令上使用 whatis ，比如 cat ， more ， grep ， mv ， find ， tar ， chmod ， chown ， date ，和 script 。 more 让你像在 DOS 中那样每次读取一页，例如， ls -l | more 或者 more<span> </span><em>filename</em> 。* 作为通配符使用，例如， ls w* 将显示以 w 开头的文件。
+你可能想尝试在一些常用实用命令上使用 whatis ，比如 cat ， more ， grep ， mv ， find ， tar ， chmod ， chown ， date ，和 script 。 more 让你像在 DOS 中那样每次读取一页，例如， ls -l | more 或者 more<span> </span><em>filename</em> 。_ 作为通配符使用，例如， ls w_ 将显示以 w 开头的文件。
 
 有一些不太有效的吗？locate(1) 和 whatis(1) 都依赖于每周重建一次的数据库。如果您的计算机不会在周末开着（并且运行的是 FreeBSD），您可能会想立即运行日常、每周和每月维护的命令。运行它们时要作为 root 运行，并且现在，要给每个命令足够的时间让其完成，然后再开始下一个命令。
 
@@ -137,7 +135,7 @@ output omitted
 
 如果你厌倦了等待，按下 Alt+F2 键获取另一个虚拟控制台，然后重新登录。毕竟，这是一个多用户、多任务系统。不过，这些命令在运行时可能会在屏幕上闪烁消息；你可以在提示符处输入 clear 来清除屏幕。一旦它们运行完毕，你可能想查看/var/mail/root 和/var/log/messages。
 
-运行这样的命令是系统管理的一部分-作为 UNIX®系统的单个用户，您就是自己的系统管理员。几乎您需要做的任何事情都是系统管理。这些责任甚至在那些大部头的 UNIX®书籍中也没有很好地涵盖，这些书籍似乎在拉下窗口管理器中的菜单上花费了很多篇幅。您可能需要获取两本主要的系统管理书籍之一，即 Evi Nemeth 等人的《UNIX 系统管理手册》（Prentice-Hall，1995 年，ISBN 0-13-15051-7）-第二版为红色封面；或Æleen Frisch 的《基本系统管理》（O’Reilly＆Associates，2002 年，ISBN 0-596-00343-9）。我使用了 Nemeth。
+运行这样的命令是系统管理的一部分-作为 UNIX® 系统的单个用户，您就是自己的系统管理员。几乎您需要做的任何事情都是系统管理。这些责任甚至在那些大部头的 UNIX® 书籍中也没有很好地涵盖，这些书籍似乎在拉下窗口管理器中的菜单上花费了很多篇幅。您可能需要获取两本主要的系统管理书籍之一，即 Evi Nemeth 等人的《UNIX 系统管理手册》（Prentice-Hall，1995 年，ISBN 0-13-15051-7）-第二版为红色封面；或 Æleen Frisch 的《基本系统管理》（O’Reilly＆Associates，2002 年，ISBN 0-596-00343-9）。我使用了 Nemeth。
 
 ## 5. 编辑文本
 
@@ -208,7 +206,7 @@ df 显示文件空间和已挂载的系统。
 
 ps aux 显示正在运行的进程。 ps ax 是一个更窄的形式。
 
-  rm<span> </span><em>filename</em> 删除文件名。
+rm<span> </span><em>filename</em> 删除文件名。
 
 rm -R<span> </span><em>dir</em> 删除目录 dir 及其所有子目录 - 小心！
 
@@ -224,15 +222,15 @@ man hier UNIX® 文件系统的手册页
 % find /usr -name "filename"
 ```
 
-您可以在 "<em>filename</em>" 中使用 * 作为通配符（应在引号中）。如果告诉 find 在 / 而不是 /usr 中搜索，它将在所有已挂载的文件系统上查找文件，包括 CDROM 和 DOS 分区上的文件。
+您可以在 "<em>filename</em>" 中使用 \* 作为通配符（应在引号中）。如果告诉 find 在 / 而不是 /usr 中搜索，它将在所有已挂载的文件系统上查找文件，包括 CDROM 和 DOS 分区上的文件。
 
 一本很好的书，解释了 UNIX® 命令和实用程序，是 Abrahams & Larson, Unix for the Impatient（第 2 版，Addison-Wesley，1996）。互联网上也有很多 UNIX® 信息。
 
 ## 下一步
 
-现在您应该有必要的工具来浏览和编辑文件，以便启动一切。在 FreeBSD 手册（可能已经在您的硬盘上）和 FreeBSD 网站中包含大量信息。CDROM 上以及网站上还有各种软件包和镜像。手册会告诉您如何使用它们（如果存在该软件包，请使用 pkg add<span> </span><em>packagename</em> 获取，其中 packagename 是软件包的文件名）。CDROM 中的 cdrom/packages/index、cdrom/packages/index.txt 和 cdrom/ports/index 中有软件包列表，并在/cdrom/ports/ / /pkg/DESCR 中有更详细的描述，其中*s 代表程序种类和程序名称的子目录。
+现在您应该有必要的工具来浏览和编辑文件，以便启动一切。在 FreeBSD 手册（可能已经在您的硬盘上）和 FreeBSD 网站中包含大量信息。CDROM 上以及网站上还有各种软件包和镜像。手册会告诉您如何使用它们（如果存在该软件包，请使用 pkg add<span> </span><em>packagename</em> 获取，其中 packagename 是软件包的文件名）。CDROM 中的 cdrom/packages/index、cdrom/packages/index.txt 和 cdrom/ports/index 中有软件包列表，并在/cdrom/ports/ / /pkg/DESCR 中有更详细的描述，其中\*s 代表程序种类和程序名称的子目录。
 
-如果您觉得手册对于从 CDROM 安装ports太复杂（带有 lndir 等内容），以下通常是有效的方法：
+如果您觉得手册对于从 CDROM 安装 ports 太复杂（带有 lndir 等内容），以下通常是有效的方法：
 
 找到您想要的 port ，说 kermit 。光盘上会有一个目录。用以下命令将子目录复制到 /usr/local（这是您添加的软件应该对所有用户可用的好地方）：
 
@@ -250,7 +248,7 @@ man hier UNIX® 文件系统的手册页
 # make all install
 ```
 
-在这个过程中，port将通过 FTP 获取任何压缩文件，这些文件在 CDROM 或/usr/ports/distfiles 中没有找到。如果您的网络尚未运行，并且在/cdrom/ports/distfiles 中没有port的文件，您将不得不使用另一台机器获取 distfile，并将其复制到/usr/ports/distfiles。阅读 Makefile（使用 cat 或 more 或 view ）以找出去哪里（主分发站点）获取文件及其名称是什么。（使用二进制文件传输！）然后返回/usr/local/kermit，找到带有 Makefile 的目录，并输入 make all install 。
+在这个过程中，port 将通过 FTP 获取任何压缩文件，这些文件在 CDROM 或/usr/ports/distfiles 中没有找到。如果您的网络尚未运行，并且在/cdrom/ports/distfiles 中没有 port 的文件，您将不得不使用另一台机器获取 distfile，并将其复制到/usr/ports/distfiles。阅读 Makefile（使用 cat 或 more 或 view ）以找出去哪里（主分发站点）获取文件及其名称是什么。（使用二进制文件传输！）然后返回/usr/local/kermit，找到带有 Makefile 的目录，并输入 make all install 。
 
 ## 8.您的工作环境
 
@@ -290,4 +288,3 @@ alias su su -m
 如果您使用本指南，我会很乐意知道哪里不清楚以及您认为应该包括什么内容，以及其是否有帮助。感谢我的 SUNY-Stony Brook 的计算机科学教授 Eugene W. Stark 和 John Fieber 的帮助性评论。
 
 Annelise Anderson, [andrsn@andrsn.stanford.edu](mailto:andrsn@andrsn.stanford.edu)
-
