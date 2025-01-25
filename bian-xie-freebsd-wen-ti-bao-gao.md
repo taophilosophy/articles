@@ -16,7 +16,7 @@ Sun、Sun Microsystems、Java、Java Virtual Machine、JDK、JRE、JSP、JVM、N
 
 摘要
 
-本文描述了如何最好地制定并提交问题报告给 FreeBSD 项目。
+本文介绍了如何最好地制定并提交问题报告给 FreeBSD 项目。
 
 ---
 

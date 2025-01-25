@@ -10,7 +10,7 @@ FreeBSD 是 FreeBSD 基金会的注册商标。
 
 摘要
 
-这些指南描述了针对 FreeBSD 问题报告（PRs）的建议处理实践。虽然这些指南是为 FreeBSD PR 数据库维护团队 freebsd-bugbusters@FreeBSD.org 制定的，但任何与 FreeBSD PRs 一起工作的人都应遵循这些指南。
+这些指南介绍了针对 FreeBSD 问题报告（PRs）的建议处理实践。虽然这些指南是为 FreeBSD PR 数据库维护团队 freebsd-bugbusters@FreeBSD.org 制定的，但任何与 FreeBSD PRs 一起工作的人都应遵循这些指南。
 
 ---
 
@@ -66,7 +66,7 @@ Bugzilla 的访问权限开放给整个 FreeBSD 社区。为了维护数据库�
 - [ 陈旧的 PR](https://docs.freebsd.org/en/articles/pr-guidelines/#pr-stale)
 - [ 非 Bug 的 PR](https://docs.freebsd.org/en/articles/pr-guidelines/#pr-misfiled-notpr)
 
-以下各节描述了每种不同类型的 PR 用于什么，当一个 PR 属于这些类型之一时，以及每种不同类型接收到的处理。
+以下各节介绍了每种不同类型的 PR 用于什么，当一个 PR 属于这些类型之一时，以及每种不同类型接收到的处理。
 
 ## 5. 未分配的 PR
 

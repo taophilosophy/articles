@@ -166,7 +166,7 @@ FreeBSD 存储库具有多个组件，这些组件在组合时支持基本操作
 - 所有提交者可以修改 src/share/misc/committers-*.dot，src/usr.bin/calendar/calendars/calendar.freebsd 和 ports/astro/xearth/files。
 - 文档提交者可以在不需要 src 提交者批准的情况下向 src 文件提交文档更改，例如手册页面、README、幸运数据库、日历文件和注释修复，但仍需按照常规的提交程序进行。
 - 任何提交者都可以在获得具有相应权限且未被指导的提交者的“批准”的情况下更改任何其他树。被指导的提交者可以提供“审阅”，但不能提供“批准”。
-- 提交者可以通过通常的过程获得额外的权限，即找到一位导师将他们提议给核心团队、文档工程团队或端口管理团队，并在获得批准后，他们将被添加到“访问”列表中，并进行正常的指导期，这期间将继续涉及“批准”。
+- 提交者可以通过通常的过程获得额外的权限，即找到一位导师将他们提议给核心团队、文档工程团队或 Ports 管理团队，并在获得批准后，他们将被添加到“访问”列表中，并进行正常的指导期，这期间将继续涉及“批准”。
 
 #### 4.1.1. 文档隐式（全面）批准
 
@@ -207,7 +207,7 @@ FreeBSD 存储库具有多个组件，这些组件在组合时支持基本操作
 
 #### 5.2.2. 开发者入门
 
-本节描述了提交者为开发者或贡献者推送提交的读写访问。
+本节介绍了提交者为开发者或贡献者推送提交的读写访问。
 
 ##### 5.2.2.1. 日常使用
 
@@ -415,7 +415,7 @@ HEAD is now at 08b8197a742a hook gpiokeys.4 to the build
 
 有时候，事情会出错。上一个版本可用，但您刚刚更新的版本却不行。开发人员可能会要求您对问题进行二分查找，以追踪导致回归的提交。
 
-使用强大的 git bisect 命令，Git 可以轻松进行变更二分查找。以下是如何使用它的简要概述。更多信息，请参阅 https://www.metaltoad.com/blog/beginners-guide-git-bisect-process-elimination 或 https://git-scm.com/docs/git-bisect。man git-bisect 页面描述了可能出现的问题，版本构建失败时的处理方法，以及在使用除了 'good' 和 'bad' 之外的术语时该怎么办，这里不涉及这些内容。
+使用强大的 git bisect 命令，Git 可以轻松进行变更二分查找。以下是如何使用它的简要概述。更多信息，请参阅 https://www.metaltoad.com/blog/beginners-guide-git-bisect-process-elimination 或 https://git-scm.com/docs/git-bisect。man git-bisect 页面介绍了可能出现的问题，版本构建失败时的处理方法，以及在使用除了 'good' 和 'bad' 之外的术语时该怎么办，这里不涉及这些内容。
 
 git bisect start --first-parent 将启动二分查找过程。接下来，需要告诉它要遍历的范围。 git bisect good XXXXXX 将告诉它工作版本， git bisect bad XXXXX 将告诉它坏版本。坏版本几乎总是指 HEAD（一个特殊标签，表示当前检出的内容）。好版本将是您最后检出的那个版本。 --first-parent 参数是必需的，以防后续的 git bisect 命令尝试检出一个不包含完整 FreeBSD 源代码树的供应商分支。
 
@@ -769,7 +769,7 @@ Git 提供了一些内置支持，通过 git cherry 和 git log --cherry 命令�
 
 ### 5.4. 供应商使用 Git 进行导入
 
-本节详细描述了使用 Git 进行供应商导入的过程。
+本节详细介绍了使用 Git 进行供应商导入的过程。
 
 #### 5.4.1. 分支命名约定
 

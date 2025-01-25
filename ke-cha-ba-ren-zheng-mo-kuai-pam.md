@@ -20,7 +20,7 @@ Motif、OSF/1 和 UNIX 是 The Open Group 在美国和其他国家的注册商�
 
 摘要
 
-本文描述了可插拔认证模块（PAM）库的基本原理和机制，并解释了如何配置 PAM，如何将 PAM 集成到应用程序中，以及如何编写 PAM 模块。
+本文介绍了可插拔认证模块（PAM）库的基本原理和机制，并解释了如何配置 PAM，如何将 PAM 集成到应用程序中，以及如何编写 PAM 模块。
 
 ---
 
@@ -223,7 +223,7 @@ optional 执行该模块，但忽略其结果。如果链中的所有模块均�
 
 #### 4.1.1. /etc/pam.conf
 
-传统的 PAM 策略文件是/etc/pam.conf。该文件包含了系统的所有 PAM 策略。文件的每一行描述了链中的一步，如下所示：
+传统的 PAM 策略文件是/etc/pam.conf。该文件包含了系统的所有 PAM 策略。文件的每一行介绍了链中的一步，如下所示：
 
 ```sh
 login   auth    required        pam_nologin.so  no_warn
