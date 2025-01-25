@@ -14,11 +14,11 @@ QUALCOMM 和 Eudora 是 QUALCOMM Incorporated 的注册商标。
 
 </details>
 
-Abstract
+## 摘要
 
-This document provides useful information for people looking to prepare an e-mail to the FreeBSD-questions mailing list. Advice and hints are given that will maximize the chance that the reader will receive useful replies.
+本文档为希望准备发送电子邮件到 FreeBSD-questions 邮件列表的人提供了有用的信息。提供了建议和提示，以最大化读者收到有用回复的机会。
 
-This document is regularly posted to the FreeBSD-questions mailing list.
+本文档会定期发布到 FreeBSD-questions 邮件列表。
 
 ---
 
