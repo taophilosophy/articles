@@ -1,7 +1,6 @@
 # LDAP 身份验证
 
-
-版权© 2007-2008 FreeBSD 文档项目
+版权 © 2007-2008 FreeBSD 文档项目
 
 <details open="" data-immersive-translate-walked="7bfc157f-e618-4bf3-85fd-24f436fb361b"><summary data-immersive-translate-walked="7bfc157f-e618-4bf3-85fd-24f436fb361b" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
 
@@ -11,7 +10,7 @@ FreeBSD 是 FreeBSD 基金会的注册商标.
 
 </details>
 
- 摘要
+摘要
 
 本文件旨在指导如何在 FreeBSD 上配置 LDAP 服务器（主要是 OpenLDAP 服务器）以进行身份验证。这对于许多服务器需要相同用户帐户的情况非常有用，例如作为 NIS 的替代方案。
 
@@ -29,14 +28,14 @@ FreeBSD 是 FreeBSD 基金会的注册商标.
 
 LDAP 代表“轻量级目录访问协议”，是 X.500 目录访问协议的一个子集。其最新规范在 RFC4510 及相关文档中。基本上，它是一个期望被更频繁读取而不是写入的数据库。
 
-本文档中的示例将使用 LDAP 服务器 OpenLDAP；虽然这里的原则应该普遍适用于许多不同的服务器，但大部分具体的管理工作是针对 OpenLDAP 的。例如，有几个服务器版本在ports中，比如 net/openldap26-server。客户端服务器将需要相应的 net/openldap26-client 库。
+本文档中的示例将使用 LDAP 服务器 OpenLDAP；虽然这里的原则应该普遍适用于许多不同的服务器，但大部分具体的管理工作是针对 OpenLDAP 的。例如，有几个服务器版本在 ports 中，比如 net/openldap26-server。客户端服务器将需要相应的 net/openldap26-client 库。
 
 LDAP 服务中基本上有两个需要配置的领域。第一个是设置服务器以正确接收连接，第二个是向服务器目录中添加条目，以便 FreeBSD 工具知道如何与其交互。
 
 ### 2.1. 为连接设置服务器
 
-|  | 本节专门针对 OpenLDAP。如果您使用其他服务器，您需要查阅该服务器的文档。 |
-| -- | ------------------------------------------------------------------------- |
+|     | 本节专门针对 OpenLDAP。如果您使用其他服务器，您需要查阅该服务器的文档。 |
+| --- | ----------------------------------------------------------------------- |
 
 #### 2.1.1. 安装 OpenLDAP
 
@@ -59,14 +58,14 @@ LDAP 服务中基本上有两个需要配置的领域。第一个是设置服务
 
 TLS 代表“传输层安全”。使用 TLS 的服务往往会与不支持 TLS 的相同服务在同一 ports 上连接；因此，支持 TLS 的 SMTP 服务器将侦听 25 号端口，LDAP 服务器将侦听 389 号端口。
 
-SSL 代表“Secure Sockets Layer”，实现 SSL 的服务不会在ports上监听与非 SSL 对应项相同的端口。因此，SMTPS 监听 port 465（而不是 25），HTTPS 监听 443，LDAPS 监听 636。
+SSL 代表“Secure Sockets Layer”，实现 SSL 的服务不会在 ports 上监听与非 SSL 对应项相同的端口。因此，SMTPS 监听 port 465（而不是 25），HTTPS 监听 443，LDAPS 监听 636。
 
-SSL 使用不同的port与 TLS 的原因是 TLS 连接始于明文，而在 STARTTLS 指令之后切换到加密流量。SSL 连接从一开始就是加密的。除此之外，两者之间没有实质性的区别。
+SSL 使用不同的 port 与 TLS 的原因是 TLS 连接始于明文，而在 STARTTLS 指令之后切换到加密流量。SSL 连接从一开始就是加密的。除此之外，两者之间没有实质性的区别。
 
-|  | 我们将调整 OpenLDAP 以使用 TLS，因为 SSL 被视为已弃用。 |
-| -- | --------------------------------------------------------- |
+|     | 我们将调整 OpenLDAP 以使用 TLS，因为 SSL 被视为已弃用。 |
+| --- | ------------------------------------------------------- |
 
-一旦通过ports安装了 OpenLDAP，在/usr/local/etc/openldap/slapd.conf 中的以下配置参数将启用 TLS：
+一旦通过 ports 安装了 OpenLDAP，在/usr/local/etc/openldap/slapd.conf 中的以下配置参数将启用 TLS：
 
 ```
 security ssf=128
@@ -133,11 +132,11 @@ ssl start_tls
 tls_cacert /path/to/your/cacert.crt
 ```
 
-|  | 重要的是您的客户端能够访问 cacert.crt，否则他们将无法连接。 |
-| -- | ------------------------------------------------------------- |
+|     | 重要的是您的客户端能够访问 cacert.crt，否则他们将无法连接。 |
+| --- | ----------------------------------------------------------- |
 
-|  | 有两个名为 ldap.conf 的文件。第一个是此文件，用于 OpenLDAP 库，并定义如何与服务器通信。第二个是/usr/local/etc/ldap.conf，用于 pam_ldap。 |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+|     | 有两个名为 ldap.conf 的文件。第一个是此文件，用于 OpenLDAP 库，并定义如何与服务器通信。第二个是/usr/local/etc/ldap.conf，用于 pam_ldap。 |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 
 此时，您应该可以在客户端计算机上运行 ldapsearch -Z ； -Z 表示“使用 TLS”。如果遇到错误，则说明某些配置错误；很可能是您的证书问题。使用 openssl(1)的 s_client 和 s_server 来确保您已正确配置和签署它们。
 
@@ -211,14 +210,14 @@ FreeBSD 需要安装两个 ports 来对 LDAP 服务器进行身份验证，分�
 
 安全/pam_ldap 是通过 /usr/local/etc/ldap.conf 配置的。
 
-|  | 这是一个不同于 OpenLDAP 库函数配置文件的文件，/usr/local/etc/openldap/ldap.conf；然而，它拥有许多相同的选项；实际上它是该文件的超集。在本节的其余部分中，ldap.conf 的引用将意味着 /usr/local/etc/ldap.conf。 |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     | 这是一个不同于 OpenLDAP 库函数配置文件的文件，/usr/local/etc/openldap/ldap.conf；然而，它拥有许多相同的选项；实际上它是该文件的超集。在本节的其余部分中，ldap.conf 的引用将意味着 /usr/local/etc/ldap.conf。 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 因此，我们将希望将我们原始的配置参数从 openldap/ldap.conf 复制到新的 ldap.conf。完成此操作后，我们想告诉安全/pam_ldap 在目录服务器上要查找什么。
 
 我们正在使用 uid 属性来识别我们的用户。要配置这一点（尽管这是默认设置），请在 ldap.conf 中设置 pam_login_attribute 指令：
 
- 示例 4. 设置 pam_login_attribute
+示例 4. 设置 pam_login_attribute
 
 ```
 pam_login_attribute uid
@@ -289,8 +288,8 @@ account         required        pam_login_access.so
 account         required        /usr/local/lib/pam_ldap.so      no_warn ignore_authinfo_unavail ignore_unknown_user
 ```
 
-|  | 由于我们将这些行专门添加到 pam.d/sshd 中，这只会对 SSH 会话产生影响。LDAP 用户将无法在控制台登录。要更改此行为，请检查 /etc/pam.d 中的其他文件并相应地修改它们。 |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|     | 由于我们将这些行专门添加到 pam.d/sshd 中，这只会对 SSH 会话产生影响。LDAP 用户将无法在控制台登录。要更改此行为，请检查 /etc/pam.d 中的其他文件并相应地修改它们。 |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 ### 3.2. 名称服务开关
 
@@ -298,14 +297,14 @@ NSS 是将属性映射到名称的服务。因此，例如，如果文件的所�
 
 现在我们的用户信息保存在 LDAP 中，当查询时，我们需要告诉 NSS 在那里查找。
 
-net/nss_ldapport就是这么做的。它使用与 security/pam_ldap 相同的配置文件，安装后不需要任何额外的参数。剩下的就是简单地编辑/etc/nsswitch.conf 以利用该目录。只需替换以下行：
+net/nss_ldapport 就是这么做的。它使用与 security/pam_ldap 相同的配置文件，安装后不需要任何额外的参数。剩下的就是简单地编辑/etc/nsswitch.conf 以利用该目录。只需替换以下行：
 
 ```
 group: compat
 passwd: compat
 ```
 
- 与
+与
 
 ```
 group: files ldap
@@ -511,10 +510,10 @@ security/openssh-portable 具有联系 LDAP 服务器以验证 SSH 密钥的能�
 
 这将是您的根 CA 密钥和证书。您可能希望加密密钥并将其存储在一个阴凉而干燥的地方；任何能访问到它的人都可以冒充您的 LDAP 服务器之一。
 
-接下来，使用上述的头两个步骤创建一个名为 ldap-server-one.key 的密钥和一个名为 ldap-server-one.csr 的证书签名请求。一旦您使用 root.key 签署签名请求，您将能够在您的 LDAP 服务器上使用 ldap-server-one.*。
+接下来，使用上述的头两个步骤创建一个名为 ldap-server-one.key 的密钥和一个名为 ldap-server-one.csr 的证书签名请求。一旦您使用 root.key 签署签名请求，您将能够在您的 LDAP 服务器上使用 ldap-server-one.\*。
 
-|  | 不要忘记在生成证书签名请求时使用完全合格的域名作为“通用名称”属性；否则客户端将拒绝与您建立连接，并且诊断可能非常棘手。 |
-| -- | -------------------------------------------------------------------------------------------------------------------------- |
+|     | 不要忘记在生成证书签名请求时使用完全合格的域名作为“通用名称”属性；否则客户端将拒绝与您建立连接，并且诊断可能非常棘手。 |
+| --- | ---------------------------------------------------------------------------------------------------------------------- |
 
 要签署该密钥，请使用 -CA 和 -CAkey ，而不是 -signkey ：
 
