@@ -1,7 +1,5 @@
 # 可插拔认证模块（PAM）
 
-# 可插入身份验证模块
-
 2001-2003 年版权归网络关联技术公司所有。
 
 <details open="" data-immersive-translate-walked="d750a8fa-aa9a-4a71-b060-b79bfe927d2b"><summary data-immersive-translate-walked="d750a8fa-aa9a-4a71-b060-b79bfe927d2b" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
@@ -20,7 +18,7 @@ Motif、OSF/1 和 UNIX 是 The Open Group 在美国和其他国家的注册商�
 
 </details>
 
- 摘要
+摘要
 
 本文描述了可插拔认证模块（PAM）库的基本原理和机制，并解释了如何配置 PAM，如何将 PAM 集成到应用程序中，以及如何编写 PAM 模块。
 
@@ -74,7 +72,7 @@ PAM 提供的四个基本功能组之一：认证、账户管理、会话管理�
 
 这个简单的例子展示了 alice 切换到 root 。
 
-```
+```sh
 % whoami
 alice
 
@@ -87,17 +85,17 @@ Password: xi3kiune
 root
 ```
 
-* 申请人是 alice 。
-* 这个账户是 root 。
-* su(1)进程既是客户端又是服务器。
-* 验证令牌是 xi3kiune 。
-* 仲裁者是 root ，这就是 su(1)被设置为 setuid root 的原因。
+- 申请人是 alice 。
+- 这个账户是 root 。
+- su(1)进程既是客户端又是服务器。
+- 验证令牌是 xi3kiune 。
+- 仲裁者是 root ，这就是 su(1)被设置为 setuid root 的原因。
 
 #### 2.2.2. 客户端和服务器是分开的
 
 下面的示例显示 eve 尝试启动对 login.example.com 的 ssh(1) 连接，请求以 bob 登录，并成功。Bob 应该选择一个更好的密码！
 
-```
+```sh
 % whoami
 eve
 
@@ -113,18 +111,18 @@ Welcome to FreeBSD!
 %
 ```
 
-* 申请人是 eve 。
-* 客户端是 Eve 的 ssh(1)进程。
-* 服务器是 login.example.com 上的 sshd(8)进程。
-* 账户是 bob 。
-* 认证令牌为 god 。
-* 尽管在此示例中未显示，仲裁员是 root 。
+- 申请人是 eve 。
+- 客户端是 Eve 的 ssh(1)进程。
+- 服务器是 login.example.com 上的 sshd(8) 进程。
+- 账户是 bob 。
+- 认证令牌为 god 。
+- 尽管在此示例中未显示，仲裁员是 root 。
 
 #### 2.2.3. 示例政策
 
 下面是 FreeBSD 的默认策略，适用于 sshd ：
 
-```
+```sh
 sshd	auth		required	pam_nologin.so	no_warn
 sshd	auth		required	pam_unix.so	no_warn try_first_pass
 sshd	account		required	pam_login_access.so
@@ -133,9 +131,9 @@ sshd	session		required	pam_lastlog.so	no_fail
 sshd	password	required	pam_permit.so
 ```
 
-* 该策略适用于 sshd 服务（不一定局限于 sshd(8) 服务器）。
-* auth ， account ， session 和 password 是设施。
-* pam_nologin.so，pam_unix.so，pam_login_access.so，pam_lastlog.so 和 pam_permit.so 都是模块。从这个例子可以看出，pam_unix.so 至少提供两个功能（认证和账户管理）。
+- 该策略适用于 sshd 服务（不一定局限于 sshd(8)  服务器）。
+- auth ， account ， session 和 password 是设施。
+- pam_nologin.so，pam_unix.so，pam_login_access.so，pam_lastlog.so 和 pam_permit.so 都是模块。从这个例子可以看出，pam_unix.so 至少提供两个功能（认证和账户管理）。
 
 ## 3. PAM Essentials
 
@@ -145,21 +143,21 @@ PAM API 提供了四个设施中的六种不同的认证基元，下面对它们
 
 auth 认证。该设施关注的是对申请人进行认证并建立帐户凭据。它提供了两种基元：
 
-* pam_authenticate(3) 通过请求认证令牌并将其与存储在数据库中的值或从认证服务器获取的值进行比较，对申请人进行认证。
-* pam_setcred(3)建立帐户凭据，如用户 ID、组成员资格和资源限制。
+- pam_authenticate(3) 通过请求认证令牌并将其与存储在数据库中的值或从认证服务器获取的值进行比较，对申请人进行认证。
+- pam_setcred(3) 建立帐户凭据，如用户 ID、组成员资格和资源限制。
 
 account 帐户管理。此功能处理与帐户可用性无关的问题，例如基于一天中的时间或服务器工作负载的访问限制。它提供单个基元：
 
-* pam_acct_mgmt(3)验证所请求的帐户是否可用。
+- pam_acct_mgmt(3) 验证所请求的帐户是否可用。
 
 session 会话管理。此功能处理与会话建立和拆除相关的任务，例如登录记账。它提供两个原语：
 
-* pam_open_session(3) 执行与会话建立相关的任务：在 utmp 和 wtmp 数据库中添加条目，启动 SSH 代理等。
-* pam_close_session(3) 执行与会话拆除相关的任务：在 utmp 和 wtmp 数据库中添加条目，停止 SSH 代理等。
+- pam_open_session(3) 执行与会话建立相关的任务：在 utmp 和 wtmp 数据库中添加条目，启动 SSH 代理等。
+- pam_close_session(3) 执行与会话拆除相关的任务：在 utmp 和 wtmp 数据库中添加条目，停止 SSH 代理等。
 
 password 密码管理。此功能用于更改与帐户关联的身份验证令牌，无论是因为其已过期还是因为用户希望更改它。它提供一个单一的原语：
 
-* pam_chauthtok(3) 更改身份验证令牌，可选地验证其是否足够难以猜测，以前是否已使用过等。
+- pam_chauthtok(3) 更改身份验证令牌，可选地验证其是否足够难以猜测，以前是否已使用过等。
 
 ### 3.2. 模块
 
@@ -215,7 +213,7 @@ optional 执行该模块，但忽略其结果。如果链中的所有模块均�
 6. 如果前一步返回 PAM_NEW_AUTHTOK_REQD ，服务器现在调用 pam_chauthtok(3)强制客户端为请求的账户更改认证令牌。
 7. 现在申请人已经得到适当的认证，服务器调用 pam_setcred(3)来建立请求账户的凭证。它能够这样做是因为它代表仲裁者行事，并持有仲裁者的凭证。
 8. 一旦正确的凭证被建立，服务器调用 pam_open_session(3)来设置会话。
-9. 服务器现在执行客户请求的任何服务-例如，向申请人提供shell。
+9. 服务器现在执行客户请求的任何服务-例如，向申请人提供 shell。
 10. 一旦服务器完成为客户提供服务，它调用 pam_close_session(3)来终止会话。
 11. 最后，服务器调用 pam_end(3)通知 PAM 库它已完成，并释放在事务过程中分配的任何资源。
 
@@ -227,7 +225,7 @@ optional 执行该模块，但忽略其结果。如果链中的所有模块均�
 
 传统的 PAM 策略文件是/etc/pam.conf。该文件包含了系统的所有 PAM 策略。文件的每一行描述了链中的一步，如下所示：
 
-```
+```sh
 login   auth    required        pam_nologin.so  no_warn
 ```
 
@@ -241,13 +239,13 @@ OpenPAM 和 Linux-PAM 支持另一种配置机制，在 FreeBSD 中是首选机�
 
 这些针对每个服务的策略文件只有四个字段，而不是 pam.conf 的五个字段：服务名称字段被省略。因此，而不是前一节中的示例 pam.conf 行，用户将在/etc/pam.d/login 中有以下行：
 
-```
+```sh
 auth    required        pam_nologin.so  no_warn
 ```
 
 由于这种简化的语法，可以通过将每个服务名称链接到同一个策略文件来为多个服务使用相同的策略。例如，要为 su 和 sudo 服务使用相同的策略，可以按照以下步骤进行：
 
-```
+```sh
 # cd /etc/pam.d
 # ln -s su sudo
 ```
@@ -272,7 +270,7 @@ auth    required        pam_nologin.so  no_warn
 
 设施是《设施与原语》中描述的四个设施关键字之一。
 
-同样，控制标志是《链和策略》中描述的四个关键字之一，用于描述如何解释模块返回码。Linux-PAM 支持一种替代语法，允许您指定与每个可能的返回码关联的动作，但应避免使用，因为它是非标准的，并与 Linux-PAM 调度服务调用的方式密切相关（这与 Solaris™和 OpenPAM 的方式有很大不同）。毫不奇怪，OpenPAM 不支持此语法。
+同样，控制标志是《链和策略》中描述的四个关键字之一，用于描述如何解释模块返回码。Linux-PAM 支持一种替代语法，允许您指定与每个可能的返回码关联的动作，但应避免使用，因为它是非标准的，并与 Linux-PAM 调度服务调用的方式密切相关（这与 Solaris™ 和 OpenPAM 的方式有很大不同）。毫不奇怪，OpenPAM 不支持此语法。
 
 ### 4.3. 政策
 
@@ -284,14 +282,13 @@ auth    required        pam_nologin.so  no_warn
 
 表 1. PAM 链执行摘要
 
-|        | PAM\_SUCCESS   | PAM\_IGNORE | other            |
-| -------- | ------------------- | ---------------- | ------------------ |
-|binding|if (!fail) break;|-|fail = true;|
-|required|-|-|fail = true;|
-|requisite|-|-|fail = true; break;|
-|sufficient|if (!fail) break;|-|-|
-|optional|-|-|-|
-
+|            | PAM_SUCCESS       | PAM_IGNORE | other               |
+| ---------- | ----------------- | ---------- | ------------------- |
+| binding    | if (!fail) break; | -          | fail = true;        |
+| required   | -                 | -          | fail = true;        |
+| requisite  | -                 | -          | fail = true; break; |
+| sufficient | if (!fail) break; | -          | -                   |
+| optional   | -                 | -          | -                   |
 
 如果 fail 在链的末尾为真，或者达到"break"时，调度程序将返回第一个失败模块返回的错误代码。否则，它将返回 PAM_SUCCESS 。
 
@@ -303,89 +300,89 @@ auth    required        pam_nologin.so  no_warn
 
 ## 5. FreeBSD PAM 模块
 
-### 5.1. pam_deny(8)是最简单的模块之一，它会对任何请求做出{{0}}的响应。它非常适合快速禁用一个服务（将其添加到每个链的顶部），或者用于终止{{1}}模块的链。
+### 5.1. pam_deny(8) 是最简单的模块之一，它会对任何请求做出{{0}}的响应。它非常适合快速禁用一个服务（将其添加到每个链的顶部），或者用于终止{{1}}模块的链。
 
-pam_deny(8)模块是可用模块之一；它对任何请求均有 PAM_AUTH_ERR 的响应。它适用于快速禁用服务（将其添加到每个链的顶部），或用于终止 sufficient 模块的链。
+pam_deny(8) 模块是可用模块之一；它对任何请求均有 PAM_AUTH_ERR 的响应。它适用于快速禁用服务（将其添加到每个链的顶部），或用于终止 sufficient 模块的链。
 
-### 5.2. [pam_echo(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_echo&sektion=8&format=html)
+### 5.2. [pam_echo(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_echo&sektion=8&format=html)
 
-pam_echo（8）模块只是将其参数传递给对话函数作为 PAM_TEXT_INFO 消息。 它主要用于调试，但也可以在启动身份验证过程之前显示诸如“未经授权的访问将被起诉”之类的消息。
+pam_echo(8) 模块只是将其参数传递给对话函数作为 PAM_TEXT_INFO 消息。 它主要用于调试，但也可以在启动身份验证过程之前显示诸如“未经授权的访问将被起诉”之类的消息。
 
-### 5.3。 pam_exec（8）
+### 5.3。 pam_exec(8) 
 
-pam_exec（8）模块将其第一个参数视为要执行的程序的名称，并将其余参数作为命令行参数传递给该程序。 一个可能的应用是在登录时使用它来运行一个程序，该程序可以挂载用户的主目录。
+pam_exec(8) 模块将其第一个参数视为要执行的程序的名称，并将其余参数作为命令行参数传递给该程序。 一个可能的应用是在登录时使用它来运行一个程序，该程序可以挂载用户的主目录。
 
-### 5.4. [pam_ftpusers(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_ftpusers&sektion=8&format=html)
+### 5.4. [pam_ftpusers(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_ftpusers&sektion=8&format=html)
 
-pam_ftpusers(8)模块
+pam_ftpusers(8) 模块
 
-### 5.5. [pam_group(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_group&sektion=8&format=html)
+### 5.5. [pam_group(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_group&sektion=8&format=html)
 
-pam_group(8)模块根据用户是否属于特定文件组（通常为 wheel su(1)）接受或拒绝申请者。它主要用于保持 BSD su(1)的传统行为，但也有许多其他用途，比如排除某些用户组不让其访问特定服务。
+pam_group(8) 模块根据用户是否属于特定文件组（通常为 wheel su(1)）接受或拒绝申请者。它主要用于保持 BSD su(1)的传统行为，但也有许多其他用途，比如排除某些用户组不让其访问特定服务。
 
-### 5.6. [pam_guest(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_guest&sektion=8&format=html)
+### 5.6. [pam_guest(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_guest&sektion=8&format=html)
 
-pam_guest(8)模块允许使用固定登录名进行访客登录。可以对密码设置各种要求，但默认行为是只要登录名是访客帐户的就允许任何密码。pam_guest(8)模块可以轻松用于实现匿名 FTP 登录。
+pam_guest(8) 模块允许使用固定登录名进行访客登录。可以对密码设置各种要求，但默认行为是只要登录名是访客帐户的就允许任何密码。pam_guest(8) 模块可以轻松用于实现匿名 FTP 登录。
 
-### 5.7. [pam_krb5(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_krb5&sektion=8&format=html)
+### 5.7. [pam_krb5(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_krb5&sektion=8&format=html)
 
- pam_krb5(8)模块
+pam_krb5(8) 模块
 
-### 5.8. [pam_ksu(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_ksu&sektion=8&format=html)
+### 5.8. [pam_ksu(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_ksu&sektion=8&format=html)
 
- pam_ksu(8)模块
+pam_ksu(8) 模块
 
-### 5.9. [pam_lastlog(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_lastlog&sektion=8&format=html)
+### 5.9. [pam_lastlog(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_lastlog&sektion=8&format=html)
 
-pam_lastlog(8)模块
+pam_lastlog(8) 模块
 
-### 5.10. [pam_login_access(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_login_access&sektion=8&format=html)
+### 5.10. [pam_login_access(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_login_access&sektion=8&format=html)
 
-pam_login_access(8)模块提供了一个实现账户管理原语的方法，该方法强制执行 login.access(5)表中指定的登录限制。
+pam_login_access(8) 模块提供了一个实现账户管理原语的方法，该方法强制执行 login.access(5)表中指定的登录限制。
 
-### 5.11. [pam_nologin(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_nologin&sektion=8&format=html)
+### 5.11. [pam_nologin(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_nologin&sektion=8&format=html)
 
-当 /var/run/nologin 存在时，pam_nologin(8) 模块拒绝非 root 用户登录。这个文件通常由 shutdown(8) 在距离计划关机时间少于五分钟时创建。
+当 /var/run/nologin 存在时，pam_nologin(8)  模块拒绝非 root 用户登录。这个文件通常由 shutdown(8)  在距离计划关机时间少于五分钟时创建。
 
-### 5.12. [pam_passwdqc(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_passwdqc&sektion=8&format=html)
+### 5.12. [pam_passwdqc(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_passwdqc&sektion=8&format=html)
 
-pam_passwdqc(8) 模块
+pam_passwdqc(8)  模块
 
-### 5.13. [pam_permit(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_permit&sektion=8&format=html)
+### 5.13. [pam_permit(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_permit&sektion=8&format=html)
 
-pam_permit(8)模块是可用的最简单模块之一；它对任何请求都响应 PAM_SUCCESS 。它作为一个占位符很有用，用于一个或多个链本来会是空的服务。
+pam_permit(8) 模块是可用的最简单模块之一；它对任何请求都响应 PAM_SUCCESS 。它作为一个占位符很有用，用于一个或多个链本来会是空的服务。
 
-### 5.14. [pam_radius(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_radius&sektion=8&format=html)
+### 5.14. [pam_radius(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_radius&sektion=8&format=html)
 
- pam_radius(8)模块
+pam_radius(8) 模块
 
-### 5.15. [pam_rhosts(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_rhosts&sektion=8&format=html)
+### 5.15. [pam_rhosts(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_rhosts&sektion=8&format=html)
 
- pam_rhosts(8)模块
+pam_rhosts(8) 模块
 
-### 5.16. [pam_rootok(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_rootok&sektion=8&format=html)
+### 5.16. [pam_rootok(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_rootok&sektion=8&format=html)
 
-pam_rootok(8)模块仅在调用它的进程的真实用户 ID 为 0 时报告成功。这对于像 su(1)或 passwd(1)这样的非网络服务很有用，这些服务应自动允许 root 访问。
+pam_rootok(8) 模块仅在调用它的进程的真实用户 ID 为 0 时报告成功。这对于像 su(1)或 passwd(1)这样的非网络服务很有用，这些服务应自动允许 root 访问。
 
-### 5.17. [pam_securetty(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_securetty&sektion=8&format=html)
+### 5.17. [pam_securetty(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_securetty&sektion=8&format=html)
 
-pam_securetty(8)模块
+pam_securetty(8) 模块
 
-### 5.18. [pam_self(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_self&sektion=8&format=html)
+### 5.18. [pam_self(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_self&sektion=8&format=html)
 
-pam_self(8)模块仅在申请者的名称与目标帐户的名称完全匹配时报告成功。它在非网络服务（如 su(1)）中非常有用，可以轻松验证申请者的身份。
+pam_self(8) 模块仅在申请者的名称与目标帐户的名称完全匹配时报告成功。它在非网络服务（如 su(1)）中非常有用，可以轻松验证申请者的身份。
 
-### 5.19. pam_ssh(8)模块
+### 5.19. pam_ssh(8) 模块
 
-pam_ssh(8)模块提供身份验证和会话服务。身份验证服务允许具有在其~/.ssh 目录中有密码保护的 SSH 密钥的用户通过输入密码短语来进行身份验证。会话服务启动 ssh-agent(1)并预先加载在身份验证阶段解密的密钥。此功能特别适用于本地登录，无论是在 X 环境（使用 xdm(8)或其他 PAM-aware X 登录管理器）还是在控制台。
+pam_ssh(8) 模块提供身份验证和会话服务。身份验证服务允许具有在其~/.ssh 目录中有密码保护的 SSH 密钥的用户通过输入密码短语来进行身份验证。会话服务启动 ssh-agent(1)并预先加载在身份验证阶段解密的密钥。此功能特别适用于本地登录，无论是在 X 环境（使用 xdm(8) 或其他 PAM-aware X 登录管理器）还是在控制台。
 
-### 5.20. pam_tacplus(8)模块
+### 5.20. pam_tacplus(8) 模块
 
-pam_tacplus(8) 模块
+pam_tacplus(8)  模块
 
-### 5.21. [pam_unix(8)](https://man.freebsd.org/cgi/man.cgi?query=pam_unix&sektion=8&format=html)
+### 5.21. [pam_unix(8) ](https://man.freebsd.org/cgi/man.cgi?query=pam_unix&sektion=8&format=html)
 
-pam_unix(8) 模块实现了传统的 UNIX® 密码认证，使用 getpwnam(3) 获取目标账户的密码并与申请人提供的密码进行比较。它还提供账户管理服务（强制执行账户和密码过期时间）和密码更改服务。这可能是单一最有用的模块，因为绝大多数管理员会希望至少对某些服务保持历史行为。
+pam_unix(8)  模块实现了传统的 UNIX® 密码认证，使用 getpwnam(3) 获取目标账户的密码并与申请人提供的密码进行比较。它还提供账户管理服务（强制执行账户和密码过期时间）和密码更改服务。这可能是单一最有用的模块，因为绝大多数管理员会希望至少对某些服务保持历史行为。
 
 ## 6. PAM 应用程序编程
 
@@ -399,7 +396,7 @@ pam_unix(8) 模块实现了传统的 UNIX® 密码认证，使用 getpwnam(3) �
 
 以下是使用 PAM 的 su(1)的最小实现。请注意，它使用 OpenPAM 特定的 openpam_ttyconv(3)对话函数，在 security/openpam.h 中有原型。如果您希望在具有不同 PAM 库的系统上构建此应用程序，则必须提供自己的对话函数。一个强大的对话功能令人惊讶地难以实现；示例 PAM 对话功能中提供的对话功能是一个很好的起点，但不应用于实际应用程序中。
 
-```
+```c
 /*-
  * Copyright (c) 2002,2003 Networks Associates Technology, Inc.
  * All rights reserved.
@@ -590,9 +587,9 @@ err:
 
 ## 附录 B: 示例 PAM 模块
 
-以下是 pam_unix(8) 的最小实现，仅提供身份验证服务。它应该能够在大多数 PAM 实现中构建和运行，但如果有 OpenPAM 扩展的话会利用：请注意 pam_get_authtok(3) 的使用，它极大地简化了提示用户输入密码的过程。
+以下是 pam_unix(8)  的最小实现，仅提供身份验证服务。它应该能够在大多数 PAM 实现中构建和运行，但如果有 OpenPAM 扩展的话会利用：请注意 pam_get_authtok(3) 的使用，它极大地简化了提示用户输入密码的过程。
 
-```
+```c
 /*-
  * Copyright (c) 2002 Networks Associates Technology, Inc.
  * All rights reserved.
@@ -764,7 +761,7 @@ PAM_MODULE_ENTRY("pam_unix");
 
 下面介绍的对话功能是 OpenPAM 的 openpam_ttyconv(3) 的一个极简化版本。它是完全功能的，应该能给读者一个对对话功能应如何行为的良好理解，但对于实际使用来说过于简单。即使您不使用 OpenPAM，也可以随意下载源代码并调整 openpam_ttyconv(3) 来适应您的需求；我们认为它尽可能健壮，适用于面向 tty 的对话功能。
 
-```
+```c
 /*-
  * Copyright (c) 2002 Networks Associates Technology, Inc.
  * All rights reserved.
