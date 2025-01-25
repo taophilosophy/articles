@@ -10,10 +10,10 @@ FreeBSD 是 FreeBSD 基金会的注册商标。
 
 </details>
 
- 摘要
+摘要
 
-|  | 本文档已过时，不准确描述了 FreeBSD 发布工程团队当前的发布程序。仅供历史目的保留。FreeBSD 发布工程团队当前使用的程序可以在《FreeBSD 发布工程》文章中找到。 |
-| -- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     | 本文档已过时，不准确描述了 FreeBSD 发布工程团队当前的发布程序。仅供历史目的保留。FreeBSD 发布工程团队当前使用的程序可以在《FreeBSD 发布工程》文章中找到。 |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 本文描述了 FreeBSD 发布工程团队用于制作 FreeBSD 操作系统的生产级发布的方法。它详细介绍了官方 FreeBSD 发布所使用的方法论，并描述了为那些有兴趣为公司推出或商业产品化定制 FreeBSD 发布的人士提供的工具。
 
@@ -63,14 +63,14 @@ MFC 代表 "Merge From CURRENT"，描述了将经过测试的更改从我们的 
 
 预计发布日期前 60 天，源代码库进入“冻结代码”阶段。在此期间，所有提交到-稳定-分支的提交必须经过 Release Engineering Team <<a href="mailto:re@FreeBSD.org">re@FreeBSD.org</a>> 的批准。批准过程由一个预提交挂钩技术强制执行。在这段时间内允许的更改类型包括：
 
-* 错误修复。
-* 文档更新。
-* 任何与安全相关的修复。
-* 对设备驱动程序的轻微更改，如添加新的设备 ID。
-* 来自供应商的驱动程序更新。
-* 发布工程团队认为有必要的任何额外变更，考虑到潜在的风险。
+- 错误修复。
+- 文档更新。
+- 任何与安全相关的修复。
+- 对设备驱动程序的轻微更改，如添加新的设备 ID。
+- 来自供应商的驱动程序更新。
+- 发布工程团队认为有必要的任何额外变更，考虑到潜在的风险。
 
-在代码冻结开始不久后，会构建并发布一个用于广泛测试的 BETA1 镜像。在代码冻结期间，每两周至少发布一个 beta 镜像或发行候选版，直到最终版本准备就绪。在最终版本发布前的几天，发布工程团队将与安全官员团队、文档维护人员和port维护人员保持密切沟通，以确保实现成功发布所需的所有不同组件都可用。
+在代码冻结开始不久后，会构建并发布一个用于广泛测试的 BETA1 镜像。在代码冻结期间，每两周至少发布一个 beta 镜像或发行候选版，直到最终版本准备就绪。在最终版本发布前的几天，发布工程团队将与安全官员团队、文档维护人员和 port 维护人员保持密切沟通，以确保实现成功发布所需的所有不同组件都可用。
 
 当 BETA 镜像的质量令人满意，并且没有计划进行大规模且潜在风险的更改时，创建发布分支，并从发布分支构建发布候选 (RC) 镜像，而不是从 STABLE 分支构建 BETA 镜像。同时，STABLE 分支的冻结状态解除，发布分支进入“硬代码冻结”，除非涉及严重的 bug 修复或安全问题，否则很难证明对系统进行新更改的合理性。
 
@@ -80,8 +80,8 @@ MFC 代表 "Merge From CURRENT"，描述了将经过测试的更改从我们的 
 
 #### 2.2.1. 创建发布分支
 
-|  | 在下面的所有示例中， $FSVN 指的是 FreeBSD Subversion 仓库的位置， svn+ssh://svn.FreeBSD.org/base/ 。 |
-| -- | ------------------------------------------------------------------------------------------------------ |
+|     | 在下面的所有示例中， $FSVN 指的是 FreeBSD Subversion 仓库的位置， svn+ssh://svn.FreeBSD.org/base/ 。 |
+| --- | ---------------------------------------------------------------------------------------------------- |
 
 FreeBSD 分支在 Subversion 中的布局在提交者指南中有描述。创建分支的第一步是确定要从中分支的 stable/<em>X</em> 源的修订版本。
 
@@ -101,8 +101,8 @@ FreeBSD 分支在 Subversion 中的布局在提交者指南中有描述。创建
 # svn co $FSVN/releng/9.2 src
 ```
 
-|  | 创建 releng 分支和 release 标签由发布工程团队完成。 |
-| -- | ----------------------------------------------------- |
+|     | 创建 releng 分支和 release 标签由发布工程团队完成。 |
+| --- | --------------------------------------------------- |
 
 ![FreeBSD Development Branch](https://docs.freebsd.org/images/articles/releng/branches-head.png)
 
@@ -124,41 +124,41 @@ FreeBSD 分支在 Subversion 中的布局在提交者指南中有描述。创建
 
 在最终版本可以被标记、构建和发布之前，需要修改以下文件以反映 FreeBSD 的正确版本：
 
-* doc/en_US.ISO8859-1/books/handbook/mirrors/chapter.xml
-* doc/en_US.ISO8859-1/books/porters-handbook/book.xml
-* doc/en_US.ISO8859-1/htdocs/cgi/ports.cgi
-* ports/Tools/scripts/release/config
-* doc/shared/xml/freebsd.ent
-* src/Makefile.inc1
-* src/UPDATING
-* src/gnu/usr.bin/groff/tmac/mdoc.local
-* src/release/Makefile
-* src/release/doc/en_US.ISO8859-1/shared/xml/release.dsl
-* src/release/doc/shared/examples/Makefile.relnotesng
-* src/release/doc/shared/xml/release.ent
-* src/sys/conf/newvers.sh
-* src/sys/sys/param.h
-* src/usr.sbin/pkg_install/add/main.c
-* doc/en_US.ISO8859-1/htdocs/search/opensearch/man.xml
+- doc/en_US.ISO8859-1/books/handbook/mirrors/chapter.xml
+- doc/en_US.ISO8859-1/books/porters-handbook/book.xml
+- doc/en_US.ISO8859-1/htdocs/cgi/ports.cgi
+- ports/Tools/scripts/release/config
+- doc/shared/xml/freebsd.ent
+- src/Makefile.inc1
+- src/UPDATING
+- src/gnu/usr.bin/groff/tmac/mdoc.local
+- src/release/Makefile
+- src/release/doc/en_US.ISO8859-1/shared/xml/release.dsl
+- src/release/doc/shared/examples/Makefile.relnotesng
+- src/release/doc/shared/xml/release.ent
+- src/sys/conf/newvers.sh
+- src/sys/sys/param.h
+- src/usr.sbin/pkg_install/add/main.c
+- doc/en_US.ISO8859-1/htdocs/search/opensearch/man.xml
 
 发布说明和勘误文件也需要为新版本（在发布分支上）进行调整，并在稳定/当前分支上适当截断：
 
-* src/release/doc/en_US.ISO8859-1/relnotes/common/new.xml
-* src/release/doc/en_US.ISO8859-1/errata/article.xml
+- src/release/doc/en_US.ISO8859-1/relnotes/common/new.xml
+- src/release/doc/en_US.ISO8859-1/errata/article.xml
 
 Sysinstall 应该更新以注明可用的 ports 数量和 Ports 集合所需的磁盘空间。^[ 5]^ 此信息目前保存在 src/usr.sbin/bsdinstall/dist.c 中。
 
 发布版本构建完成后，应更新一些文件以向世界宣布发布。这些文件相对于 head/ 在 doc/ 子版本树中。
 
-* share/images/articles/releng/branches-relengX.pic
-* head/shared/xml/release.ent
-* en_US.ISO8859-1/htdocs/releases/*
-* en_US.ISO8859-1/htdocs/releng/index.xml
-* share/xml/news.xml
+- share/images/articles/releng/branches-relengX.pic
+- head/shared/xml/release.ent
+- en_US.ISO8859-1/htdocs/releases/\*
+- en_US.ISO8859-1/htdocs/releng/index.xml
+- share/xml/news.xml
 
 此外，更新“BSD 家族树”文件：
 
-* src/shared/misc/bsd-family-tree
+- src/shared/misc/bsd-family-tree
 
 #### 2.2.3. 创建发布标签
 
@@ -168,7 +168,7 @@ Sysinstall 应该更新以注明可用的 ports 数量和 Ports 集合所需的�
 # svn cp $FSVN/releng/9.2 $FSVN/release/9.2.0
 ```
 
-文档和Ports管理人员负责用 tags/RELEASE_9_2_0 标签标记各自的树。
+文档和 Ports 管理人员负责用 tags/RELEASE_9_2_0 标签标记各自的树。
 
 当使用子版本 svn cp 命令创建发布标记时，这将标识特定时间点的源代码。通过创建标记，我们确保未来的发布构建者总是能够使用我们用来创建官方 FreeBSD 项目发布的相同源代码。
 
@@ -189,24 +189,24 @@ release(7)文件记录了构建 FreeBSD 发布所需的确切命令。以下命�
 
 发布 Makefile 可以分解为几个不同的步骤。
 
-* 在一个单独的目录层次结构中创建一个经过消毒的系统环境，使用“make installworld”。
-* 从 Subversion 检出系统源代码、文档和 ports 的干净版本到发布构建层次结构中。
-* 在 chrooted 环境中填充 /etc 和 /dev。
-* chroot 进入发布构建层次结构，以使外部环境更难污染此构建。
-* make world 在 chrooted 环境中。
-* 构建与凯比尔相关的二进制文件。
-* 构建通用内核。
-* 创建一个分段目录树，在其中构建和打包二进制分发。
-* 构建和安装文档工具链，用于将文档源文件（SGML）转换为 HTML 和文本文档，并随发布一起提供。
-* 构建和安装实际文档（用户手册、教程、发行说明、硬件兼容性列表等）。
-* 打包二进制和源码分发 tar 包。
-* 创建 FTP 安装层次结构。
-* （可选）为 CDROM/DVD 介质创建 ISO 镜像。
+- 在一个单独的目录层次结构中创建一个经过消毒的系统环境，使用“make installworld”。
+- 从 Subversion 检出系统源代码、文档和 ports 的干净版本到发布构建层次结构中。
+- 在 chrooted 环境中填充 /etc 和 /dev。
+- chroot 进入发布构建层次结构，以使外部环境更难污染此构建。
+- make world 在 chrooted 环境中。
+- 构建与凯比尔相关的二进制文件。
+- 构建通用内核。
+- 创建一个分段目录树，在其中构建和打包二进制分发。
+- 构建和安装文档工具链，用于将文档源文件（SGML）转换为 HTML 和文本文档，并随发布一起提供。
+- 构建和安装实际文档（用户手册、教程、发行说明、硬件兼容性列表等）。
+- 打包二进制和源码分发 tar 包。
+- 创建 FTP 安装层次结构。
+- （可选）为 CDROM/DVD 介质创建 ISO 镜像。
 
 有关发布构建基础设施的更多信息，请参阅 release(7)。
 
-|  | 从 /etc/make.conf 中删除任何特定于站点的设置是很重要的。例如，在一个设置了 CPUTYPE 为特定处理器的系统上构建二进制文件并分发是不明智的。 |
-| -- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+|     | 从 /etc/make.conf 中删除任何特定于站点的设置是很重要的。例如，在一个设置了 CPUTYPE 为特定处理器的系统上构建二进制文件并分发是不明智的。 |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------- |
 
 ### 3.2. 贡献软件 ("ports")
 
@@ -278,10 +278,10 @@ FreeBSD 系统安装和配置工具 bsdinstall(8)可被脚本化以实现大规�
 
 我们的发布工程活动必须随着我们不断增长的用户基础进行扩展。在此过程中，我们正在努力记录生成 FreeBSD 发行版所涉及的过程。
 
-* 并行性 - 发布构建的某些部分实际上是“非常适合并行的”。大多数任务都是非常 I/O 密集型的，因此拥有多个高速磁盘驱动器实际上比使用多个处理器更能加速 make release 过程。如果在 chroot(2) 环境中为不同的层次结构使用多个磁盘，那么 CVS 检出 ports 和文档树可以与另一个磁盘上的 make world 同时进行。使用 RAID 解决方案（硬件或软件）可以显著减少整体构建时间。
-* 交叉构建发行版 - 在 x86 硬件上构建 IA-64 或 Alpha 发行版？ make TARGET=ia64 release 。
-* 回归测试 - 我们需要更好的自动化正确性测试来适用于 FreeBSD。
-* 安装工具 - 我们的安装程序早已超出了其预期的寿命。目前正在开发几个项目以提供更先进的安装机制。libh 项目就是这样一个旨在提供智能的新软件包框架和 GUI 安装程序的项目。
+- 并行性 - 发布构建的某些部分实际上是“非常适合并行的”。大多数任务都是非常 I/O 密集型的，因此拥有多个高速磁盘驱动器实际上比使用多个处理器更能加速 make release 过程。如果在 chroot(2) 环境中为不同的层次结构使用多个磁盘，那么 CVS 检出 ports 和文档树可以与另一个磁盘上的 make world 同时进行。使用 RAID 解决方案（硬件或软件）可以显著减少整体构建时间。
+- 交叉构建发行版 - 在 x86 硬件上构建 IA-64 或 Alpha 发行版？ make TARGET=ia64 release 。
+- 回归测试 - 我们需要更好的自动化正确性测试来适用于 FreeBSD。
+- 安装工具 - 我们的安装程序早已超出了其预期的寿命。目前正在开发几个项目以提供更先进的安装机制。libh 项目就是这样一个旨在提供智能的新软件包框架和 GUI 安装程序的项目。
 
 ## 8. 致谢
 
