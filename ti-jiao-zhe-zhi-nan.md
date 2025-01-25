@@ -645,7 +645,7 @@ MFC 工作流程可以总结为 git cherry-pick -x 加 git commit --amend 来调
 
 如果出现问题，你需要使用 git cherry-pick --abort 中止 cherry-pick 或修复它并执行 git cherry-pick --continue 。
 
-一旦 cherry-pick 完成，用 git push 推送。如果由于丢失提交竞争而出错，请使用 git pull --rebase 并再次尝试推送。
+待 cherry-pick 完成，用 git push 推送。如果由于丢失提交竞争而出错，请使用 git pull --rebase 并再次尝试推送。
 
 #### 5.3.3. MFC 到 RELENG 分支
 
@@ -685,7 +685,7 @@ MFC 工作流程可以总结为 git cherry-pick -x 加 git commit --amend 来调
 % git push freebsd HEAD:stable/X
 ```
 
-一旦 MFC 完成，您可以删除临时分支：
+待 MFC 完成，您可以删除临时分支：
 
 ```
 % git checkout stable/X
@@ -808,7 +808,7 @@ Git 提供了一些内置支持，通过 git cherry 和 git log --cherry 命令�
 % git tag -a vendor/NetBSD/mtree/20201211
 ```
 
-非常重要的是要验证您导入的源代码来自可信任的来源。许多开源项目使用密码签名来签署代码更改、git 标签和/或源代码压缩包。始终验证这些签名，并使用隔离机制如 jails、chroot，结合一个与您通常使用的不同的专用、非特权用户帐户（有关更多详细信息，请参阅下面的更新 FreeBSD 源代码树部分），直到您确信导入的源代码看起来是安全的。跟踪上游开发并偶尔审查上游代码更改可以极大地帮助改进代码质量并使所有相关方受益。在将它们导入供应商区域之前检查 git diff 结果也是一个好主意。
+非常重要的是要验证您导入的源代码来自可信任的来源。许多开源项目使用密码签名来签署代码更改、git 标签和/或源代码压缩包。始终验证这些签名，并使用隔离机制如 jail、chroot，结合一个与您通常使用的不同的专用、非特权用户帐户（有关更多详细信息，请参阅下面的更新 FreeBSD 源代码树部分），直到您确信导入的源代码看起来是安全的。跟踪上游开发并偶尔审查上游代码更改可以极大地帮助改进代码质量并使所有相关方受益。在将它们导入供应商区域之前检查 git diff 结果也是一个好主意。
 
 始终运行 git diff 和 git status 命令，并仔细检查结果。如果有疑问，可以在供应商分支或上游 git 存储库上执行 git annotate 以查看谁以及为什么做出了更改。
 
@@ -1981,7 +1981,7 @@ FreeBSD 项目反对完全新的许可证和标准许可证的变体。新的许
 - 有关适用于 FreeBSD 使用许可材料的任何限制、限制或例外的说明。
 - 任何其他相关信息。
 
-一旦 core@FreeBSD.org 确信所有必要的细节都已收集并且正确，秘书将发送一封包含许可详情的 PGP 签名确认收据。此收据将被持久存档，并作为我们对许可授予的永久记录。
+待 core@FreeBSD.org 确信所有必要的细节都已收集并且正确，秘书将发送一封包含许可详情的 PGP 签名确认收据。此收据将被持久存档，并作为我们对许可授予的永久记录。
 
 许可存档应仅包含许可授予的详细信息；这不是讨论许可或其他主题的地方。许可存档中的数据访问将根据对 core@FreeBSD.org 的要求进行。
 
@@ -2303,13 +2303,13 @@ FreeBSD 项目不对第三层平台的使用者提供任何保证，并且不承
 
 #### 22.1.1. 我如何添加一个新的 port？
 
-往树中添加 port 相对简单。一旦 port 准备好添加，如下文所述，你需要在分类的 Makefile 中添加 port 的目录条目。在这个 Makefile 中，ports 按字母顺序列出并添加到 SUBDIR 变量中，如下所示：
+往树中添加 port 相对简单。待 port 准备好添加，如下文所述，你需要在分类的 Makefile 中添加 port 的目录条目。在这个 Makefile 中，ports 按字母顺序列出并添加到 SUBDIR 变量中，如下所示：
 
 ```
 	SUBDIR += newport
 ```
 
-一旦 port 及其分类的 Makefile 准备就绪，新 port 就可以提交了：
+待 port 及其分类的 Makefile 准备就绪，新 port 就可以提交了：
 
 ```
 % git add category/Makefile category/newport
