@@ -20,7 +20,7 @@ Motif、OSF/1 和 UNIX 是注册商标，IT DialTone 和 The Open Group 是 The 
 
 </details>
 
- 摘要
+摘要
 
 本文档包含可用于 FreeBSD 和 syscons 驱动程序、X11、Ghostscript 和 Groff 的各种字体文件的描述。提供了用于将 syscons 显示切换到 80x60 模式以及在上述应用程序中使用 Type 1 字体的示例。
 
@@ -40,19 +40,19 @@ Motif、OSF/1 和 UNIX 是注册商标，IT DialTone 和 The Open Group 是 The 
 
 .pfm 与类型 1 字体相关的打印机字体度量。
 
- .ttf 一种 TrueType®字体
+.ttf 一种 TrueType® 字体
 
 .fot 对 TrueType 字体的间接引用（并非实际字体）
 
 .fon, .fnt 点阵屏幕字体
 
-Windows®中使用.fot 作为对实际 TrueType®字体(.ttf)文件的一种符号链接。.fon 字体文件也被 Windows 使用。我不知道如何在 FreeBSD 中使用这种字体格式。
+Windows® 中使用.fot 作为对实际 TrueType® 字体(.ttf)文件的一种符号链接。.fon 字体文件也被 Windows 使用。我不知道如何在 FreeBSD 中使用这种字体格式。
 
 ## 3. 我可以使用哪些字体格式？
 
 哪种字体文件格式有用取决于所使用的应用程序。FreeBSD 本身不使用字体。应用程序和/或驱动程序可以利用字体文件。这里是一个小的应用程序/驱动程序与字体类型后缀的交叉引用：
 
- 驱动程序 vt.hex
+驱动程序 vt.hex
 
 syscons.fnt
 
@@ -64,7 +64,7 @@ Groff.pfa, .afm
 
 Povray.ttf
 
-“.fnt”后缀经常使用。我怀疑每当有人想为他们的应用程序创建一个专用字体文件时，很可能会选择这个后缀。因此，使用这个后缀的文件很可能不是相同的格式;具体来说，在 FreeBSD 下由 syscons 使用的“.fnt”文件可能与在 MS-DOS®/Windows®环境中遇到的“.fnt”文件不是相同的格式。我没有尝试使用 FreeBSD 提供的以外的其他“.fnt”文件。
+“.fnt”后缀经常使用。我怀疑每当有人想为他们的应用程序创建一个专用字体文件时，很可能会选择这个后缀。因此，使用这个后缀的文件很可能不是相同的格式;具体来说，在 FreeBSD 下由 syscons 使用的“.fnt”文件可能与在 MS-DOS®/Windows® 环境中遇到的“.fnt”文件不是相同的格式。我没有尝试使用 FreeBSD 提供的以外的其他“.fnt”文件。
 
 ## 设置虚拟控制台为 80x60 行模式
 
@@ -259,7 +259,7 @@ GS>quit
 
 ## 7. 使用 Groff 与 Type 1 字体
 
-既然新字体可以被 X11 和 Ghostscript 同时使用，那么如何在 groff 中使用新字体呢?首先，由于我们正在处理 Type 1 PostScript®字体，适用的 groff 设备是 ps 设备。必须为 groff 可以使用的每种字体创建一个字体文件。groff 字体名称就是/usr/share/groff_font/devps 中的一个文件。在我们的例子中，字体文件可能是/usr/share/groff_font/devps/SHOWBOAT。文件必须使用 groff 提供的工具来创建。
+既然新字体可以被 X11 和 Ghostscript 同时使用，那么如何在 groff 中使用新字体呢?首先，由于我们正在处理 Type 1 PostScript® 字体，适用的 groff 设备是 ps 设备。必须为 groff 可以使用的每种字体创建一个字体文件。groff 字体名称就是/usr/share/groff_font/devps 中的一个文件。在我们的例子中，字体文件可能是/usr/share/groff_font/devps/SHOWBOAT。文件必须使用 groff 提供的工具来创建。
 
 第一个工具是 afmtodit 。这通常不会被安装，因此必须从源分发获取。我发现我需要更改文件的第一行，所以我这样做了：
 
@@ -288,7 +288,7 @@ Now create the groff font file
 
 现在可以使用 SHOWBOAT 名称引用该字体。
 
-如果 Ghostscript 用于驱动系统上的打印机，则不需要做其他操作。但是，如果使用真正的 PostScript®打印机，则必须下载字体到打印机，以便使用该字体（除非打印机恰好内置了 showboat 字体或在可访问的字体磁盘上）。最后一步是创建可下载的字体。 pfbtops 工具用于创建字体的.pfa 格式，并修改下载以引用新字体。下载必须引用字体的内部名称，这可以很容易地从 groff 字体文件中确定，就像下面的示例一样：
+如果 Ghostscript 用于驱动系统上的打印机，则不需要做其他操作。但是，如果使用真正的 PostScript® 打印机，则必须下载字体到打印机，以便使用该字体（除非打印机恰好内置了 showboat 字体或在可访问的字体磁盘上）。最后一步是创建可下载的字体。 pfbtops 工具用于创建字体的.pfa 格式，并修改下载以引用新字体。下载必须引用字体的内部名称，这可以很容易地从 groff 字体文件中确定，就像下面的示例一样：
 
 ```
 Create the .pfa font file
@@ -360,14 +360,14 @@ ttf2pf TrueType 到 PostScript 转换实用程序。这允许将 TrueType 字体
 
 感兴趣的文件为：
 
-* GS_TTF.PS
-* [PF2AFM.PS](http://PF2AFM.PS)
-* ttf2pf.ps 有趣的大/小写是因为它们也用于 DOSshells。ttf2pf.ps 利用其他部分作为大写字母，因此任何重命名都必须与此保持一致。(实际上，GS_TTF.PS 和 PFS2AFM.PS 据说是 Ghostscript 分发的一部分，但将它们用作独立工具同样方便。FreeBSD 似乎不包含后者。) 您还可能希望将这些安装到 /usr/local/share/groff_font/devps(?)。
+- GS_TTF.PS
+- [PF2AFM.PS](http://PF2AFM.PS)
+- ttf2pf.ps 有趣的大/小写是因为它们也用于 DOSshells。ttf2pf.ps 利用其他部分作为大写字母，因此任何重命名都必须与此保持一致。(实际上，GS_TTF.PS 和 PFS2AFM.PS 据说是 Ghostscript 分发的一部分，但将它们用作独立工具同样方便。FreeBSD 似乎不包含后者。) 您还可能希望将这些安装到 /usr/local/share/groff_font/devps(?)。
 
 afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通常位于目录 /usr/src/contrib/groff/afmtodit 中，需要一些工作才能开始使用。
 
-|  | 如果你对在 /usr/src 目录中工作感到担忧，只需将上述目录的内容复制到一个工作位置。 |
-| -- | ---------------------------------------------------------------------------------- |
+|     | 如果你对在 /usr/src 目录中工作感到担忧，只需将上述目录的内容复制到一个工作位置。 |
+| --- | -------------------------------------------------------------------------------- |
 
 在工作区，你需要制作该实用程序。只需键入：
 
@@ -381,48 +381,49 @@ afmtodit 从 ascii 字体度量文件创建 groff 使用的字体文件。它通
 
 1. 通过输入以下内容创建 .afm:
 
-    ```
-    % gs -dNODISPLAY -q -- ttf2pf.ps TTF_name PS_font_name AFM_name
-    ```
+   ```
+   % gs -dNODISPLAY -q -- ttf2pf.ps TTF_name PS_font_name AFM_name
+   ```
 
-    在此处，TTF_name 是您的 TrueType 字体文件，PS_font_name 是.pfa 文件的文件名，AFM_name 是.afm 文件的名称。如果您没有指定.pfa 或.afm 文件的输出文件名，则将从 TrueType 字体文件名生成默认名称。
+   在此处，TTF_name 是您的 TrueType 字体文件，PS_font_name 是.pfa 文件的文件名，AFM_name 是.afm 文件的名称。如果您没有指定.pfa 或.afm 文件的输出文件名，则将从 TrueType 字体文件名生成默认名称。
 
-    这也会生成一个.pfa 文件，即 ASCII 格式的 PostScript 字体度量文件（.pfb 为其二进制形式）。这不是必需的，但可能对字体服务器有用（我认为）。
+   这也会生成一个.pfa 文件，即 ASCII 格式的 PostScript 字体度量文件（.pfb 为其二进制形式）。这不是必需的，但可能对字体服务器有用（我认为）。
 
-    例如，要使用默认文件名转换 30f9 条形码字体，请使用以下命令：
+   例如，要使用默认文件名转换 30f9 条形码字体，请使用以下命令：
 
-    ```
-    % gs -dNODISPLAY -- ttf2pf.ps 3of9.ttf
-    Aladdin Ghostscript 5.10 (1997-11-23)
-    Copyright (C) 1997 Aladdin Enterprises, Menlo Park, CA.  All rights reserved.
-    This software comes with NO WARRANTY: see the file PUBLIC for details.
-    Converting 3of9.ttf to 3of9.pfa and 3of9.afm.
-    ```
+   ```
+   % gs -dNODISPLAY -- ttf2pf.ps 3of9.ttf
+   Aladdin Ghostscript 5.10 (1997-11-23)
+   Copyright (C) 1997 Aladdin Enterprises, Menlo Park, CA.  All rights reserved.
+   This software comes with NO WARRANTY: see the file PUBLIC for details.
+   Converting 3of9.ttf to 3of9.pfa and 3of9.afm.
+   ```
 
-    如果您希望将转换后的字体存储在 A.pfa 和 B.afm 中，请使用以下命令：
+   如果您希望将转换后的字体存储在 A.pfa 和 B.afm 中，请使用以下命令：
 
-    ```
-    % gs -dNODISPLAY -- ttf2pf.ps 3of9.ttf A B
-    Aladdin Ghostscript 5.10 (1997-11-23)
-    Copyright (C) 1997 Aladdin Enterprises, Menlo Park, CA.  All rights reserved.
-    This software comes with NO WARRANTY: see the file PUBLIC for details.
-    Converting 3of9.ttf to A.pfa and B.afm.
-    ```
+   ```
+   % gs -dNODISPLAY -- ttf2pf.ps 3of9.ttf A B
+   Aladdin Ghostscript 5.10 (1997-11-23)
+   Copyright (C) 1997 Aladdin Enterprises, Menlo Park, CA.  All rights reserved.
+   This software comes with NO WARRANTY: see the file PUBLIC for details.
+   Converting 3of9.ttf to A.pfa and B.afm.
+   ```
+
 2. 创建 groff PostScript 文件：切换到 /usr/share/groff_font/devps 目录，以便更轻松地执行以下命令。您可能需要 root 权限才能执行此操作。（或者，如果您对在这里工作感到不安全，请确保引用文件 DESC、text.enc 和 generate/textmap 存储在该目录中。）
 
-    ```
-    % afmtodit -d DESC -e text.enc file.afm generate/textmap PS_font_name
-    ```
+   ```
+   % afmtodit -d DESC -e text.enc file.afm generate/textmap PS_font_name
+   ```
 
-    其中，file.afm 是由上述 ttf2pf.ps 创建的 AFM 名称，而 PS_font_name 是从该命令中使用的字体名称，也是 groff(1) 引用此字体的名称。例如，假设您使用了上述第一个 tiff2pf.ps ，则可以使用以下命令创建 3of9 条形码字体：
+   其中，file.afm 是由上述 ttf2pf.ps 创建的 AFM 名称，而 PS_font_name 是从该命令中使用的字体名称，也是 groff(1) 引用此字体的名称。例如，假设您使用了上述第一个 tiff2pf.ps ，则可以使用以下命令创建 3of9 条形码字体：
 
-    ```
-    % afmtodit -d DESC -e text.enc 3of9.afm generate/textmap 3of9
-    ```
+   ```
+   % afmtodit -d DESC -e text.enc 3of9.afm generate/textmap 3of9
+   ```
 
-    确保生成的 PS_font_name 文件（例如，上面的 3of9 示例）位于/usr/share/groff_font/devps 目录中，通过复制或移动它到那里。
+   确保生成的 PS_font_name 文件（例如，上面的 3of9 示例）位于/usr/share/groff_font/devps 目录中，通过复制或移动它到那里。
 
-    请注意，如果 ttf2pf.ps 使用 TrueType 字体文件中找到的字体名称，并且您希望使用不同的名称，您必须在运行 afmtodit 之前编辑.afm 文件。该名称还必须与 Fontmap 文件中使用的名称匹配，如果您希望将 groff(1)传输到 gs(1)中的话。
+   请注意，如果 ttf2pf.ps 使用 TrueType 字体文件中找到的字体名称，并且您希望使用不同的名称，您必须在运行 afmtodit 之前编辑.afm 文件。该名称还必须与 Fontmap 文件中使用的名称匹配，如果您希望将 groff(1)传输到 gs(1)中的话。
 
 ## 9. 可以将 TrueType 字体与其他程序一起使用吗？
 
@@ -432,19 +433,19 @@ TrueType 字体格式被 Windows、Windows 95 和 Mac 使用。它相当受欢�
 
 这种相当令人沮丧的局面可能很快会发生改变。FreeType 项目目前正在开发一组实用的 FreeType 工具：
 
-* X11 的 xfsft 字体服务器可以除了常规字体外，还可以用于 TrueType 字体。尽管目前还在测试阶段，但据说已经相当可用。更多信息请参见 Juliusz Chroboczek 的页面。FreeBSD 的移植说明可以在 Stephen Montgomery 的软件页面找到。
-* xfstt 是另一个 X11 的字体服务器，可在 ftp://sunsite.unc.edu/pub/Linux/X11/fonts/上获取。
-* 一个名为 ttf2bdf 的程序可以从 TrueType 文件生成适用于 X 环境的 BDF 文件。据说 Linux 二进制文件可以从 ftp://crl.nmsu.edu/CLR/multiling/General/获取。
-* 及其他……
+- X11 的 xfsft 字体服务器可以除了常规字体外，还可以用于 TrueType 字体。尽管目前还在测试阶段，但据说已经相当可用。更多信息请参见 Juliusz Chroboczek 的页面。FreeBSD 的移植说明可以在 Stephen Montgomery 的软件页面找到。
+- xfstt 是另一个 X11 的字体服务器，可在 ftp://sunsite.unc.edu/pub/Linux/X11/fonts/上获取。
+- 一个名为 ttf2bdf 的程序可以从 TrueType 文件生成适用于 X 环境的 BDF 文件。据说 Linux 二进制文件可以从 ftp://crl.nmsu.edu/CLR/multiling/General/获取。
+- 及其他……
 
 ## 10. 哪里可以获得更多字体？
 
-互联网上有许多字体。它们要么完全免费，要么是共享软件。此外，许多字体可以在ports 集合中的 x11-fonts/ 目录下找到。
+互联网上有许多字体。它们要么完全免费，要么是共享软件。此外，许多字体可以在 ports 集合中的 x11-fonts/ 目录下找到。
 
 ## 11. 其他问题
 
-* .pfm 文件有什么用处？
-* 能否从 .pfa 或 .pfb 生成 .afm 文件？
-* 如何为具有非标准字符名称的 PostScript 字体生成 groff 字符映射文件？
-* 可以设置 xditview 和 devX??设备以访问所有新字体吗？
-* 最好有一些使用 TrueType 字体与 Povray 和 Ghostscript 的示例。
+- .pfm 文件有什么用处？
+- 能否从 .pfa 或 .pfb 生成 .afm 文件？
+- 如何为具有非标准字符名称的 PostScript 字体生成 groff 字符映射文件？
+- 可以设置 xditview 和 devX??设备以访问所有新字体吗？
+- 最好有一些使用 TrueType 字体与 Povray 和 Ghostscript 的示例。
