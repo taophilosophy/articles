@@ -1,6 +1,5 @@
 # 在台机上实现 UFS 日志功能
 
-
 <details open="" data-immersive-translate-walked="94cf6408-7487-4d2f-ba87-b0aba28cf54c"><summary data-immersive-translate-walked="94cf6408-7487-4d2f-ba87-b0aba28cf54c" data-immersive-translate-paragraph="1"><font class="notranslate immersive-translate-target-wrapper" data-immersive-translate-translation-element-mark="1" lang="zh-CN"><font class="notranslate" data-immersive-translate-translation-element-mark="1"> </font><font class="notranslate immersive-translate-target-translation-theme-none immersive-translate-target-translation-inline-wrapper-theme-none immersive-translate-target-translation-inline-wrapper" data-immersive-translate-translation-element-mark="1"><font class="notranslate immersive-translate-target-inner immersive-translate-target-translation-theme-none-inner" data-immersive-translate-translation-element-mark="1">商标</font></font></font></summary>
 
 FreeBSD 是 FreeBSD 基金会的注册商标。
@@ -9,7 +8,7 @@ FreeBSD 是 FreeBSD 基金会的注册商标。
 
 </details>
 
- 抽象
+## 概述
 
 日志型文件系统使用日志记录系统中发生的所有事务，并在系统崩溃或断电时保持其完整性。虽然仍然有可能丢失未保存的更改，但日志记录几乎完全消除了因非正常关闭而导致的文件系统损坏的可能性。它还将失败后的文件系统检查所需的时间缩短到最低。尽管 FreeBSD 使用的 UFS 文件系统本身不实现日志记录，但 FreeBSD 7.X 中的新日志类可以用来提供独立于文件系统的日志记录。本文介绍了如何在典型的桌面 PC 场景上实现 UFS 日志记录。
 
@@ -25,19 +24,19 @@ GEOM 提供的新日志功能可以在这种情景中大大帮助，几乎消除
 
 阅读本文后，您将了解：
 
-* 如何在新安装的 FreeBSD 中为日志记录保留空间。
-* 如何加载和启用 geom_journal 模块（或在自定义内核中构建支持）。
-* 如何将现有文件系统转换为使用日志记录，并在/etc/fstab 中使用哪些选项进行挂载。
-* 如何在新的（空）分区实施日志记录。
-* 如何排除与日志记录相关的常见问题。
+- 如何在新安装的 FreeBSD 中为日志记录保留空间。
+- 如何加载和启用 geom_journal 模块（或在自定义内核中构建支持）。
+- 如何将现有文件系统转换为使用日志记录，并在/etc/fstab 中使用哪些选项进行挂载。
+- 如何在新的（空）分区实施日志记录。
+- 如何排除与日志记录相关的常见问题。
 
 阅读此文章之前，您应该能够：
 
-* 理解基本的 UNIX®和 FreeBSD 概念。
-* 熟悉 FreeBSD 的安装过程和 sysinstall 实用程序。
+- 理解基本的 UNIX® 和 FreeBSD 概念。
+- 熟悉 FreeBSD 的安装过程和 sysinstall 实用程序。
 
-|  | 这里描述的过程适用于准备一个新安装，其中磁盘上还没有存储实际用户数据。虽然可以修改和扩展此过程以用于已经在生产中的系统，但在这样做之前，您应备份所有重要数据。在低级别操作磁盘和分区可能导致致命错误和数据丢失。 |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|     | 这里描述的过程适用于准备一个新安装，其中磁盘上还没有存储实际用户数据。虽然可以修改和扩展此过程以用于已经在生产中的系统，但在这样做之前，您应备份所有重要数据。在低级别操作磁盘和分区可能导致致命错误和数据丢失。 |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 ## 2. 了解 FreeBSD 中的日志记录
 
@@ -47,14 +46,14 @@ FreeBSD 7.X 中由 GEOM 提供的日志记录不是文件系统特定的（不�
 
 当文件系统被日志记录时，需要一些磁盘空间来保存日志本身。容纳实际数据的磁盘空间被称为数据提供者，而容纳日志的提供者被称为日志提供者。数据提供者和日志提供者在对现有（非空）分区进行日志记录时需要位于不同的分区。在对新分区进行日志记录时，您有选择将单个提供者用于数据和日志。在任何情况下， gjournal 命令将合并两个提供者以创建最终的日志记录文件系统。例如：
 
-* 您希望对存储在/dev/ad0s1f 中（已包含数据）的/usr 文件系统进行日志记录。
-* 您在/dev/ad0s1g 分区中保留了一些空闲磁盘空间。
-* 使用 gjournal ，创建了一个新的/dev/ad0s1f.journal 设备，其中/dev/ad0s1f 是数据提供者，/dev/ad0s1g 是日志提供者。随后所有的文件操作都将使用这个新设备。
+- 您希望对存储在/dev/ad0s1f 中（已包含数据）的/usr 文件系统进行日志记录。
+- 您在/dev/ad0s1g 分区中保留了一些空闲磁盘空间。
+- 使用 gjournal ，创建了一个新的/dev/ad0s1f.journal 设备，其中/dev/ad0s1f 是数据提供者，/dev/ad0s1g 是日志提供者。随后所有的文件操作都将使用这个新设备。
 
 您需要为日志提供者预留的磁盘空间量取决于文件系统的使用负载，而不是数据提供者的大小。例如，在典型的办公桌面上，为/usr 文件系统预留 1 GB 的日志提供者就足够了，而处理大量磁盘 I/O 的机器（如视频编辑）可能需要更多。如果在提交之前日志空间耗尽，将会发生内核恐慌。
 
-|  | 此处建议的日志大小，在典型的桌面使用中几乎不太可能引起问题（例如网页浏览、文字处理和媒体文件的播放）。如果您的工作负载包括密集的磁盘活动，请使用以下规则以获得最大可靠性：您的 RAM 大小应适合于日志提供者空间的 30%。例如，如果您的系统有 1GB RAM，请创建大约 3.3GB 的日志提供者。（将 RAM 大小乘以 3.3 即可获得日志的大小）。 |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     | 此处建议的日志大小，在典型的桌面使用中几乎不太可能引起问题（例如网页浏览、文字处理和媒体文件的播放）。如果您的工作负载包括密集的磁盘活动，请使用以下规则以获得最大可靠性：您的 RAM 大小应适合于日志提供者空间的 30%。例如，如果您的系统有 1GB RAM，请创建大约 3.3GB 的日志提供者。（将 RAM 大小乘以 3.3 即可获得日志的大小）。 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 关于日志记录的更多信息，请阅读 gjournal(8)的手册页面。
 
@@ -74,8 +73,8 @@ FreeBSD 7.X 中由 GEOM 提供的日志记录不是文件系统特定的（不�
 
 现在，将高亮显示移动到屏幕顶部的磁盘名称，然后按 C 键为/usr 创建一个新分区。该新分区应该比 1 GB（如果您只打算对/usr 进行日志记录）或 2 GB（如果您打算对/usr 和/var 都进行日志记录）小。从弹出窗口中选择创建文件系统，并将/usr 键入为挂载点。
 
-|  | 如果你想日志记录 /var 分区吗？通常来说，在相当大的分区上进行日志记录是有意义的。你可以决定不对 /var 进行日志记录，尽管在典型的桌面上这样做不会造成任何损害。如果文件系统的使用量不大（对于桌面来说是很可能的），你可能希望为其日志分配更少的磁盘空间。<br /><br />在我们的示例中，我们对 /usr 和 /var 都进行了日志记录。当然，你可以根据自己的需要调整程序。 |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|     | 如果你想日志记录 /var 分区吗？通常来说，在相当大的分区上进行日志记录是有意义的。你可以决定不对 /var 进行日志记录，尽管在典型的桌面上这样做不会造成任何损害。如果文件系统的使用量不大（对于桌面来说是很可能的），你可能希望为其日志分配更少的磁盘空间。<br /><br />在我们的示例中，我们对 /usr 和 /var 都进行了日志记录。当然，你可以根据自己的需要调整程序。 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 为了尽可能简单，我们将使用 sysinstall 来创建日志记录所需的分区。然而，在安装过程中，sysinstall 坚持要求为你创建的每个分区指定挂载点。在这一点上，你并没有为将保存日志的分区分配任何挂载点，实际上你甚至不需要它们。这些不是我们将要在某个地方挂载的分区。
 
@@ -90,7 +89,7 @@ FreeBSD 7.X 中由 GEOM 提供的日志记录不是文件系统特定的（不�
 表 1. 分区和日志
 
 | 分区   | 挂载点 | 日志   |
-| -------- | -------- | -------- |
+| ------ | ------ | ------ |
 | ad0s1d | /var   | ad0s1h |
 | ad0s1f | /usr   | ad0s1g |
 
@@ -108,11 +107,11 @@ FreeBSD 7.X 中由 GEOM 提供的日志记录不是文件系统特定的（不�
 
 准备了所有必需的分区后，配置日志记录就变得相当容易了。我们需要切换到单用户模式，因此登录为 root ，然后输入:
 
-```
+```sh
 # shutdown now
 ```
 
-按 Enter 以获取默认值shell。我们需要卸载将被日志记录的分区，在我们的示例中为/usr 和/var:
+按 Enter 以获取默认值 shell。我们需要卸载将被日志记录的分区，在我们的示例中为/usr 和/var:
 
 ```
 # umount /usr /var
@@ -120,13 +119,13 @@ FreeBSD 7.X 中由 GEOM 提供的日志记录不是文件系统特定的（不�
 
 加载所需的日志记录模块:
 
-```
+```sh
 # gjournal load
 ```
 
 现在，使用您的笔记确定每个日志记录将用于哪个分区。在我们的示例中，/usr 是 ad0s1f，其日志将是 ad0s1g，而/var 是 ad0s1d，并将被日志记录到 ad0s1h。需要以下命令:
 
-```
+```sh
 # gjournal label ad0s1f ad0s1g
 GEOM_JOURNAL: Journal 2948326772: ad0s1f contains data.
 GEOM_JOURNAL: Journal 2948326772: ad0s1g contains journal.
@@ -136,15 +135,15 @@ GEOM_JOURNAL: Journal 3193218002: ad0s1d contains data.
 GEOM_JOURNAL: Journal 3193218002: ad0s1h contains journal.
 ```
 
-```
+```sh
 # gjournal label -f ad0s1d ad0s1h
 ```
 
-Since this is a new installation, it is highly unlikely that anything will be actually overwritten.
+由于这是一次全新安装，实际覆盖任何内容的可能性非常小。
 
-At this point, two new devices are created, namely ad0s1d.journal and ad0s1f.journal. These represent the /var and /usr partitions we have to mount. Before mounting, we must however set the journal flag on them and clear the Soft Updates flag:
+此时，创建了两个新设备，即 ad0s1d.journal 和 ad0s1f.journal。这些设备代表我们需要挂载的 /var 和 /usr 分区。然而，在挂载之前，我们必须为它们设置 journal 标志并清除 Soft Updates 标志：
 
-```
+```sh
 # tunefs -J enable -n disable ad0s1d.journal
 tunefs: gjournal set
 tunefs: soft updates cleared
@@ -154,32 +153,31 @@ tunefs: gjournal set
 tunefs: soft updates cleared
 ```
 
-Now, mount the new devices manually at their respective places (note that we can now use the `async` mount option):
-
-```
+现在，将新设备手动挂载到各自的位置（请注意，我们现在可以使用 `async` 挂载选项）：
+```sh
 # mount -o async /dev/ad0s1d.journal /var
 # mount -o async /dev/ad0s1f.journal /usr
 ```
 
 编辑 /etc/fstab 并更新 /usr 和 /var 的条目：
 
-```
+```sh
 /dev/ad0s1f.journal     /usr            ufs     rw,async      2       2
 /dev/ad0s1d.journal     /var            ufs     rw,async      2       2
 ```
 
-|  | 确保以上条目正确，否则重启后会有启动问题！ |
-| -- | -------------------------------------------- |
+|     | 确保以上条目正确，否则重启后会有启动问题！ |
+| --- | ------------------------------------------ |
 
 最后，编辑 /boot/loader.conf 并添加以下行，以便每次启动时加载 gjournal(8) 模块：
 
-```
+```sh
 geom_journal_load="YES"
 ```
 
 恭喜！您的系统现在已设置为日志记录。您可以输入 exit 返回到多用户模式，或者重新启动以测试您的配置（推荐）。在启动过程中，您将看到如下消息：
 
-```
+```sh
 ad0: 76293MB XEC XE800JD-00HBC0 08.02D08 at ata0-master SATA150
 GEOM_JOURNAL: Journal 2948326772: ad0s1g contains journal.
 GEOM_JOURNAL: Journal 3193218002: ad0s1h contains journal.
@@ -191,7 +189,7 @@ GEOM_JOURNAL: Journal ad0s1f clean.
 
 在不干净的关闭之后，消息会略有不同，即：
 
-```
+```sh
 GEOM_JOURNAL: Journal ad0s1d consistent.
 ```
 
@@ -201,7 +199,7 @@ GEOM_JOURNAL: Journal ad0s1d consistent.
 
 While the above procedure is necessary for journaling partitions that already contain data, journaling an empty partition is somewhat easier, since both the data and the journal provider can be stored in the same partition. For example, assume a new disk was installed, and a new partition /dev/ad1s1d was created. Creating the journal would be as simple as:
 
-```
+```sh
 # gjournal label ad1s1d
 ```
 
@@ -209,13 +207,13 @@ While the above procedure is necessary for journaling partitions that already co
 
 例如，要创建一个 2 GB 的日志，您可以使用以下命令：
 
-```
+```sh
 # gjournal label -s 2G ad1s1d
 ```
 
 然后，您可以在新分区上创建一个文件系统，并使用 -J 选项启用日志记录：
 
-```
+```sh
 # newfs -J /dev/ad1s1d.journal
 ```
 
@@ -223,7 +221,7 @@ While the above procedure is necessary for journaling partitions that already co
 
 如果您不希望将 geom_journal 作为一个模块加载，您可以将其函数直接构建到您的内核中。编辑自定义内核配置文件，并确保它包含以下两行：
 
-```
+```sh
 options UFS_GJOURNAL # Note: This is already in GENERIC
 
 options GEOM_JOURNAL # You will have to add this one
@@ -239,19 +237,19 @@ options GEOM_JOURNAL # You will have to add this one
 
 ### 5.1. 我在高磁盘活动期间遇到内核崩溃。这与日记有什么关系？
 
-期刊可能会在提交（刷新）到磁盘之前填满。请记住，期刊的大小取决于使用负载，而不是数据提供者的大小。如果您的磁盘活动很高，您需要一个更大的分区用于期刊。请参见 FreeBSD 部分中关于理解期刊的注记。
+日志可能会在提交（刷新）到磁盘之前填满。请记住，日志的大小取决于使用负载，而不是数据提供者的大小。如果您的磁盘活动很高，您需要一个更大的分区用于日志。请参见 FreeBSD 部分中关于理解日志的注记。
 
 ### 5.2.在配置过程中犯了一些错误，现在无法正常启动。有办法修复吗？
 
-您可能忘记了（或拼错了）/boot/loader.conf 文件中的条目，或者您的/etc/fstab 文件中存在错误。这些问题通常很容易解决。按 Enter 键进入默认的单用户shell。然后找到问题的根源：
+您可能忘记了（或拼错了）/boot/loader.conf 文件中的条目，或者您的/etc/fstab 文件中存在错误。这些问题通常很容易解决。按 Enter 键进入默认的单用户 shell。然后找到问题的根源：
 
-```
+```sh
 # cat /boot/loader.conf
 ```
 
 如果 geom_journal_load 条目丢失或拼错，日志设备将永远不会被创建。手动加载模块，挂载所有分区，然后继续进行多用户引导:
 
-```
+```sh
 # gjournal load
 
 GEOM_JOURNAL: Journal 2948326772: ad0s1g contains journal.
@@ -270,7 +268,7 @@ GEOM_JOURNAL: Journal ad0s1f clean.
 
 ### 5.3.我可以删除日志记录并返回到具有软更新的标准文件系统吗？
 
-当然。使用以下过程，它会撤销更改。您为期刊提供者创建的分区随后可用于其他目的，如果您愿意的话。
+当然。使用以下过程，它会撤销更改。您为日志提供者创建的分区随后可用于其他目的，如果您愿意的话。
 
 以 root 登录并切换到单用户模式：
 
@@ -280,26 +278,26 @@ GEOM_JOURNAL: Journal ad0s1f clean.
 
 卸载日志分区：
 
-```
+```sh
 # umount /usr /var
 ```
 
-同步期刊：
+同步日志：
 
-```
+```sh
 # gjournal sync
 ```
 
-停止期刊提供商：
+停止日志提供商：
 
-```
+```sh
 # gjournal stop ad0s1d.journal
 # gjournal stop ad0s1f.journal
 ```
 
-清除所有设备使用的期刊元数据：
+清除所有设备使用的日志元数据：
 
-```
+```sh
 # gjournal clear ad0s1d
 # gjournal clear ad0s1f
 # gjournal clear ad0s1g
@@ -308,7 +306,7 @@ GEOM_JOURNAL: Journal ad0s1f clean.
 
 清除文件系统日志标志，并恢复软更新标志：
 
-```
+```sh
 # tunefs -J disable -n enable ad0s1d
 tunefs: gjournal cleared
 tunefs: soft updates set
@@ -320,14 +318,14 @@ tunefs: soft updates set
 
 手动重新挂载旧设备：
 
-```
+```sh
 # mount -o rw /dev/ad0s1d /var
 # mount -o rw /dev/ad0s1f /usr
 ```
 
 编辑 /etc/fstab 并将其恢复到原始状态：
 
-```
+```sh
 /dev/ad0s1f     /usr            ufs     rw      2       2
 /dev/ad0s1d     /var            ufs     rw      2       2
 ```
@@ -338,7 +336,7 @@ tunefs: soft updates set
 
 日志记录是 FreeBSD 的一个相当新的功能，因此，它尚未得到很好的文档记录。不过，你可能会发现以下附加参考资料很有用：
 
-* 自由 BSD 手册现在有一个关于日记的新章节。
-* 自由 BSD-CURRENT 邮件列表中，gjournal(8)的开发者发布了这篇帖子。
-* 在自由 BSD 常见问题邮件列表中， Ivan Voras <<a href="mailto:ivoras@FreeBSD.org">ivoras@FreeBSD.org</a>> 发布了这篇帖子。
-* gjournal(8)和 geom(8)的手册页面。
+- 自由 BSD 手册现在有一个关于日记的新章节。
+- 自由 BSD-CURRENT 邮件列表中，gjournal(8)的开发者发布了这篇帖子。
+- 在自由 BSD 常见问题邮件列表中， Ivan Voras <<a href="mailto:ivoras@FreeBSD.org">ivoras@FreeBSD.org</a>> 发布了这篇帖子。
+- gjournal(8)和 geom(8)的手册页面。
