@@ -10,7 +10,7 @@ FreeBSD 是 FreeBSD 基金会的注册商标。
 
 </details>
 
- 摘要
+摘要
 
 本文档记录了在远程系统控制台不可用时远程安装 FreeBSD 操作系统的方法。本文的主要思想是与 Martin Matuska <<a href="mailto:mm@FreeBSD.org">mm@FreeBSD.org</a>> 合作的结果，并得到了 Paweł Jakub Dawidek <<a href="mailto:pjd@FreeBSD.org">pjd@FreeBSD.org</a>> 的宝贵意见。
 
@@ -18,9 +18,9 @@ FreeBSD 是 FreeBSD 基金会的注册商标。
 
 ## 1. 背景
 
-世界上有许多服务器托管提供商，但其中很少有官方支持 FreeBSD。他们通常支持在他们提供的服务器上安装 Linux®发行版。
+世界上有许多服务器托管提供商，但其中很少有官方支持 FreeBSD。他们通常支持在他们提供的服务器上安装 Linux® 发行版。
 
-在某些情况下，如果您请求，这些公司会为您安装所选的 Linux®发行版。通过这个选项，我们将尝试安装 FreeBSD。在其他情况下，他们可能提供一个用于紧急情况的救援系统。我们也可以将其用于我们的目的。
+在某些情况下，如果您请求，这些公司会为您安装所选的 Linux® 发行版。通过这个选项，我们将尝试安装 FreeBSD。在其他情况下，他们可能提供一个用于紧急情况的救援系统。我们也可以将其用于我们的目的。
 
 本文介绍了启动具有 RAID-1 和 ZFS 功能的远程 FreeBSD 安装所需的基本安装和配置步骤。
 
@@ -36,10 +36,10 @@ FreeBSD 是 FreeBSD 基金会的注册商标。
 
 要成功继续，您必须：
 
-* 拥有具有 SSH 访问权限的网络可访问操作系统
-* 理解 FreeBSD 安装过程
-* 熟悉 sysinstall(8) 实用程序
-* 准备好 FreeBSD 安装 SO 镜像或 CD
+- 拥有具有 SSH 访问权限的网络可访问操作系统
+- 理解 FreeBSD 安装过程
+- 熟悉 sysinstall(8) 实用程序
+- 准备好 FreeBSD 安装 SO 镜像或 CD
 
 ## 3. 准备 - mfsBSD
 
@@ -115,12 +115,11 @@ ifconfig_re0="inet 192.168.0.2/24"
 # make BASE=DIST
 ```
 
-|  | 上述 make 必须从 mfsBSD 目录树的顶层运行，例如~/mfsbsd-2.1/。 |
-| -- | --------------------------------------------------------------- |
+>上述 make 必须从 mfsBSD 目录树的顶层运行，例如~/mfsbsd-2.1/。 
 
 ### 3.3. 启动 mfsBSD
 
-现在 mfsBSD 镜像已准备就绪，必须上传到运行活动救援系统或预先安装的 Linux®发行版的远程系统。 这项任务最适合的工具是 scp：
+现在 mfsBSD 镜像已准备就绪，必须上传到运行活动救援系统或预先安装的 Linux® 发行版的远程系统。 这项任务最适合的工具是 scp：
 
 ```
 # scp disk.img root@192.168.0.2:.
@@ -153,29 +152,29 @@ mfsBSD 已成功引导，并且应该可以通过 ssh(1) 登录。本节将描�
 以下示例将描述如何创建切片和标签，在每个分区上初始化 gmirror(8)，以及如何在每个镜像分区中创建 UFS2 文件系统：
 
 ```
-# fdisk -BI /dev/ad0 
+# fdisk -BI /dev/ad0
 # fdisk -BI /dev/ad1
-# bsdlabel -wB /dev/ad0s1 
+# bsdlabel -wB /dev/ad0s1
 # bsdlabel -wB /dev/ad1s1
-# bsdlabel -e /dev/ad0s1 
-# bsdlabel /dev/ad0s1 > /tmp/bsdlabel.txt && bsdlabel -R /dev/ad1s1 /tmp/bsdlabel.txt 
-# gmirror label root /dev/ad[01]s1a 
+# bsdlabel -e /dev/ad0s1
+# bsdlabel /dev/ad0s1 > /tmp/bsdlabel.txt && bsdlabel -R /dev/ad1s1 /tmp/bsdlabel.txt
+# gmirror label root /dev/ad[01]s1a
 # gmirror label var /dev/ad[01]s1d
 # gmirror label usr /dev/ad[01]s1e
-# gmirror label -F swap /dev/ad[01]s1b 
-# newfs /dev/mirror/root 
+# gmirror label -F swap /dev/ad[01]s1b
+# newfs /dev/mirror/root
 # newfs /dev/mirror/var
 # newfs /dev/mirror/usr
 ```
 
-|  | 创建覆盖整个磁盘的切片并初始化给定磁盘第 0 扇区中的引导代码。对系统中的所有硬盘重复此命令。                                                                                            |
-| -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  | 为每个磁盘写入标准标签，包括自举代码。                                                                                                                                                 |
-|  | 现在，手动编辑所给磁盘的标签。参考 bsdlabel(8) 手册页面，了解如何创建分区。创建分区 a 用于 /（根）文件系统， b 用于交换空间， d 用于 /var， e 用于 /usr，最后创建 f 以备将来用于 ZFS。 |
-|  | 导入最近为第二块硬盘创建的标签，以便两块硬盘标签相同。                                                                                                                                 |
-|  | 在每个分区上初始化 gmirror(8)。                                                                                                                                                        |
-|  | 注意， -F 用于交换分区。这指示 gmirror(8) 在断电/系统故障后假定设备处于一致状态。                                                                                                      |
-|  | 在每个镜像分区上创建一个 UFS2 文件系统。                                                                                                                                               |
+|     | 创建覆盖整个磁盘的切片并初始化给定磁盘第 0 扇区中的引导代码。对系统中的所有硬盘重复此命令。                                                                                            |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     | 为每个磁盘写入标准标签，包括自举代码。                                                                                                                                                 |
+|     | 现在，手动编辑所给磁盘的标签。参考 bsdlabel(8) 手册页面，了解如何创建分区。创建分区 a 用于 /（根）文件系统， b 用于交换空间， d 用于 /var， e 用于 /usr，最后创建 f 以备将来用于 ZFS。 |
+|     | 导入最近为第二块硬盘创建的标签，以便两块硬盘标签相同。                                                                                                                                 |
+|     | 在每个分区上初始化 gmirror(8)。                                                                                                                                                        |
+|     | 注意， -F 用于交换分区。这指示 gmirror(8) 在断电/系统故障后假定设备处于一致状态。                                                                                                      |
+|     | 在每个镜像分区上创建一个 UFS2 文件系统。                                                                                                                                               |
 
 ### 4.2. 系统安装
 
@@ -188,15 +187,13 @@ mfsBSD 已成功引导，并且应该可以通过 ssh(1) 登录。本节将描�
 # mount /dev/mirror/usr /mnt/usr
 ```
 
-当你完成时，启动 sysinstall(8)。从主菜单中选择自定义安装。选择“选项”并按 Enter 键。借助箭头键，将光标移动到 Install Root 项目上，按空格并将其更改为/mnt。按 Enter 键提交更改，并通过按 q 键退出“选项”菜单。
+当你完成时，启动 sysinstall(8)。从主菜单中选择自定义安装。选择“选项”并按 Enter 键。借助箭头键，将光标移动到 Install Root 项目上，按空格并将其更改为 /mnt。按 Enter 键提交更改，并通过按 q 键退出“选项”菜单。
 
-|  | 请注意，这一步非常重要，如果跳过， sysinstall 将无法安装 FreeBSD。 |
-| -- | -------------------------------------------------------------------- |
+>请注意，这一步非常重要，如果跳过， sysinstall 将无法安装 FreeBSD。
 
 转到“发行版”菜单，使用箭头键移动光标到 Minimal ，按空格键进行检查。本文使用最小发行版来节省网络流量，因为系统本身将通过 ftp 进行安装。通过选择 Exit 来退出此菜单。
 
-|  | 分区和标签菜单将被跳过，因为现在这些是无用的。 |
-| -- | ------------------------------------------------ |
+>分区和标签菜单将被跳过，因为现在这些是无用的。
 
 在“媒体”菜单中，选择 FTP 。选择最近的镜像，并让 sysinstall 假设网络已经配置好。您将被返回到自定义菜单。
 
@@ -214,12 +211,13 @@ FreeBSD 操作系统现在应该已安装；但是，流程还没有结束。有
 
 要完成我们的目标，请执行以下步骤：
 
-* 将 GENERIC 内核复制到/boot/kernel 目录中：
+- 将 GENERIC 内核复制到/boot/kernel 目录中：
 
   ```
   # cp -Rp /boot/GENERIC/* /boot/kernel
   ```
-* 创建/etc/rc.conf、/etc/resolv.conf 和/etc/fstab 文件。不要忘记正确设置网络信息，并在/etc/rc.conf 中启用 sshd。/etc/fstab 的内容将类似于以下内容：
+
+- 创建/etc/rc.conf、/etc/resolv.conf 和/etc/fstab 文件。不要忘记正确设置网络信息，并在/etc/rc.conf 中启用 sshd。/etc/fstab 的内容将类似于以下内容：
 
   ```
   # Device                Mountpoint      FStype  Options         Dump    Pass#
@@ -229,19 +227,22 @@ FreeBSD 操作系统现在应该已安装；但是，流程还没有结束。有
   /dev/mirror/var         /var            ufs     rw              2       2
   /dev/cd0                /cdrom          cd9660  ro,noauto       0       0
   ```
-* 创建/boot/loader.conf 并添加以下内容：
+
+- 创建/boot/loader.conf 并添加以下内容：
 
   ```
   geom_mirror_load="YES"
   zfs_load="YES"
   ```
-* 执行以下命令，这将使 ZFS 在下一次启动时可用：
+
+- 执行以下命令，这将使 ZFS 在下一次启动时可用：
 
   ```
   # sysrc zfs_enable="YES"
   ```
-* 使用 adduser(8) 工具将额外的用户添加到系统中。不要忘记将用户添加到 wheel 组，这样您可以在重启后获得 root 访问权限。
-* 仔细检查所有的设置。
+
+- 使用 adduser(8) 工具将额外的用户添加到系统中。不要忘记将用户添加到 wheel 组，这样您可以在重启后获得 root 访问权限。
+- 仔细检查所有的设置。
 
 系统现在应该已准备好进行下一次启动。使用 reboot(8) 命令来重启您的系统。
 
@@ -249,7 +250,7 @@ FreeBSD 操作系统现在应该已安装；但是，流程还没有结束。有
 
 如果您的系统经受住了重启的考验，现在应该可以登录了。欢迎来到全新的 FreeBSD 安装，远程执行而无需使用远程控制台！
 
-唯一剩下的步骤就是配置 zpool(8)并创建一些 zfs(8)文件系统。创建和管理 ZFS 非常简单。首先，创建一个镜像池：
+唯一剩下的步骤就是配置 zpool(8)并创建一些 zfs(8) 文件系统。创建和管理 ZFS 非常简单。首先，创建一个镜像池：
 
 ```
 # zpool create tank mirror /dev/ad[01]s1f
