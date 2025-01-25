@@ -22,27 +22,27 @@ Oracle 是 Oracle 公司的注册商标。
 
 </details>
 
- 摘要
+摘要
 
-这篇硕士论文涉及更新 Linux®模拟层（即所谓的 Linuxulator）。该任务是更新该层以匹配 Linux® 2.6 的功能。作为参考实现，选择了 Linux® 2.6.16 内核。该概念基本上是基于 NetBSD 的实现。大部分工作是在 2006 年夏季作为 Google Summer of Code 学生项目的一部分完成的。重点是将 NPTL（新 POSIX®线程库）支持带入模拟层，包括 TLS（线程本地存储）、futexes（快速用户空间互斥锁）、PID 篡改和一些其他小事情。在这个过程中，识别并修复了许多小问题。我的工作已经集成到主 FreeBSD 源代码库中，并将在即将发布的 7.0R 版本中发布。我们，模拟开发团队，正在努力使 Linux® 2.6 模拟成为 FreeBSD 中的默认模拟层。
+这篇硕士论文涉及更新 Linux® 模拟层（即所谓的 Linuxulator）。该任务是更新该层以匹配 Linux® 2.6 的功能。作为参考实现，选择了 Linux® 2.6.16 内核。该概念基本上是基于 NetBSD 的实现。大部分工作是在 2006 年夏季作为 Google Summer of Code 学生项目的一部分完成的。重点是将 NPTL（新 POSIX® 线程库）支持带入模拟层，包括 TLS（线程本地存储）、futexes（快速用户空间互斥锁）、PID 篡改和一些其他小事情。在这个过程中，识别并修复了许多小问题。我的工作已经集成到主 FreeBSD 源代码库中，并将在即将发布的 7.0R 版本中发布。我们，模拟开发团队，正在努力使 Linux® 2.6 模拟成为 FreeBSD 中的默认模拟层。
 
 ---
 
 ## 1. 引言
 
-在过去几年里，开源的基于 UNIX®的操作系统开始广泛部署在服务器和客户端机器上。在这些操作系统中，我想要指出两个：FreeBSD，因为它的 BSD 传承、经过时间验证的代码库和许多有趣的功能；以及 Linux®，因为它拥有广泛的用户群体、充满热情的开发者社区以及大公司的支持。FreeBSD 倾向于在提供重型网络任务的服务器级机器上使用，而在桌面级普通用户机器上的使用较少。而 Linux®在服务器上有同样的用途，但在家庭用户中使用更为广泛。这导致一个情况：有许多仅支持 Linux®的二进制程序在 FreeBSD 上缺乏支持。
+在过去几年里，开源的基于 UNIX® 的操作系统开始广泛部署在服务器和客户端机器上。在这些操作系统中，我想要指出两个：FreeBSD，因为它的 BSD 传承、经过时间验证的代码库和许多有趣的功能；以及 Linux®，因为它拥有广泛的用户群体、充满热情的开发者社区以及大公司的支持。FreeBSD 倾向于在提供重型网络任务的服务器级机器上使用，而在桌面级普通用户机器上的使用较少。而 Linux® 在服务器上有同样的用途，但在家庭用户中使用更为广泛。这导致一个情况：有许多仅支持 Linux® 的二进制程序在 FreeBSD 上缺乏支持。
 
-自然而然地，FreeBSD 系统上运行 Linux®二进制程序的需求应运而生，这正是本文所涉及的内容：在 FreeBSD 操作系统中对 Linux®内核进行仿真。
+自然而然地，FreeBSD 系统上运行 Linux® 二进制程序的需求应运而生，这正是本文所涉及的内容：在 FreeBSD 操作系统中对 Linux® 内核进行仿真。
 
-在 2006 年夏天，Google 公司赞助了一个项目，重点是扩展 FreeBSD 中的 Linux®仿真层（所谓的 Linuxulator），以包括 Linux® 2.6 设施。 这篇论文是作为这个项目的一部分编写的。
+在 2006 年夏天，Google 公司赞助了一个项目，重点是扩展 FreeBSD 中的 Linux® 仿真层（所谓的 Linuxulator），以包括 Linux® 2.6 设施。 这篇论文是作为这个项目的一部分编写的。
 
 ## 2. 一探究竟…
 
-在这一部分中，我们将描述每个操作系统。 它们如何处理系统调用、陷阱帧等等，所有底层内容。 我们还描述它们理解常见 UNIX®原语的方式，比如 PID 是什么，线程是什么等等。 在第三小节中，我们谈论 UNIX®对 UNIX®仿真如何在一般情况下完成。
+在这一部分中，我们将描述每个操作系统。 它们如何处理系统调用、陷阱帧等等，所有底层内容。 我们还描述它们理解常见 UNIX® 原语的方式，比如 PID 是什么，线程是什么等等。 在第三小节中，我们谈论 UNIX® 对 UNIX® 仿真如何在一般情况下完成。
 
-### UNIX®是一种具有悠久历史的操作系统，影响了几乎所有当前正在使用的其他操作系统。从 20 世纪 60 年代开始，它的发展一直持续至今（尽管在不同的项目中）。UNIX®的发展很快分成了两个主要的方向：BSD 和 System III/V 系列。它们通过制定一个共同的 UNIX®标准相互影响。在 BSD 中产生的贡献包括虚拟内存、TCP/IP 网络、FFS 等。System V 分支为 SysV 进程间通信原语、写时复制等做出了贡献。UNIX®本身不再存在，但其思想已被许多其他操作系统在全球范围内使用，从而形成了所谓的类 UNIX®操作系统。如今，最具影响力的是 Linux®、Solaris，可能（在某种程度上）还有 FreeBSD。存在一些公司内部的 UNIX®衍生产品（如 AIX、HP-UX 等），但这些产品已经越来越多地迁移到前述的系统上。让我们总结一下 UNIX®的典型特征。
+**UNIX® 是一种具有悠久历史的操作系统，影响了几乎所有当前正在使用的其他操作系统。从 20 世纪 60 年代开始，它的发展一直持续至今（尽管在不同的项目中）。UNIX® 的发展很快分成了两个主要的方向：BSD 和 System III/V 系列。它们通过制定一个共同的 UNIX® 标准相互影响。在 BSD 中产生的贡献包括虚拟内存、TCP/IP 网络、FFS 等。System V 分支为 SysV 进程间通信原语、写时复制等做出了贡献。UNIX® 本身不再存在，但其思想已被许多其他操作系统在全球范围内使用，从而形成了所谓的类 UNIX® 操作系统。如今，最具影响力的是 Linux®、Solaris，可能（在某种程度上）还有 FreeBSD。存在一些公司内部的 UNIX® 衍生产品（如 AIX、HP-UX 等），但这些产品已经越来越多地迁移到前述的系统上。让我们总结一下 UNIX® 的典型特征。**
 
-UNIX®具有悠久历史的操作系统，影响了几乎所有当前正在使用的其他操作系统。从 20 世纪 60 年代开始，它的发展一直持续至今（尽管在不同的项目中）。UNIX®的发展很快分成了两个主要的方向：BSD 和 System III/V 系列。它们通过制定一个共同的 UNIX®标准相互影响。在 BSD 中产生的贡献包括虚拟内存、TCP/IP 网络、FFS 等。System V 分支为 SysV 进程间通信原语、写时复制等做出了贡献。UNIX®本身不再存在，但其思想已被许多其他操作系统在全球范围内使用，从而形成了所谓的类 UNIX®操作系统。如今，最具影响力的是 Linux®、Solaris，可能（在某种程度上）还有 FreeBSD。存在一些公司内部的 UNIX®衍生产品（如 AIX、HP-UX 等），但这些产品已经越来越多地迁移到前述的系统上。让我们总结一下 UNIX®的典型特征。
+UNIX® 具有悠久历史的操作系统，影响了几乎所有当前正在使用的其他操作系统。从 20 世纪 60 年代开始，它的发展一直持续至今（尽管在不同的项目中）。UNIX® 的发展很快分成了两个主要的方向：BSD 和 System III/V 系列。它们通过制定一个共同的 UNIX® 标准相互影响。在 BSD 中产生的贡献包括虚拟内存、TCP/IP 网络、FFS 等。System V 分支为 SysV 进程间通信原语、写时复制等做出了贡献。UNIX® 本身不再存在，但其思想已被许多其他操作系统在全球范围内使用，从而形成了所谓的类 UNIX® 操作系统。如今，最具影响力的是 Linux®、Solaris，可能（在某种程度上）还有 FreeBSD。存在一些公司内部的 UNIX® 衍生产品（如 AIX、HP-UX 等），但这些产品已经越来越多地迁移到前述的系统上。让我们总结一下 UNIX® 的典型特征。
 
 ### 技术细节
 
@@ -64,29 +64,29 @@ UNIX®具有悠久历史的操作系统，影响了几乎所有当前正在使�
 
 #### 2.2.4. 线程管理
 
-传统的 UNIX®并未为线程定义任何 API 或实现，而 POSIX®定义了其线程 API，但实现未定义。传统上有两种实现线程的方式。将它们处理为独立进程（1:1 线程）或将整个线程组包装在一个进程中，并在用户空间管理线程（1:N 线程）。比较每种方法的主要特点：
+传统的 UNIX® 并未为线程定义任何 API 或实现，而 POSIX® 定义了其线程 API，但实现未定义。传统上有两种实现线程的方式。将它们处理为独立进程（1:1 线程）或将整个线程组包装在一个进程中，并在用户空间管理线程（1:N 线程）。比较每种方法的主要特点：
 
- 1:1 线程
+1:1 线程
 
-*
-* 重量级线程
-*
-* 由用户无法更改调度（通过 POSIX® API 略有缓解）
-*
-* 不需要系统调用包装
-*
-* 可利用多个 CPU
+-
+- 重量级线程
+-
+- 由用户无法更改调度（通过 POSIX® API 略有缓解）
+-
+- 不需要系统调用包装
+-
+- 可利用多个 CPU
 
- 1:N 线程
+1:N 线程
 
-*
-* 轻量级线程
-*
-* 调度可以被用户轻松改变
-*
-* 系统调用必须包装
-*
-* 不能利用超过一个 CPU
+-
+- 轻量级线程
+-
+- 调度可以被用户轻松改变
+-
+- 系统调用必须包装
+-
+- 不能利用超过一个 CPU
 
 ### 2.3. 什么是 FreeBSD?
 
@@ -94,19 +94,19 @@ FreeBSD 项目是目前可供日常使用的最古老的开源操作系统之一
 
 FreeBSD 是一款现代的基于 UNIX® 的操作系统，具有 UNIX® 的所有特性。抢占式多任务处理、多用户设施、TCP/IP 网络、内存保护、对称多处理支持、具有合并 VM 和缓存的虚拟内存，它们都在那里。有趣且极其有用的一个功能是能够模拟其他类 UNIX® 操作系统。截至 2006 年 12 月和 7-CURRENT 开发，支持以下模拟功能：
 
-* FreeBSD/i386 在 FreeBSD/amd64 上的仿真
-* 在 FreeBSD / ia64 上模拟 FreeBSD / i386
-* 在 FreeBSD 上模拟 Linux®操作系统
-* Windows 网络驱动程序接口的 NDIS 模拟
-* NetBSD 操作系统的 NetBSD 仿真
-* 支持 PECoff FreeBSD 可执行文件的 PECoff
-* System V 修订版 4 UNIX®的 SVR4 仿真
+- FreeBSD/i386 在 FreeBSD/amd64 上的仿真
+- 在 FreeBSD / ia64 上模拟 FreeBSD / i386
+- 在 FreeBSD 上模拟 Linux® 操作系统
+- Windows 网络驱动程序接口的 NDIS 模拟
+- NetBSD 操作系统的 NetBSD 仿真
+- 支持 PECoff FreeBSD 可执行文件的 PECoff
+- System V 修订版 4 UNIX® 的 SVR4 仿真
 
-积极开发的仿真是 Linux®层和各种 FreeBSD-on-FreeBSD 层。其他的不应该在这些日子里正常工作或可用。
+积极开发的仿真是 Linux® 层和各种 FreeBSD-on-FreeBSD 层。其他的不应该在这些日子里正常工作或可用。
 
 #### 2.3.1. 技术细节
 
-FreeBSD 是 UNIX®传统风味，它将进程的运行划分为内核空间和用户空间运行的两半。内核有两种类型的进程入口：系统调用和陷阱。只有一种返回方式。在后续章节中，我们将描述从内核进入/离开的三个门。整个描述适用于 i386 架构，因为 Linuxulator 仅在那里存在，但在其他架构上，概念类似。此信息来源于[1]和源代码。
+FreeBSD 是 UNIX® 传统风味，它将进程的运行划分为内核空间和用户空间运行的两半。内核有两种类型的进程入口：系统调用和陷阱。只有一种返回方式。在后续章节中，我们将描述从内核进入/离开的三个门。整个描述适用于 i386 架构，因为 Linuxulator 仅在那里存在，但在其他架构上，概念类似。此信息来源于[1]和源代码。
 
 ##### 2.3.1.1。 系统项
 
@@ -116,7 +116,7 @@ FreeBSD 有一个称为执行类载入器的抽象概念，它是 execve(2) 系�
 
 在 FreeBSD 上，通过执行中断 0x80 ，并将寄存器 %eax 设置为所需的系统调用号，同时通过堆栈传递参数来发出系统调用。
 
-当进程发出中断 0x80 时，会触发 int0x80 系统调用陷阱处理程序（定义在 sys/i386/i386/exception.s 中），该处理程序会准备参数（即将它们复制到堆栈上），以便调用 C 函数 syscall(2)（定义在 sys/i386/i386/trap.c 中），该函数处理传入的 trapframe。处理过程包括准备系统调用（取决于 sysvec 条目）、确定系统调用是 32 位还是 64 位（改变参数的大小），然后复制参数，包括系统调用。接下来，实际的系统调用函数会执行，并处理返回码（对于 ERESTART 和 EJUSTRETURN 错误有特殊处理）。最后会调度一个 userret() ，将进程切换回用户空间。实际系统调用处理程序的参数以 struct thread *td 、 struct syscall args * 形式传递，其中第二个参数是指向复制参数结构的指针。
+当进程发出中断 0x80 时，会触发 int0x80 系统调用陷阱处理程序（定义在 sys/i386/i386/exception.s 中），该处理程序会准备参数（即将它们复制到堆栈上），以便调用 C 函数 syscall(2)（定义在 sys/i386/i386/trap.c 中），该函数处理传入的 trapframe。处理过程包括准备系统调用（取决于 sysvec 条目）、确定系统调用是 32 位还是 64 位（改变参数的大小），然后复制参数，包括系统调用。接下来，实际的系统调用函数会执行，并处理返回码（对于 ERESTART 和 EJUSTRETURN 错误有特殊处理）。最后会调度一个 userret() ，将进程切换回用户空间。实际系统调用处理程序的参数以 struct thread _td 、 struct syscall args _ 形式传递，其中第二个参数是指向复制参数结构的指针。
 
 ##### 2.3.1.3. 陷阱
 
@@ -130,11 +130,11 @@ FreeBSD 有一个称为执行类载入器的抽象概念，它是 execve(2) 系�
 
 FreeBSD 操作系统遵循传统的 UNIX® 方案，其中每个进程都有一个唯一的标识号，即所谓的 PID（进程 ID）。PID 号码是线性或随机分配的，范围从 0 到 PID_MAX 。PID 号码的分配是通过线性搜索 PID 空间来完成的。进程中的每个线程通过 getpid(2) 调用都会收到相同的 PID 号码作为结果。
 
-FreeBSD 目前有两种实现线程的方法。第一种方法是 M:N 线程模型，接着是 1:1 线程模型。默认使用的库是 M:N 线程模型（ libpthread ），您可以在运行时切换到 1:1 线程模型（ libthr ）。计划很快将默认切换到 1:1 库。尽管这两个库使用相同的内核原语，但它们通过不同的 API 访问。M:N 库使用 kse_* 系列的系统调用，而 1:1 库使用 thr_* 系列的系统调用。由于这一点，在内核和用户空间之间没有线程 ID 的通用概念。当然，这两个线程库都实现了 pthread 线程 ID API。每个内核线程（如 struct thread 所述）都有一个 td tid 标识符，但这并不能直接从用户空间访问，而且仅仅为内核的需求服务。它也被用作 1:1 线程库的 pthread 线程 ID，但这个处理是内部库处理的，不能依赖它。
+FreeBSD 目前有两种实现线程的方法。第一种方法是 M:N 线程模型，接着是 1:1 线程模型。默认使用的库是 M:N 线程模型（ libpthread ），您可以在运行时切换到 1:1 线程模型（ libthr ）。计划很快将默认切换到 1:1 库。尽管这两个库使用相同的内核原语，但它们通过不同的 API 访问。M:N 库使用 kse*\* 系列的系统调用，而 1:1 库使用 thr*\* 系列的系统调用。由于这一点，在内核和用户空间之间没有线程 ID 的通用概念。当然，这两个线程库都实现了 pthread 线程 ID API。每个内核线程（如 struct thread 所述）都有一个 td tid 标识符，但这并不能直接从用户空间访问，而且仅仅为内核的需求服务。它也被用作 1:1 线程库的 pthread 线程 ID，但这个处理是内部库处理的，不能依赖它。
 
 正如之前所述，在 FreeBSD 中有两种线程实现。M:N 库将工作划分为内核空间和用户空间。线程是在内核中调度的实体，但它可以代表多个用户空间线程。 M 个用户空间线程映射到 N 个内核线程，从而节省资源，同时保持利用多处理器并行性的能力。有关该实现的更多信息可以从 man 页面或[1]获取。 1:1 库直接将用户空间线程映射到内核线程，从而极大地简化了方案。这些设计都没有实现公平机制（尽管曾经实现过一种机制，但最近已经移除，因为它导致严重减速并使代码更难处理）。
 
-### 2.4.Linux®是什么
+### 2.4.Linux® 是什么
 
 Linux® 是一个类 Unix 内核，最初是由 Linus Torvalds 开发的，现在正在全世界众多程序员的贡献。从其刚开始的阶段到今天，得到了 IBM 或谷歌等公司的大力支持，Linux® 被认为具有快速的发展步伐，完整的硬件支持和仁慈独裁者组织模式。
 
@@ -148,7 +148,7 @@ Linux® 的开发始于 1991 年芬兰赫尔辛基大学的一个业余项目。
 
 #### 2.4.1. 技术细节
 
-Linux®遵循传统的 UNIX®方案，将进程的运行划分为两个部分：内核和用户空间。内核可以通过陷阱或系统调用两种方式进入。返回仅以一种方式处理。进一步的描述适用于 Linux® 2.6 在 i386™架构上。此信息来自[2]。
+Linux® 遵循传统的 UNIX® 方案，将进程的运行划分为两个部分：内核和用户空间。内核可以通过陷阱或系统调用两种方式进入。返回仅以一种方式处理。进一步的描述适用于 Linux® 2.6 在 i386™ 架构上。此信息来自[2]。
 
 ##### 2.4.1.1. 系统调用
 
@@ -177,20 +177,20 @@ Linux®遵循传统的 UNIX®方案，将进程的运行划分为两个部分：
 
 实现的克隆标志有：
 
-* CLONE_VM - 进程共享它们的内存空间
-* CLONE_FS - 共享 umask、当前工作目录和命名空间
-* CLONE_FILES - 共享打开的文件
-* CLONE_SIGHAND - 共享信号处理程序和被阻止的信号
-* CLONE_PARENT - 共享父级
-* CLONE_THREAD - 线程优化 (以下进一步解释)
-* CLONE_NEWNS - 新命名空间
-* CLONE_SYSVSEM - 共享 SysV 撤销结构
-* CLONE_SETTLS - 在提供的地址设置 TLS
-* CLONE_PARENT_SETTID - 在父级中设置 TID
-* CLONE_CHILD_CLEARTID - 在子级中清除 TID
-* CLONE_CHILD_SETTID - 在子级中设置 TID
+- CLONE_VM - 进程共享它们的内存空间
+- CLONE_FS - 共享 umask、当前工作目录和命名空间
+- CLONE_FILES - 共享打开的文件
+- CLONE_SIGHAND - 共享信号处理程序和被阻止的信号
+- CLONE_PARENT - 共享父级
+- CLONE_THREAD - 线程优化 (以下进一步解释)
+- CLONE_NEWNS - 新命名空间
+- CLONE_SYSVSEM - 共享 SysV 撤销结构
+- CLONE_SETTLS - 在提供的地址设置 TLS
+- CLONE_PARENT_SETTID - 在父级中设置 TID
+- CLONE_CHILD_CLEARTID - 在子级中清除 TID
+- CLONE_CHILD_SETTID - 在子级中设置 TID
 
-CLONE_PARENT 将真实父进程设置为调用者的父进程。对于线程来说很有用，因为如果线程 A 创建线程 B，我们希望线程 B 被赋予整个线程组的父进程。 CLONE_THREAD 正好做了与 CLONE_PARENT 、 CLONE_VM 和 CLONE_SIGHAND 相同的事情，重写 PID 为调用者的 PID，设置退出信号为无，然后进入线程组。 CLONE_SETTLS 设置 GDT 条目以处理 TLS。一组 CLONE_ *_* TID 标志设置/清除用户提供的地址为 TID 或 0。
+CLONE*PARENT 将真实父进程设置为调用者的父进程。对于线程来说很有用，因为如果线程 A 创建线程 B，我们希望线程 B 被赋予整个线程组的父进程。 CLONE_THREAD 正好做了与 CLONE_PARENT 、 CLONE_VM 和 CLONE_SIGHAND 相同的事情，重写 PID 为调用者的 PID，设置退出信号为无，然后进入线程组。 CLONE_SETTLS 设置 GDT 条目以处理 TLS。一组 CLONE* _\__ TID 标志设置/清除用户提供的地址为 TID 或 0。
 
 正如您所见， CLONE_THREAD 完成了大部分工作，但似乎不太适合这个方案。最初的意图不清楚（即使对于代码的作者来说，根据代码中的注释），但我认为最初有一个线程标志，然后被分成许多其他标志，但这种分离从未完全完成。不清楚这种分区有何用处，因为 glibc 不使用它，所以只有手工编写的 clone 使用允许程序员访问这些功能。
 
@@ -228,13 +228,13 @@ CLONE_SIGNAL 被定义为
 
 从实现角度来看，实现仿真有两种主要方法。您可以仿真整个对象 - 接受原始对象可能的输入，维护内部状态，并根据状态和/或输入生成正确的输出。这种仿真不需要任何特殊条件，基本上可以在任何设备/程序上实现。缺点是实现这种仿真非常困难、耗时且容易出错。在某些情况下，我们可以使用更简单的方法。想象一下，您要在从右到左打印的打印机上仿真从左到右打印的打印机。显然，不需要复杂的仿真层，只需简单地反转打印文本即可。有时仿真环境与仿真对象非常相似，因此只需要一些翻译的薄层即可提供完全工作的仿真！正如您所看到的，这要求要实现的工作量要少得多，因此比前一种方法少耗时且少出错。但是必要的条件是这两个环境必须足够相似。第三种方法结合了前两种方法。大多数时候，对象并不提供相同的功能，因此在较强大的对象上对较弱的对象进行仿真时，我们必须使用上述全面仿真来仿真缺失的功能。
 
-本硕士论文涉及 UNIX®在 UNIX®上的仿真，这正是只需一层薄薄的翻译就能提供完整仿真的情况。UNIX® API 由一组系统调用组成，这些调用通常是自包含的，不会影响一些全局内核状态。
+本硕士论文涉及 UNIX® 在 UNIX® 上的仿真，这正是只需一层薄薄的翻译就能提供完整仿真的情况。UNIX® API 由一组系统调用组成，这些调用通常是自包含的，不会影响一些全局内核状态。
 
 有一些系统调用会影响内部状态，但可以通过提供一些维护额外状态的结构来解决这个问题。
 
 没有完美的仿真，仿真往往会缺少一些部分，但这通常不会造成严重的缺陷。想象一下一个游戏主机模拟器，它模拟了一切，但没有音乐输出。毫无疑问，游戏是可以玩的，人们可以使用模拟器。这也许不像原始游戏主机那样舒适，但在价格和舒适性之间是一个可接受的妥协。
 
-与 UNIX® API 一样。 大多数程序可以使用非常有限的一组系统调用而生存。 这些系统调用往往是最古老的（read（2）/write（2），fork（2）系列，signal（3）处理，exit（3），socket（2）API），因此很容易进行模拟，因为它们的语义在所有 UNIX®之间共享，这些 UNIX®存在于今天。
+与 UNIX® API 一样。 大多数程序可以使用非常有限的一组系统调用而生存。 这些系统调用往往是最古老的（read（2）/write（2），fork（2）系列，signal（3）处理，exit（3），socket（2）API），因此很容易进行模拟，因为它们的语义在所有 UNIX® 之间共享，这些 UNIX® 存在于今天。
 
 ## 3. 模拟
 
@@ -242,7 +242,7 @@ CLONE_SIGNAL 被定义为
 
 正如早前所述，FreeBSD 支持从其他几个 UNIX®es 运行二进制文件。这是因为 FreeBSD 具有一个称为执行类加载器的抽象。它嵌入到 execve(2)系统调用中，因此当 execve(2)即将执行一个二进制文件时，它会检查其类型。
 
-在 FreeBSD 中基本上有两种类型的二进制文件。类似Shell的文本脚本，它们通过 #! 作为前两个字符进行标识，以及通常是 ELF 格式的普通二进制文件，它们是编译后的可执行对象的表示。绝大多数（可以说全部）的 FreeBSD 二进制文件属于 ELF 类型。ELF 文件包含一个标头，该标头指定了此 ELF 文件的操作系统 ABI。通过阅读此信息，操作系统可以准确确定给定文件的二进制类型。
+在 FreeBSD 中基本上有两种类型的二进制文件。类似 Shell 的文本脚本，它们通过 #! 作为前两个字符进行标识，以及通常是 ELF 格式的普通二进制文件，它们是编译后的可执行对象的表示。绝大多数（可以说全部）的 FreeBSD 二进制文件属于 ELF 类型。ELF 文件包含一个标头，该标头指定了此 ELF 文件的操作系统 ABI。通过阅读此信息，操作系统可以准确确定给定文件的二进制类型。
 
 每个操作系统 ABI 必须在 FreeBSD 内核中注册。这也适用于 FreeBSD 本机操作系统 ABI。因此，当 execve(2)执行一个二进制文件时，它会遍历已注册 API 列表，一旦找到正确的 API，它就开始使用操作系统 ABI 描述中包含的信息（其系统调用表、 errno 转换表等）。因此，每次进程调用系统调用时，它都会使用自己的一组系统调用，而不是一组全局的系统调用。这有效地提供了一种非常优雅且简单的方式来支持各种二进制格式的执行。
 
@@ -256,15 +256,15 @@ CLONE_SIGNAL 被定义为
 
 #### 3.2.1. 锁定原语
 
- 贡献者: Attilio Rao <<a href="mailto:attilio@FreeBSD.org">attilio@FreeBSD.org</a>>
+贡献者: Attilio Rao <<a href="mailto:attilio@FreeBSD.org">attilio@FreeBSD.org</a>>
 
 FreeBSD 同步原语集基于一个理念，即以一种方式提供大量不同的原语，以便在每个特定的、适当的情况下可以使用更好的原语。
 
 从一个高层次的角度来看，你可以在 FreeBSD 内核中考虑三种类型的同步原语：
 
-* 原子操作和内存屏障
-* 锁定
-* 调度屏障
+- 原子操作和内存屏障
+- 锁定
+- 调度屏障
 
 下面是 3 个家族的描述。对于每个锁定，您应该真正检查链接的手册页（在可能的情况下）以获取更详细的解释。
 
@@ -284,8 +284,8 @@ FreeBSD 内核具有多种类型的锁。每个锁由一些特殊属性定义，
 2. 阻塞
 3. 休眠
 
-|  | 数字并不随意 |
-| -- | -------------- |
+|     | 数字并不随意 |
+| --- | ------------ |
 
 ##### 3.2.1.4. 旋转锁
 
@@ -303,15 +303,15 @@ FreeBSD 内核具有多种类型的锁。每个锁由一些特殊属性定义，
 
 这是一个带有各自行为的锁列表：
 
-* 自旋互斥锁 - 自旋 - 互斥锁(9)
-* 睡眠互斥锁 - 阻塞 - 互斥锁(9)
-* 池互斥锁 - 阻塞 - mtx(池)
-* 睡眠家庭 - 睡眠中 - 睡眠（9）暂停 tsleep msleep msleep spin msleep rw msleep sx
-* condvar - 睡眠中 - condvar（9）
-* rwlock - 阻塞 - rwlock（9）
-* sxlock - 睡眠 - sx(9)
-* lockmgr - 睡眠 - lockmgr(9)
-* semaphores - 睡眠 - sema(9)
+- 自旋互斥锁 - 自旋 - 互斥锁(9)
+- 睡眠互斥锁 - 阻塞 - 互斥锁(9)
+- 池互斥锁 - 阻塞 - mtx(池)
+- 睡眠家庭 - 睡眠中 - 睡眠（9）暂停 tsleep msleep msleep spin msleep rw msleep sx
+- condvar - 睡眠中 - condvar（9）
+- rwlock - 阻塞 - rwlock（9）
+- sxlock - 睡眠 - sx(9)
+- lockmgr - 睡眠 - lockmgr(9)
+- semaphores - 睡眠 - sema(9)
 
 只有互斥锁、sxlocks、读写锁和 lockmgrs 这些锁才用于处理递归，但目前只有互斥锁和 lockmgrs 支持递归。
 
@@ -319,9 +319,9 @@ FreeBSD 内核具有多种类型的锁。每个锁由一些特殊属性定义，
 
 调度屏障旨在用于驱动线程调度。主要包括三个不同的存根：
 
-* 临界区（和抢占）
-* sched_bind
-* sched_pin
+- 临界区（和抢占）
+- sched_bind
+- sched_pin
 
 通常情况下，这些仅应在特定上下文中使用，即使它们通常可以替代锁，也应避免使用，因为它们不允许使用锁定调试工具来诊断简单的潜在问题（如 witness(4) 所示）。
 
@@ -348,7 +348,7 @@ if (__predict_true(p->p_sysent != &elf_Linux(R)_sysvec))
 	  return;
 ```
 
-正如您所看到的，我们有效地使用 __predict_true 修饰符将最常见的情况（FreeBSD 进程）折叠为简单的返回操作，从而保持高性能。这段代码应该转换为宏，因为当前它并不是很灵活，即我们不支持 Linux®64 仿真，也不支持 i386 上的 A.OUT Linux®进程。
+正如您所看到的，我们有效地使用 \_\_predict_true 修饰符将最常见的情况（FreeBSD 进程）折叠为简单的返回操作，从而保持高性能。这段代码应该转换为宏，因为当前它并不是很灵活，即我们不支持 Linux®64 仿真，也不支持 i386 上的 A.OUT Linux® 进程。
 
 #### 3.2.3. VFS
 
@@ -364,35 +364,35 @@ vn_fullpath(9) 函数尽力遍历 VFS 名称缓存，并返回给定（已锁定
 
 ##### 3.2.3.3. Vnode 操作
 
-* fgetvp - 给定一个线程和文件描述符号，返回关联的 vnode
-* vn_lock(9) - 锁定一个 vnode
-* vn_unlock - 解锁一个 vnode
-* VOP_READDIR(9) - 读取由 vnode 引用的目录
-* VOP_GETATTR(9) - 获取由 vnode 引用的文件或目录的属性
-* VOP_LOOKUP(9) - 查找到给定目录的路径
-* VOP_OPEN(9) - 打开由 vnode 引用的文件
-* VOP_CLOSE(9) - 关闭由 vnode 引用的文件
-* vput(9) - 减少 vnode 的使用计数并解锁
-* vrele(9) - 减少 vnode 的使用计数
-* vref(9) - 增加 vnode 的使用计数
+- fgetvp - 给定一个线程和文件描述符号，返回关联的 vnode
+- vn_lock(9) - 锁定一个 vnode
+- vn_unlock - 解锁一个 vnode
+- VOP_READDIR(9) - 读取由 vnode 引用的目录
+- VOP_GETATTR(9) - 获取由 vnode 引用的文件或目录的属性
+- VOP_LOOKUP(9) - 查找到给定目录的路径
+- VOP_OPEN(9) - 打开由 vnode 引用的文件
+- VOP_CLOSE(9) - 关闭由 vnode 引用的文件
+- vput(9) - 减少 vnode 的使用计数并解锁
+- vrele(9) - 减少 vnode 的使用计数
+- vref(9) - 增加 vnode 的使用计数
 
 ##### 3.2.3.4. 文件处理器操作
 
-* fget - 给定一个线程和文件描述符号，返回相关联的文件处理程序并引用它
-* fdrop - 释放文件处理程序的引用
-* fhold - 引用文件处理程序
+- fget - 给定一个线程和文件描述符号，返回相关联的文件处理程序并引用它
+- fdrop - 释放文件处理程序的引用
+- fhold - 引用文件处理程序
 
-## 4. Linux®模拟层 - MD 部分
+## 4. Linux® 模拟层 - MD 部分
 
 本节涉及 FreeBSD 操作系统中 Linux® 模拟层的实现。首先描述了机器相关部分，讨论用户空间和内核之间的交互是如何以及在哪里实现的。它涉及到系统调用、信号、ptrace、陷阱、堆栈修复。这一部分讨论了 i386，但它总体上编写得很通用，因此其他体系结构不应该有太大区别。下一部分是 Linuxulator 的机器无关部分。本节仅涵盖 i386 和 ELF 处理。A.OUT 已经过时且未经测试。
 
 ### 4.1. 系统调用处理
 
-系统调用处理主要是在 linux_sysvec.c 中编写的，它涵盖了 sysentvec 结构中指出的大多数例程。当运行在 FreeBSD 上的 Linux®进程发出系统调用时，通用系统调用例程会调用 Linux® ABI 的 linux prepsyscall 例程。
+系统调用处理主要是在 linux_sysvec.c 中编写的，它涵盖了 sysentvec 结构中指出的大多数例程。当运行在 FreeBSD 上的 Linux® 进程发出系统调用时，通用系统调用例程会调用 Linux® ABI 的 linux prepsyscall 例程。
 
 #### 4.1.1. Linux® prepsyscall
 
-Linux®通过寄存器传递系统调用参数（这就是为什么在 i386 上仅限于 6 个参数），而 FreeBSD 使用堆栈。Linux® prepsyscall 例程必须将参数从寄存器复制到堆栈中。寄存器的顺序是： %ebx ， %ecx ， %edx ， %esi ， %edi ， %ebp 。问题是对于大多数系统调用来说只是这样。一些系统调用（尤其是 clone ）使用不同的顺序，但幸运的是，通过在 linux_clone 原型中插入一个虚拟参数很容易解决。
+Linux® 通过寄存器传递系统调用参数（这就是为什么在 i386 上仅限于 6 个参数），而 FreeBSD 使用堆栈。Linux® prepsyscall 例程必须将参数从寄存器复制到堆栈中。寄存器的顺序是： %ebx ， %ecx ， %edx ， %esi ， %edi ， %ebp 。问题是对于大多数系统调用来说只是这样。一些系统调用（尤其是 clone ）使用不同的顺序，但幸运的是，通过在 linux_clone 原型中插入一个虚拟参数很容易解决。
 
 #### 4.1.2. 系统调用写入
 
@@ -441,7 +441,7 @@ Linux® 模拟层并不完整，因为某些系统调用没有正确实现，而
 
 ### 4.2. 信号处理
 
-信号处理通常在 FreeBSD 内核中完成，用于所有二进制兼容性，调用与兼容性相关的层。Linux®兼容性层为此目的定义 linux_sendsig 例程。
+信号处理通常在 FreeBSD 内核中完成，用于所有二进制兼容性，调用与兼容性相关的层。Linux® 兼容性层为此目的定义 linux_sendsig 例程。
 
 #### 4.2.1. Linux® sendsig
 
@@ -457,15 +457,15 @@ Linux® 模拟层并不完整，因为某些系统调用没有正确实现，而
 
 ### 4.3. Ptrace
 
-许多 UNIX®派生版本实现 ptrace(2)系统调用，以允许各种跟踪和调试功能。此功能使跟踪进程能够获取有关被跟踪进程的各种信息，如寄存器转储、进程地址空间中的任何内存等，还能够跟踪进程，比如在指令之间进行步进操作或在系统入口之间进行跟踪（系统调用和陷阱）。ptrace(2)还允许您在被跟踪的进程中设置各种信息（寄存器等）。ptrace(2)是一个 UNIX®范围的标准，在世界上大多数 UNIX®中实现。
+许多 UNIX® 派生版本实现 ptrace(2)系统调用，以允许各种跟踪和调试功能。此功能使跟踪进程能够获取有关被跟踪进程的各种信息，如寄存器转储、进程地址空间中的任何内存等，还能够跟踪进程，比如在指令之间进行步进操作或在系统入口之间进行跟踪（系统调用和陷阱）。ptrace(2)还允许您在被跟踪的进程中设置各种信息（寄存器等）。ptrace(2)是一个 UNIX® 范围的标准，在世界上大多数 UNIX® 中实现。
 
-FreeBSD 中的 Linux®仿真实现了 linux_ptrace.c 中的 ptrace(2)工具。 在 Linux®和 FreeBSD 之间转换寄存器的例程以及实际的 ptrace(2)系统调用仿真系统调用。该系统调用是一个长开关块，用于为每个 ptrace(2)命令在 FreeBSD 中实现其 Linux®对应项。 ptrace(2)命令在 Linux®和 FreeBSD 之间大多是相同的，所以通常只需要进行一些小的修改。 例如，在 Linux®中， PT_GETREGS 操作直接数据，而 FreeBSD 使用数据的指针，因此在执行(native) ptrace(2)系统调用后，必须执行复制操作以保留 Linux®语义。
+FreeBSD 中的 Linux® 仿真实现了 linux_ptrace.c 中的 ptrace(2)工具。 在 Linux® 和 FreeBSD 之间转换寄存器的例程以及实际的 ptrace(2)系统调用仿真系统调用。该系统调用是一个长开关块，用于为每个 ptrace(2)命令在 FreeBSD 中实现其 Linux® 对应项。 ptrace(2)命令在 Linux® 和 FreeBSD 之间大多是相同的，所以通常只需要进行一些小的修改。 例如，在 Linux® 中， PT_GETREGS 操作直接数据，而 FreeBSD 使用数据的指针，因此在执行(native) ptrace(2)系统调用后，必须执行复制操作以保留 Linux® 语义。
 
 Linuxulator 中的 ptrace(2)实现存在一些已知弱点。在 Linuxulator 环境中使用 strace （这是一个 ptrace(2)使用者）时发生过紧急情况。还没有实现 PT_SYSCALL 。
 
 ### 4.4. 陷阱
 
-每当在仿真层运行的 Linux®进程陷入陷阱时，只有陷阱转换例外情况下才会透明地处理它。 Linux®和 FreeBSD 对于陷阱的定义存在差异，因此需要在此处理。 代码实际上非常简短：
+每当在仿真层运行的 Linux® 进程陷入陷阱时，只有陷阱转换例外情况下才会透明地处理它。 Linux® 和 FreeBSD 对于陷阱的定义存在差异，因此需要在此处理。 代码实际上非常简短：
 
 ```
 static int
@@ -497,7 +497,7 @@ RTLD 运行时链接编辑器期望在 execve 期间堆栈上有所谓的 AUX �
 
 i386 上的 Linux® 仿真层也支持 Linux® A.OUT 二进制文件。前面部分描述的几乎所有内容都必须为 A.OUT 支持实现（除了陷阱翻译和信号发送）。A.OUT 二进制文件的支持不再维护，尤其是 2.6 仿真不支持它，但这并不会造成任何问题，因为 ports 中的 linux-base 可能根本不支持 A.OUT 二进制文件。这个支持可能会在未来被移除。加载 Linux® A.OUT 二进制文件所需的大部分内容都在 imgact_linux.c 文件中。
 
-## 5. Linux®仿真层 -MI 部分
+## 5. Linux® 仿真层 -MI 部分
 
 本节讨论 Linuxulator 的机器无关部分。它涵盖了 Linux® 2.6 仿真所需的仿真基础设施，线程本地存储（TLS）实现（在 i386 上）和 futexes。然后我们简要讨论一些系统调用。
 
@@ -511,7 +511,7 @@ FreeBSD Linuxulator 实现在三个主要领域接近 NPTL。TLS、futexes 和 P
 
 ### 5.2. Linux® 2.6 模拟基础设施
 
-这些部分涉及 Linux®线程的管理方式以及我们在 FreeBSD 中如何模拟它们。
+这些部分涉及 Linux® 线程的管理方式以及我们在 FreeBSD 中如何模拟它们。
 
 #### 5.2.1. 运行时确定 2.6 模拟
 
@@ -567,7 +567,7 @@ struct linux_emuldata *em_find(struct proc *, int locked);
 
 #### 5.2.3. PID 篡改
 
-由于 FreeBSD 和 Linux®在进程 ID 和线程 ID 的概念上存在差异，我们必须以某种方式来翻译这种观点。我们通过 PID 篡改来实现。这意味着我们在内核和用户空间之间伪造 PID（=TGID）和 TID（=PID）。经验法则是在内核（在 Linux 模拟器中）中，PID = PID，TGID = shared → group pid，在用户空间中我们呈现 PID = shared → group_pid 和 TID = proc → p_pid 。 linux_emuldata structure 的 PID 成员是 FreeBSD PID。
+由于 FreeBSD 和 Linux® 在进程 ID 和线程 ID 的概念上存在差异，我们必须以某种方式来翻译这种观点。我们通过 PID 篡改来实现。这意味着我们在内核和用户空间之间伪造 PID（=TGID）和 TID（=PID）。经验法则是在内核（在 Linux 模拟器中）中，PID = PID，TGID = shared → group pid，在用户空间中我们呈现 PID = shared → group_pid 和 TID = proc → p_pid 。 linux_emuldata structure 的 PID 成员是 FreeBSD PID。
 
 上述主要影响 getpid、getppid、gettid 系统调用。我们分别使用 PID/TGID。在 child_clear_tid 和 child_set_tid 的 TID 复制中，我们复制出 FreeBSD PID。
 
@@ -596,7 +596,7 @@ clone 系统调用能够且事实上用于模拟经典的 fork(2) 和 vfork(2) �
 
 #### 5.3.1. 线程概述
 
-计算机科学中的线程是进程中可以独立调度的实体。进程中的线程共享进程范围的数据（文件描述符等），但也有自己的堆栈用于自己的数据。有时需要进程范围的数据特定于给定线程。想象一下线程在执行中的名称之类的东西。传统的 UNIX® 线程 API，pthread 提供了一种方法通过 pthread_key_create(3)，pthread_setspecific(3) 和 pthread_getspecific(3) 来实现，在这种方法中，线程可以创建一个用于线程本地数据的密钥，并使用 pthread_getspecific(3) 或 pthread_getspecific(3) 来操作这些数据。您很容易看出，这并不是完成这项任务的最舒适的方法。因此，各种 C/C++ 编译器的生产商引入了一个更好的方法。他们定义了一个新的修饰关键字 thread，指定一个变量是线程特定的。还开发了一种访问这些变量的新方法（至少在 i386 上是这样）。pthread 方法往往在用户空间中实现为一个简单的查找表。这种解决方案的性能并不是很好。因此，新方法在 i386 上使用段寄存器来定位存储 TLS 区域的段，因此访问线程变量实际上只是将段寄存器附加到地址上，从而通过它进行寻址。段寄存器通常是 %gs 和 %fs ，充当段选择器。每个线程都有自己的区域，线程本地数据存储在其中，必须在每次上下文切换时加载段。该方法非常快速，并且几乎完全在整个 i386 UNIX® 世界中使用。FreeBSD 和 Linux® 都实现了这种方法，并获得了非常好的结果。唯一的缺点是需要在每次上下文切换时重新加载段，这可能会减慢上下文切换的速度。FreeBSD 通过仅使用 1 个段描述符来尽量避免这种开销，而 Linux® 使用 3 个。 几乎没有什么东西使用超过 1 个描述符（只有 Wine 似乎使用了 2 个），因此 Linux®为上下文切换支付了这个不必要的代价。
+计算机科学中的线程是进程中可以独立调度的实体。进程中的线程共享进程范围的数据（文件描述符等），但也有自己的堆栈用于自己的数据。有时需要进程范围的数据特定于给定线程。想象一下线程在执行中的名称之类的东西。传统的 UNIX® 线程 API，pthread 提供了一种方法通过 pthread_key_create(3)，pthread_setspecific(3) 和 pthread_getspecific(3) 来实现，在这种方法中，线程可以创建一个用于线程本地数据的密钥，并使用 pthread_getspecific(3) 或 pthread_getspecific(3) 来操作这些数据。您很容易看出，这并不是完成这项任务的最舒适的方法。因此，各种 C/C++ 编译器的生产商引入了一个更好的方法。他们定义了一个新的修饰关键字 thread，指定一个变量是线程特定的。还开发了一种访问这些变量的新方法（至少在 i386 上是这样）。pthread 方法往往在用户空间中实现为一个简单的查找表。这种解决方案的性能并不是很好。因此，新方法在 i386 上使用段寄存器来定位存储 TLS 区域的段，因此访问线程变量实际上只是将段寄存器附加到地址上，从而通过它进行寻址。段寄存器通常是 %gs 和 %fs ，充当段选择器。每个线程都有自己的区域，线程本地数据存储在其中，必须在每次上下文切换时加载段。该方法非常快速，并且几乎完全在整个 i386 UNIX® 世界中使用。FreeBSD 和 Linux® 都实现了这种方法，并获得了非常好的结果。唯一的缺点是需要在每次上下文切换时重新加载段，这可能会减慢上下文切换的速度。FreeBSD 通过仅使用 1 个段描述符来尽量避免这种开销，而 Linux® 使用 3 个。 几乎没有什么东西使用超过 1 个描述符（只有 Wine 似乎使用了 2 个），因此 Linux® 为上下文切换支付了这个不必要的代价。
 
 #### 5.3.2. i386 上的段
 
@@ -616,7 +616,7 @@ mov %edx,%gs:0x10
 
 ##### 5.3.4.1. i386
 
-当前线程加载 TLS 时，通过调用 set_thread_area 来完成；而在第二个进程加载 TLS 时，则在 clone 中的单独块中完成。这两个函数非常相似。唯一的区别在于 GDT 段的实际加载，对于新创建的进程，在下一次上下文切换时完成，而 set_thread_area 必须直接加载它。代码基本上做了这个操作。它复制来自用户空间的 Linux®形式段描述符。代码检查描述符的编号，但由于 FreeBSD 和 Linux®之间存在差异，我们对其进行了模拟。我们仅支持索引 6、3 和-1。其中，6 是真正的 Linux®编号，3 是真正的 FreeBSD 编号，-1 表示自动选择。然后我们将描述符编号设为常数 3，并将其复制到用户空间。我们依赖于用户空间进程使用描述符编号，但这在大多数情况下都有效（从未见过这种方法不起作用的情况）。接着，我们将描述符从 Linux®形式转换为机器相关形式（即操作系统无关形式），并将其复制到 FreeBSD 定义的段描述符中。最后，我们可以加载它。我们将描述符分配给线程的 PCB（进程控制块），并使用 load_gs 加载 %gs 段。这种加载必须在临界区中完成，以确保没有中断。 CLONE_SETTLS 情况完全相同，只是不执行 load_gs 的加载。用于此目的的段（段编号 3）在 FreeBSD 进程和 Linux®进程之间共享，因此 Linux®仿真层在普通 FreeBSD 上不会增加任何开销。
+当前线程加载 TLS 时，通过调用 set_thread_area 来完成；而在第二个进程加载 TLS 时，则在 clone 中的单独块中完成。这两个函数非常相似。唯一的区别在于 GDT 段的实际加载，对于新创建的进程，在下一次上下文切换时完成，而 set_thread_area 必须直接加载它。代码基本上做了这个操作。它复制来自用户空间的 Linux® 形式段描述符。代码检查描述符的编号，但由于 FreeBSD 和 Linux® 之间存在差异，我们对其进行了模拟。我们仅支持索引 6、3 和-1。其中，6 是真正的 Linux® 编号，3 是真正的 FreeBSD 编号，-1 表示自动选择。然后我们将描述符编号设为常数 3，并将其复制到用户空间。我们依赖于用户空间进程使用描述符编号，但这在大多数情况下都有效（从未见过这种方法不起作用的情况）。接着，我们将描述符从 Linux® 形式转换为机器相关形式（即操作系统无关形式），并将其复制到 FreeBSD 定义的段描述符中。最后，我们可以加载它。我们将描述符分配给线程的 PCB（进程控制块），并使用 load_gs 加载 %gs 段。这种加载必须在临界区中完成，以确保没有中断。 CLONE_SETTLS 情况完全相同，只是不执行 load_gs 的加载。用于此目的的段（段编号 3）在 FreeBSD 进程和 Linux® 进程之间共享，因此 Linux® 仿真层在普通 FreeBSD 上不会增加任何开销。
 
 ##### 5.3.4.2. amd64
 
@@ -656,12 +656,12 @@ int futex(void *uaddr, int op, int val, struct timespec *timeout, void *uaddr2, 
 
 Futexes 实现以下操作：
 
-* `FUTEX_WAIT`
-* `FUTEX_WAKE`
-* `FUTEX_FD`
-* `FUTEX_REQUEUE`
-* `FUTEX_CMP_REQUEUE`
-* `FUTEX_WAKE_OP`
+- `FUTEX_WAIT`
+- `FUTEX_WAKE`
+- `FUTEX_FD`
+- `FUTEX_REQUEUE`
+- `FUTEX_CMP_REQUEUE`
+- `FUTEX_WAKE_OP`
 
 ##### 5.4.3.1. FUTEX_WAIT
 
@@ -689,14 +689,14 @@ Futexes 实现以下操作：
 
 在 FUTEX_WAKE_OP 中实现的操作有：
 
-* `FUTEX_OP_SET`
-* `FUTEX_OP_ADD`
-* `FUTEX_OP_OR`
-* `FUTEX_OP_AND`
-* `FUTEX_OP_XOR`
+- `FUTEX_OP_SET`
+- `FUTEX_OP_ADD`
+- `FUTEX_OP_OR`
+- `FUTEX_OP_AND`
+- `FUTEX_OP_XOR`
 
-|  | futex 原型中没有 val2 参数。 val2 参数是从 struct timespec *timeout 参数中获取，用于操作 FUTEX_REQUEUE ， FUTEX_CMP_REQUEUE 和 FUTEX_WAKE_OP 。 |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     | futex 原型中没有 val2 参数。 val2 参数是从 struct timespec \*timeout 参数中获取，用于操作 FUTEX_REQUEUE ， FUTEX_CMP_REQUEUE 和 FUTEX_WAKE_OP 。 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 #### 5.4.4. FreeBSD 中的 Futex 仿真
 
@@ -736,7 +736,7 @@ struct waiting_proc {
 
 ##### 5.4.4.3. futex_wake
 
-在 futex_wake 函数中，唤醒休眠在 futex 上的线程。首先，在这个函数中，我们模仿了奇怪的 Linux®行为，在所有操作中唤醒 N 个线程，唯一的例外是 REQUEUE 操作在 N+1 个线程上执行。但通常这并没有任何区别，因为我们唤醒了所有线程。接下来，在循环中，我们唤醒 n 个线程，然后检查是否有新的 futex 需要重新排队。如果是这样，我们会在新的 futex 上重新排队最多 n2 个线程。这与 futex_sleep 协作。
+在 futex_wake 函数中，唤醒休眠在 futex 上的线程。首先，在这个函数中，我们模仿了奇怪的 Linux® 行为，在所有操作中唤醒 N 个线程，唯一的例外是 REQUEUE 操作在 N+1 个线程上执行。但通常这并没有任何区别，因为我们唤醒了所有线程。接下来，在循环中，我们唤醒 n 个线程，然后检查是否有新的 futex 需要重新排队。如果是这样，我们会在新的 futex 上重新排队最多 n2 个线程。这与 futex_sleep 协作。
 
 ##### 5.4.4.4. futex_wake_op
 
@@ -761,9 +761,9 @@ Futex implementation uses two lock lists protecting `sx_lock` and global locks (
 
 在这一部分，我将描述一些较小的系统调用，这些系统调用值得一提，因为它们的实现并不明显，或者从其他角度看这些系统调用很有趣。
 
-#### 5.5.1. *at 系列的系统调用
+#### 5.5.1. \*at 系列的系统调用
 
-在 Linux® 2.6.16 内核的开发过程中，*at 系列的系统调用被添加进来了。这些系统调用（例如 openat ）与它们的非 at 版本完全相同，只是在 dirfd 参数上稍有不同。这个参数改变了要在哪个文件上执行系统调用。当 filename 参数是绝对路径时， dirfd 会被忽略，但当文件路径是相对路径时，它就会起作用。 dirfd 参数是一个相对于哪个目录来检查相对路径名的目录。 dirfd 参数是一些目录或 AT_FDCWD 的文件描述符。所以例如 openat 系统调用可以是这样的：
+在 Linux® 2.6.16 内核的开发过程中，\*at 系列的系统调用被添加进来了。这些系统调用（例如 openat ）与它们的非 at 版本完全相同，只是在 dirfd 参数上稍有不同。这个参数改变了要在哪个文件上执行系统调用。当 filename 参数是绝对路径时， dirfd 会被忽略，但当文件路径是相对路径时，它就会起作用。 dirfd 参数是一个相对于哪个目录来检查相对路径名的目录。 dirfd 参数是一些目录或 AT_FDCWD 的文件描述符。所以例如 openat 系统调用可以是这样的：
 
 ```
 file descriptor 123 = /tmp/foo/, current working directory = /tmp/
@@ -776,21 +776,21 @@ openat(stdio, bah\, flags, mode)	/* returns error because stdio is not a directo
 
 此基础设施是为了避免在工作目录之外打开文件时发生竞争。 想象一个进程由两个线程组成，线程 A 和线程 B。 线程 A 发出 open(./tmp/foo/bah., flags, mode) ，然后在返回之前被抢占，线程 B 运行。 线程 B 不关心线程 A 的需求，并重命名或删除/tmp/foo/。 我们就会发生竞争。 为了避免这种情况，我们可以打开/tmp/foo 并将其用作 dirfd 的 openat 系统调用。 这还可以使用户实现每个线程的工作目录。
 
-Linux® *at 系统调用系列包括： linux_openat ， linux_mkdirat ， linux_mknodat ， linux_fchownat ， linux_futimesat ， linux_fstatat64 ， linux_unlinkat ， linux_renameat ， linux_linkat ， linux_symlinkat ， linux_readlinkat ， linux_fchmodat 和 linux_faccessat 。 所有这些都是使用修改后的 namei(9)例程和简单封装层实现的。
+Linux® \*at 系统调用系列包括： linux_openat ， linux_mkdirat ， linux_mknodat ， linux_fchownat ， linux_futimesat ， linux_fstatat64 ， linux_unlinkat ， linux_renameat ， linux_linkat ， linux_symlinkat ， linux_readlinkat ， linux_fchmodat 和 linux_faccessat 。 所有这些都是使用修改后的 namei(9)例程和简单封装层实现的。
 
 ##### 5.5.1.1. 实现
 
-实现是通过修改上述描述的 namei（9）例程来完成的，以便在其结构中添加附加参数 dirfd ，该参数指定路径名查找的起始点，而不是每次都使用当前工作目录。从文件描述符号到 vnode 的解析是在本机*at 系统调用中完成的。当 dirfd 是 AT_FDCWD 时， nameidata 结构中的 dvp 条目是 NULL ，但是当 dirfd 是一个不同的数字时，我们获取这个文件描述符的文件，检查这个文件是否有效，如果有 vnode 连接到它，然后我们获得一个 vnode。然后我们检查这个 vnode 是否是一个目录。在实际的 namei（9）例程中，我们只需将 dvp vnode 替换为 namei（9）函数中的 dp 变量，该函数确定起始点。namei（9）并不直接使用，而是通过各个级别的不同函数的跟踪。例如 openat 如下所示：
+实现是通过修改上述描述的 namei（9）例程来完成的，以便在其结构中添加附加参数 dirfd ，该参数指定路径名查找的起始点，而不是每次都使用当前工作目录。从文件描述符号到 vnode 的解析是在本机\*at 系统调用中完成的。当 dirfd 是 AT_FDCWD 时， nameidata 结构中的 dvp 条目是 NULL ，但是当 dirfd 是一个不同的数字时，我们获取这个文件描述符的文件，检查这个文件是否有效，如果有 vnode 连接到它，然后我们获得一个 vnode。然后我们检查这个 vnode 是否是一个目录。在实际的 namei（9）例程中，我们只需将 dvp vnode 替换为 namei（9）函数中的 dp 变量，该函数确定起始点。namei（9）并不直接使用，而是通过各个级别的不同函数的跟踪。例如 openat 如下所示：
 
 ```
 openat() --> kern_openat() --> vn_open() -> namei()
 ```
 
-因此，必须修改 kern_open 和 vn_open 以包含额外的 dirfd 参数。对于这些情况，没有为其创建兼容层，因为这些情况的用户并不多，而且用户可以很容易地转换。这种通用实现使 FreeBSD 能够实现自己的*at 系统调用。这正在讨论中。
+因此，必须修改 kern_open 和 vn_open 以包含额外的 dirfd 参数。对于这些情况，没有为其创建兼容层，因为这些情况的用户并不多，而且用户可以很容易地转换。这种通用实现使 FreeBSD 能够实现自己的\*at 系统调用。这正在讨论中。
 
 #### 5.5.2. Ioctl
 
-ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux®和 FreeBSD 之间的设备有所不同，因此必须谨慎地进行 ioctl 仿真工作。 ioctl 处理实现在 linux_ioctl.c 中，其中定义了 linux_ioctl 函数。该函数简单地遍历 ioctl 处理程序集以查找实现给定命令的处理程序。 ioctl 系统调用有三个参数，文件描述符、命令和一个参数。 命令是一个 16 位数字，理论上分为确定 ioctl 命令类别的高 8 位和给定集合中实际命令的低 8 位。仿真利用了这种划分。我们为每个集合实现处理程序，例如 sound_handler 或 disk_handler 。每个处理程序都有最大命令和最小命令定义，用于确定使用哪个处理程序。这种方法存在一些小问题，因为 Linux®未一致使用集合划分，因此有时不属于其应属于的集合中（SCSI 通用 ioctl 在 cdrom 集合中等）。目前 FreeBSD 没有实现许多 Linux®ioctls（例如与 NetBSD 相比），但计划从 NetBSD 中port这些 ioctls。趋势是在本地 FreeBSD 驱动程序中甚至使用 Linux®ioctls，因为这些应用程序易于移植。
+ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux® 和 FreeBSD 之间的设备有所不同，因此必须谨慎地进行 ioctl 仿真工作。 ioctl 处理实现在 linux_ioctl.c 中，其中定义了 linux_ioctl 函数。该函数简单地遍历 ioctl 处理程序集以查找实现给定命令的处理程序。 ioctl 系统调用有三个参数，文件描述符、命令和一个参数。 命令是一个 16 位数字，理论上分为确定 ioctl 命令类别的高 8 位和给定集合中实际命令的低 8 位。仿真利用了这种划分。我们为每个集合实现处理程序，例如 sound_handler 或 disk_handler 。每个处理程序都有最大命令和最小命令定义，用于确定使用哪个处理程序。这种方法存在一些小问题，因为 Linux® 未一致使用集合划分，因此有时不属于其应属于的集合中（SCSI 通用 ioctl 在 cdrom 集合中等）。目前 FreeBSD 没有实现许多 Linux®ioctls（例如与 NetBSD 相比），但计划从 NetBSD 中 port 这些 ioctls。趋势是在本地 FreeBSD 驱动程序中甚至使用 Linux®ioctls，因为这些应用程序易于移植。
 
 #### 5.5.3. 调试
 
@@ -800,35 +800,35 @@ ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux®
 
 ### 6.1. 结果
 
-截至 2007 年 4 月，FreeBSD 的 Linux®仿真层能够很好地仿真 Linux® 2.6.16 内核。剩余的问题涉及 futexes，未完成的*at 系统调用系列，信号传递问题，缺少 epoll 和 inotify ，可能还有一些尚未发现的 bug。尽管如此，我们能够基本运行 FreeBSD Ports收藏中包含的所有 Linux®程序，使用的是 Fedora Core 4 和 2.6.16 内核，并且有一些初步的成功报告表明在 Fedora Core 6 和 2.6.16 上也能运行。最近提交了 Fedora Core 6 的 linux_base，进一步测试了仿真层，并提供了一些线索，告诉我们在实现缺失功能方面应该投入更多的努力。
+截至 2007 年 4 月，FreeBSD 的 Linux® 仿真层能够很好地仿真 Linux® 2.6.16 内核。剩余的问题涉及 futexes，未完成的\*at 系统调用系列，信号传递问题，缺少 epoll 和 inotify ，可能还有一些尚未发现的 bug。尽管如此，我们能够基本运行 FreeBSD Ports 收藏中包含的所有 Linux® 程序，使用的是 Fedora Core 4 和 2.6.16 内核，并且有一些初步的成功报告表明在 Fedora Core 6 和 2.6.16 上也能运行。最近提交了 Fedora Core 6 的 linux_base，进一步测试了仿真层，并提供了一些线索，告诉我们在实现缺失功能方面应该投入更多的努力。
 
-我们能够运行像 www/linux-firefox、net-im/skype 这样的最常用的应用程序，以及Ports系列中的一些游戏。一些程序在 2.6 模拟下表现出不良行为，但当前正在调查中，希望很快能解决。已知无法运行的唯一大型应用程序是 Linux® Java™开发工具包，这是因为需要 epoll 设施，这与 Linux®内核 2.6 并不直接相关。
+我们能够运行像 www/linux-firefox、net-im/skype 这样的最常用的应用程序，以及 Ports 系列中的一些游戏。一些程序在 2.6 模拟下表现出不良行为，但当前正在调查中，希望很快能解决。已知无法运行的唯一大型应用程序是 Linux® Java™ 开发工具包，这是因为需要 epoll 设施，这与 Linux® 内核 2.6 并不直接相关。
 
 我们希望在 FreeBSD 7.0 发布后的某个时候启用 2.6.16 模拟，默认情况下至少公开 2.6 模拟部分以进行更广泛的测试。一旦完成这一步，我们就可以切换到 Fedora Core 6 linux_base，这是最终计划。
 
 ### 6.2. 未来工作
 
-未来的工作应集中于修复与 futex 相关的剩余问题，实现 *at 系列系统调用，修复信号传递，并可能实现 epoll 和 inotify 设施。
+未来的工作应集中于修复与 futex 相关的剩余问题，实现 \*at 系列系统调用，修复信号传递，并可能实现 epoll 和 inotify 设施。
 
 我们希望能够尽快无缝运行最重要的程序，以便可以默认切换到 2.6 模拟，并将 Fedora Core 6 设为默认的 linux_base，因为我们目前使用的 Fedora Core 4 不再受到支持。
 
 另一个可能的目标是与 NetBSD 和 DragonflyBSD 共享我们的代码。NetBSD 对 2.6 模拟有一些支持，但还远未完成，且测试不充分。DragonflyBSD 对移植 2.6 改进表示了一些兴趣。
 
-一般来说，随着 Linux®的发展，我们希望能跟上他们的发展，实现新增的系统调用。首先想到的是 Splice。一些已实现的系统调用也是亚优化的，例如 mremap 等。还可以进行一些性能改进，例如更细粒度的锁定等。
+一般来说，随着 Linux® 的发展，我们希望能跟上他们的发展，实现新增的系统调用。首先想到的是 Splice。一些已实现的系统调用也是亚优化的，例如 mremap 等。还可以进行一些性能改进，例如更细粒度的锁定等。
 
 ### 6.3. 团队
 
 我参与了这个项目，与以下人员合作（按字母顺序排列）:
 
-* `John Baldwin <<a href="mailto:jhb@FreeBSD.org">jhb@FreeBSD.org</a>>`
-* `Konstantin Belousov <<a href="mailto:kib@FreeBSD.org">kib@FreeBSD.org</a>>`
-* 埃曼纽尔·德里福斯
-* 斯科特·赫泽尔
-* `Jung-uk Kim <<a href="mailto:jkim@FreeBSD.org">jkim@FreeBSD.org</a>>`
-* `Alexander Leidinger <<a href="mailto:netchild@FreeBSD.org">netchild@FreeBSD.org</a>>`
-* `Suleiman Souhlal <<a href="mailto:ssouhlal@FreeBSD.org">ssouhlal@FreeBSD.org</a>>`
-* 李晓
-* `David Xu <<a href="mailto:davidxu@FreeBSD.org">davidxu@FreeBSD.org</a>>`
+- `John Baldwin <<a href="mailto:jhb@FreeBSD.org">jhb@FreeBSD.org</a>>`
+- `Konstantin Belousov <<a href="mailto:kib@FreeBSD.org">kib@FreeBSD.org</a>>`
+- 埃曼纽尔·德里福斯
+- 斯科特·赫泽尔
+- `Jung-uk Kim <<a href="mailto:jkim@FreeBSD.org">jkim@FreeBSD.org</a>>`
+- `Alexander Leidinger <<a href="mailto:netchild@FreeBSD.org">netchild@FreeBSD.org</a>>`
+- `Suleiman Souhlal <<a href="mailto:ssouhlal@FreeBSD.org">ssouhlal@FreeBSD.org</a>>`
+- 李晓
+- `David Xu <<a href="mailto:davidxu@FreeBSD.org">davidxu@FreeBSD.org</a>>`
 
 我想感谢所有那些给予我的建议、代码审查和一般支持的人。
 
