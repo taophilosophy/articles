@@ -77,25 +77,25 @@ Language server 的安装可以通过 pkg 或通过 ports 进行。如果我们�
 
 ```
 au User lsp_setup call lsp#register_server({
-    \ 'name': 'ccls',
-    \ 'cmd': {server_info->['ccls']},
-    \ 'allowlist': ['c', 'cpp', 'objc'],
-    \ 'initialization_options': {
-    \     'cache': {
-    \         'hierarchicalPath': v:true
-    \     }
-    \ }})
+     'name': 'ccls',
+     'cmd': {server_info->['ccls']},
+     'allowlist': ['c', 'cpp', 'objc'],
+     'initialization_options': {
+         'cache': {
+             'hierarchicalPath': v:true
+         }
+     }})
 ```
 
 对于 clangd
 
 ```
 au User lsp_setup call lsp#register_server({
-    \ 'name': 'clangd',
-    \ 'cmd': {server_info->['clangd15', '--background-index', '--header-insertion=never']},
-    \ 'allowlist': ['c', 'cpp', 'objc'],
-    \ 'initialization_options': {},
-    \ })
+     'name': 'clangd',
+     'cmd': {server_info->['clangd15', '--background-index', '--header-insertion=never']},
+     'allowlist': ['c', 'cpp', 'objc'],
+     'initialization_options': {},
+     })
 ```
 
 根据您安装的版本 clangd ，您可能需要更新 server-info 以指向正确的二进制文件。

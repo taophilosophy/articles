@@ -34,7 +34,7 @@ UNIX 是 The Open Group 在美国和其他国家的注册商标。
 
 Linux 用户经常会惊讶地发现在 FreeBSD 中 Bash 不是默认的 shell。事实上，默认安装中不包括 Bash。相反，默认用户 shell 是与 Bourne shell-兼容的 sh(1)。在 FreeBSD 13 及更早版本中默认用户 shell 是 tcsh(1)，在 FreeBSD 14 及之后版本中是 sh(1)。sh(1)与 Bash 非常相似，但功能集较小。通常为 sh(1)编写的脚本将在 Bash 中运行，反之则并非总是成立。
 
-然而，在 FreeBSD 软件包和定制集合中可安装 Bash 和其他 shell。
+然而，在 FreeBSD 软件包和定制中可安装 Bash 和其他 shell。
 
 安装另一个 shell 后，使用 chsh(1) 来更改用户的默认 shell。建议保持 root 用户的默认 shell 不变，因为 shell 不包含在基础分发中，安装到 /usr/local/bin。如果出现问题，/usr/local/bin 所在的文件系统可能未挂载。在这种情况下， root 将无法访问其默认 shell，导致 root 无法登录并解决问题。
 
@@ -69,7 +69,7 @@ Ports
 
 ### 3.2. Ports
 
-FreeBSD 定制集合是一组特定定制的 Makefile 和补丁框架，专门用于在 FreeBSD 上从源代码安装应用程序。在安装一个定制时，系统将获取源代码，应用任何所需的补丁，编译代码，然后安装应用程序及其所需的任何依赖项。
+FreeBSD 定制是一组特定定制的 Makefile 和补丁框架，专门用于在 FreeBSD 上从源代码安装应用程序。在安装一个定制时，系统将获取源代码，应用任何所需的补丁，编译代码，然后安装应用程序及其所需的任何依赖项。
 
 Ports，有时被称为 ports 树，可以使用 Git 安装到/usr/ports。在 FreeBSD 手册的 4.5.1 节中可以找到安装 Ports 的详细说明。
 

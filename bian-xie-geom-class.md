@@ -184,7 +184,7 @@ g_class 结构中的字段 .geom 是从类实例化的 geoms 的 LIST。
 
 "softc" 这个名字是“驱动程序私有数据”的遗留术语。这个名字很可能来自古老的术语“软件控制块”。在 GEOM 中，它是一个结构体（更确切地说：指向结构体的指针），可以附加到一个 geom 实例上以保存该 geom 实例的私有数据。大多数 GEOM 类有以下成员：
 
-- struct g_provider \*provider ：该 geom 实例化的“provider”
+- struct g_provider *provider ：该 geom 实例化的“provider”
 - uint16_t n_disks ：此几何体消耗的消费者数量
 - struct g_consumer **disks ： struct g_consumer**​*的数组。（无法仅使用单个间接引用，因为 struct g_consumer* 是由 GEOM 代表我们创建的）。
 

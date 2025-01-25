@@ -117,15 +117,15 @@ Maintain an index to cross reference the fonts
 
 ```
 -bitstream-charter-medium-r-normal-xxx-0-0-0-0-p-0-iso8859-1
-     |        |      |    |   |     |  | | | | | |    \    \
-     |        |      |    |   |     \  \ \ \ \ \ \     +----+- character set
-     |        |      |    |   \      \  \ \ \ \ \ +- average width
-     |        |      |    |    \      \  \ \ \ \ +- spacing
-     |        |      |    \	\      \  \ \ \ +- vertical res.
-     |        |      |     \	 \	\  \ \ +- horizontal res.
-     |        |      |      \	  \	 \  \ +- points
-     |        |      |       \     \	  \  +- pixels
-     |        |      |        \     \	   \
+     |        |      |    |   |     |  | | | | | |        
+     |        |      |    |   |                 +----+- character set
+     |        |      |    |                +- average width
+     |        |      |    |                +- spacing
+     |        |      |    	           +- vertical res.
+     |        |      |     	 	    +- horizontal res.
+     |        |      |      	  	    +- points
+     |        |      |            	    +- pixels
+     |        |      |             	   
   foundry  family  weight   slant  width  additional style
 ```
 
@@ -279,7 +279,7 @@ Many .afm files are in Mac format... ^M delimited lines
 We need to convert them to UNIX(R) style ^J delimited lines
 % cd /tmp
 % cat /usr/local/share/fonts/type1/showboat.afm |
-	tr '\015' '\012' >showboat.afm
+	tr '015' '012' >showboat.afm
 
 Now create the groff font file
 % cd /usr/share/groff_font/devps
@@ -319,7 +319,7 @@ Showboat      showboat.pfa
 This is an example of the Showboat font:
 .br
 .ps 48
-.vs (\n(.s+2)p
+.vs (n(.s+2)p
 .sp
 .ft SHOWBOAT
 ABCDEFGHI
@@ -329,12 +329,12 @@ JKLMNOPQR
 STUVWXYZ
 .sp
 .ps 16
-.vs (\n(.s+2)p
+.vs (n(.s+2)p
 .fp 5 SHOWBOAT
 .ft R
 To use it for the first letter of a paragraph, it will look like:
 .sp 50p
-\s(48\f5H\s0\fRere is the first sentence of a paragraph that uses the
+s(48f5Hs0fRere is the first sentence of a paragraph that uses the
 showboat font as its first letter.
 Additional vertical space must be used to allow room for the larger
 letter.
@@ -440,7 +440,7 @@ TrueType 字体格式被 Windows、Windows 95 和 Mac 使用。它相当受欢�
 
 ## 10. 哪里可以获得更多字体？
 
-互联网上有许多字体。它们要么完全免费，要么是共享软件。此外，许多字体可以在 ports 集合中的 x11-fonts/ 目录下找到。
+互联网上有许多字体。它们要么完全免费，要么是共享软件。此外，许多字体可以在 ports 中的 x11-fonts/ 目录下找到。
 
 ## 11. 其他问题
 

@@ -44,8 +44,7 @@ add path 'lpt*' mode 0660 group cups
 add path 'usb/X.Y.Z' mode 0660 group cups
 ```
 
-|  | 请注意，X、Y 和 Z 应替换为列在/dev/usb 目录中与打印机对应的目标 USB 设备。要找到正确的设备，请检查 dmesg(8) 的输出，其中 ugenX.Y 列出打印机设备，它是指向/dev/usb 中 USB 设备的符号链接。 |
-| -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+>请注意，X、Y 和 Z 应替换为列在/dev/usb 目录中与打印机对应的目标 USB 设备。要找到正确的设备，请检查 dmesg(8) 的输出，其中 ugenX.Y 列出打印机设备，它是指向/dev/usb 中 USB 设备的符号链接。 
 
 接下来，在 /etc/rc.conf 中添加以下两行：
 
@@ -166,19 +165,19 @@ DefaultEncryption Never # comment this line to allow encryption
 # Set the default printer/job policies...
 <Policy default>
   # Job-related operations must be done by the owner or an administrator...
-  <Limit Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs \
-Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription \
-Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job \
+  <Limit Send-Document Send-URI Hold-Job Release-Job Restart-Job Purge-Jobs 
+Set-Job-Attributes Create-Job-Subscription Renew-Subscription Cancel-Subscription 
+Get-Notifications Reprocess-Job Cancel-Current-Job Suspend-Current-Job Resume-Job 
 CUPS-Move-Job>
     Require user @OWNER @SYSTEM
     Order deny,allow
   </Limit>
 
   # All administration operations require an administrator to authenticate...
-  <Limit Pause-Printer Resume-Printer Set-Printer-Attributes Enable-Printer \
-Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs \
-Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer \
-Promote-Job Schedule-Job-After CUPS-Add-Printer CUPS-Delete-Printer CUPS-Add-Class \
+  <Limit Pause-Printer Resume-Printer Set-Printer-Attributes Enable-Printer 
+Disable-Printer Pause-Printer-After-Current-Job Hold-New-Jobs Release-Held-New-Jobs 
+Deactivate-Printer Activate-Printer Restart-Printer Shutdown-Printer Startup-Printer 
+Promote-Job Schedule-Job-After CUPS-Add-Printer CUPS-Delete-Printer CUPS-Add-Class 
 CUPS-Delete-Class CUPS-Accept-Jobs CUPS-Reject-Jobs CUPS-Set-Default>
     AuthType Basic
     Require user @SYSTEM

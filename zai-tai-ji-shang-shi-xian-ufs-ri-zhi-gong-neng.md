@@ -336,7 +336,7 @@ tunefs: soft updates set
 
 日志记录是 FreeBSD 的一个相当新的功能，因此，它尚未得到很好的文档记录。不过，你可能会发现以下附加参考资料很有用：
 
-- 自由 BSD 手册现在有一个关于日记的新章节。
-- 自由 BSD-CURRENT 邮件列表中，gjournal(8)的开发者发布了这篇帖子。
-- 在自由 BSD 常见问题邮件列表中， Ivan Voras <<a href="mailto:ivoras@FreeBSD.org">ivoras@FreeBSD.org</a>> 发布了这篇帖子。
+-  FreeBSD 手册现在有一个关于日记的新章节。
+-  FreeBSD-CURRENT 邮件列表中，gjournal(8)的开发者发布了这篇帖子。
+- 在 FreeBSD 常见问题邮件列表中， Ivan Voras <<a href="mailto:ivoras@FreeBSD.org">ivoras@FreeBSD.org</a>> 发布了这篇帖子。
 - gjournal(8)和 geom(8)的手册页面。

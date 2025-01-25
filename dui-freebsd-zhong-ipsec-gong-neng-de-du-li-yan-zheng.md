@@ -148,19 +148,19 @@ char **argv;
 
   extern double   log(/* double x */);
 
-  printf("Uliscan 21 Dec 98 \nL=%d %d %d \n", L, V, MAXSAMP);
+  printf("Uliscan 21 Dec 98 nL=%d %d %d n", L, V, MAXSAMP);
 
   if (argc < 2) {
-    printf("Usage: Uliscan filename\n");
+    printf("Usage: Uliscan filenamen");
     exit(-1);
   } else {
-    printf("Measuring file %s\n", argv[1]);
+    printf("Measuring file %sn", argv[1]);
   }
 
   fptr = fopen(argv[1],"rb");
 
   if (fptr == NULL) {
-    printf("Can't find %s\n", argv[1]);
+    printf("Can't find %sn", argv[1]);
     exit(-1);
   }
 
@@ -173,9 +173,9 @@ char **argv;
     table[b] = i;
   }
 
-  printf("Init done\n");
+  printf("Init donen");
 
-  printf("Expected value for L=8 is 7.1836656\n");
+  printf("Expected value for L=8 is 7.1836656n");
 
   run = 1;
 
@@ -202,7 +202,7 @@ char **argv;
       }
 
     if (!run)
-      printf("Premature end of file; read %d blocks.\n", i - Q);
+      printf("Premature end of file; read %d blocks.n", i - Q);
 
     sum = (sum/((double)(i - Q))) /  log(2.0);
     printf("%4.4f ", sum);
@@ -210,7 +210,7 @@ char **argv;
     for (i = 0; i < (int)(sum*8.0 + 0.50); i++)
       printf("-");
 
-    printf("\n");
+    printf("n");
 
     /* refill initial table */
     if (0) {

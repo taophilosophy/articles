@@ -146,13 +146,13 @@ FreeBSD 分支在 Subversion 中的布局在提交者指南中有描述。创建
 - src/release/doc/en_US.ISO8859-1/relnotes/common/new.xml
 - src/release/doc/en_US.ISO8859-1/errata/article.xml
 
-Sysinstall 应该更新以注明可用的 ports 数量和 Ports 集合所需的磁盘空间。^[ 5]^ 此信息目前保存在 src/usr.sbin/bsdinstall/dist.c 中。
+Sysinstall 应该更新以注明可用的 ports 数量和 Ports 所需的磁盘空间。^[ 5]^ 此信息目前保存在 src/usr.sbin/bsdinstall/dist.c 中。
 
 发布版本构建完成后，应更新一些文件以向世界宣布发布。这些文件相对于 head/ 在 doc/ 子版本树中。
 
 - share/images/articles/releng/branches-relengX.pic
 - head/shared/xml/release.ent
-- en_US.ISO8859-1/htdocs/releases/\*
+- en_US.ISO8859-1/htdocs/releases/*
 - en_US.ISO8859-1/htdocs/releng/index.xml
 - share/xml/news.xml
 
@@ -210,14 +210,14 @@ release(7)文件记录了构建 FreeBSD 发布所需的确切命令。以下命�
 
 ### 3.2. 贡献软件 ("ports")
 
-FreeBSD Ports 集合是一个包含超过 36000 个第三方软件包的集合，可用于 FreeBSD。 Ports Management Team <<a href="mailto:portmgr@FreeBSD.org">portmgr@FreeBSD.org</a>> 负责维护一个一致的 ports 树，用于创建官方 FreeBSD 版本附带的二进制软件包。
+FreeBSD Ports 是一个包含超过 36000 个第三方软件包的，可用于 FreeBSD。 Ports Management Team <<a href="mailto:portmgr@FreeBSD.org">portmgr@FreeBSD.org</a>> 负责维护一个一致的 ports 树，用于创建官方 FreeBSD 版本附带的二进制软件包。
 
 ### 发布 ISOs
 
 从 FreeBSD 4.4 开始，FreeBSD 项目决定发布以前在 BSDi/Wind River Systems/FreeBSD Mall “官方” CDROM 发行版上销售的四个 ISO 映像。每张光盘必须包含一个 README.TXT 文件，用于解释光盘的内容，一个 CDROM.INF 文件，为 bsdinstall(8) 提供光盘的元数据以便验证和使用其中的内容，并一个 filename.txt 文件，提供光盘的清单。该清单可以通过简单的命令创建：
 
 ```
-/stage/cdrom# find . -type f | sed -e 's/^\.\///' | sort > filename.txt
+/stage/cdrom# find . -type f | sed -e 's/^.///' | sort > filename.txt
 ```
 
 每张 CD 的具体要求如下。
@@ -234,7 +234,7 @@ FreeBSD Ports 集合是一个包含超过 36000 个第三方软件包的集合�
 
 #### 3.3.3. 多卷支持
 
-Sysinstall 支持多卷软件包安装。 这要求每个光盘都有一个包含一组所有卷上所有软件包的 INDEX 文件，以及一个额外字段，指示该特定软件包位于哪个卷上。 集合中的每个卷还必须在 cdrom.inf 文件中设置 CD_VOLUME 变量，以便 bsdinstall 可以告诉哪个卷是哪个。 当用户尝试安装不在当前光盘上的软件包时，bsdinstall 将提示用户插入适当的光盘。
+Sysinstall 支持多卷软件包安装。 这要求每个光盘都有一个包含一组所有卷上所有软件包的 INDEX 文件，以及一个额外字段，指示该特定软件包位于哪个卷上。 中的每个卷还必须在 cdrom.inf 文件中设置 CD_VOLUME 变量，以便 bsdinstall 可以告诉哪个卷是哪个。 当用户尝试安装不在当前光盘上的软件包时，bsdinstall 将提示用户插入适当的光盘。
 
 ## 4. 发行版
 
@@ -297,7 +297,7 @@ FreeBSD 系统安装和配置工具 bsdinstall(8)可被脚本化以实现大规�
 
 4. 重建世界
 
-5. FreeBSD Ports 集合 https://www.FreeBSD.org/ports
+5. FreeBSD Ports  https://www.FreeBSD.org/ports
 6. 无盘操作与 PXE
 7. Marshall Kirk McKusick，Michael J. Karels 和 Keith Bostic：4.3BSD 的发布工程
 8. NetBSD 开发者文档：发布工程 http://www.NetBSD.org/developers/releng/index.html

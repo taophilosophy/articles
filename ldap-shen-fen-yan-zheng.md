@@ -335,9 +335,9 @@ if [ "$np1" != "$np2" ]; then
   exit 1
 fi
 
-ldappasswd -D uid="$USER",ou=people,dc=example,dc=org \
-  -w "$oldp" \
-  -a "$oldp" \
+ldappasswd -D uid="$USER",ou=people,dc=example,dc=org 
+  -w "$oldp" 
+  -a "$oldp" 
   -s "$np1"
 ```
 
@@ -366,7 +366,7 @@ def get_password
   raise if pwd1 != pwd2
   pwd1.check # check password strength
 
-  salt = rand.to_s.gsub(/0\./, '')
+  salt = rand.to_s.gsub(/0./, '')
   pass = pwd1.to_s
   hash = "{SSHA}"+Base64.encode64(Digest::SHA1.digest("#{pass}#{salt}")+salt).chomp!
   return hash
@@ -510,7 +510,7 @@ security/openssh-portable 具有联系 LDAP 服务器以验证 SSH 密钥的能�
 
 这将是您的根 CA 密钥和证书。您可能希望加密密钥并将其存储在一个阴凉而干燥的地方；任何能访问到它的人都可以冒充您的 LDAP 服务器之一。
 
-接下来，使用上述的头两个步骤创建一个名为 ldap-server-one.key 的密钥和一个名为 ldap-server-one.csr 的证书签名请求。一旦您使用 root.key 签署签名请求，您将能够在您的 LDAP 服务器上使用 ldap-server-one.\*。
+接下来，使用上述的头两个步骤创建一个名为 ldap-server-one.key 的密钥和一个名为 ldap-server-one.csr 的证书签名请求。一旦您使用 root.key 签署签名请求，您将能够在您的 LDAP 服务器上使用 ldap-server-one.*。
 
 |     | 不要忘记在生成证书签名请求时使用完全合格的域名作为“通用名称”属性；否则客户端将拒绝与您建立连接，并且诊断可能非常棘手。 |
 | --- | ---------------------------------------------------------------------------------------------------------------------- |
@@ -520,8 +520,8 @@ security/openssh-portable 具有联系 LDAP 服务器以验证 SSH 密钥的能�
 示例 13. 作为证书颁发机构签署
 
 ```
-% openssl x509 -req -days 1024 \
--in ldap-server-one.csr -CA root.crt -CAkey root.key \
+% openssl x509 -req -days 1024 
+-in ldap-server-one.csr -CA root.crt -CAkey root.key 
 -out ldap-server-one.crt
 ```
 

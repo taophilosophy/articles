@@ -90,7 +90,7 @@ pwd 显示当前工作目录在哪里。
 
 ls 列出当前目录中的文件。
 
-ls -F 列出当前目录中的文件，可执行文件后面加上 \*，目录后面加上 / ，符号链接后面加上 @ 。
+ls -F 列出当前目录中的文件，可执行文件后面加上 *，目录后面加上 / ，符号链接后面加上 @ 。
 
 ls -l 以长格式列出文件-大小、日期、权限。
 
@@ -116,7 +116,7 @@ which<span> </span><em>text</em> 告诉您命令文本在用户路径中的位�
 
 locate<span> </span><em>text</em> 文本字符串被发现的所有路径。
 
-whatis<span> </span><em>text</em> 告诉您命令文本的作用及其手册页。键入 whatis \* 将告诉您当前目录中的所有二进制文件。
+whatis<span> </span><em>text</em> 告诉您命令文本的作用及其手册页。键入 whatis * 将告诉您当前目录中的所有二进制文件。
 
 whereis<span> </span><em>text</em> 查找文件文本，提供完整路径。
 
@@ -222,13 +222,13 @@ man hier UNIX® 文件系统的手册页
 % find /usr -name "filename"
 ```
 
-您可以在 "<em>filename</em>" 中使用 \* 作为通配符（应在引号中）。如果告诉 find 在 / 而不是 /usr 中搜索，它将在所有已挂载的文件系统上查找文件，包括 CDROM 和 DOS 分区上的文件。
+您可以在 "<em>filename</em>" 中使用 * 作为通配符（应在引号中）。如果告诉 find 在 / 而不是 /usr 中搜索，它将在所有已挂载的文件系统上查找文件，包括 CDROM 和 DOS 分区上的文件。
 
 一本很好的书，解释了 UNIX® 命令和实用程序，是 Abrahams & Larson, Unix for the Impatient（第 2 版，Addison-Wesley，1996）。互联网上也有很多 UNIX® 信息。
 
 ## 下一步
 
-现在您应该有必要的工具来浏览和编辑文件，以便启动一切。在 FreeBSD 手册（可能已经在您的硬盘上）和 FreeBSD 网站中包含大量信息。CDROM 上以及网站上还有各种软件包和镜像。手册会告诉您如何使用它们（如果存在该软件包，请使用 pkg add<span> </span><em>packagename</em> 获取，其中 packagename 是软件包的文件名）。CDROM 中的 cdrom/packages/index、cdrom/packages/index.txt 和 cdrom/ports/index 中有软件包列表，并在/cdrom/ports/ / /pkg/DESCR 中有更详细的描述，其中\*s 代表程序种类和程序名称的子目录。
+现在您应该有必要的工具来浏览和编辑文件，以便启动一切。在 FreeBSD 手册（可能已经在您的硬盘上）和 FreeBSD 网站中包含大量信息。CDROM 上以及网站上还有各种软件包和镜像。手册会告诉您如何使用它们（如果存在该软件包，请使用 pkg add<span> </span><em>packagename</em> 获取，其中 packagename 是软件包的文件名）。CDROM 中的 cdrom/packages/index、cdrom/packages/index.txt 和 cdrom/ports/index 中有软件包列表，并在/cdrom/ports/ / /pkg/DESCR 中有更详细的描述，其中*s 代表程序种类和程序名称的子目录。
 
 如果您觉得手册对于从 CDROM 安装 ports 太复杂（带有 lndir 等内容），以下通常是有效的方法：
 

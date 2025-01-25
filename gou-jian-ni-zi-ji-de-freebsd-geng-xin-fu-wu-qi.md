@@ -14,8 +14,7 @@ Intel，Celeron，Centrino，Core，EtherExpress，i386，i486，Itanium，Penti
 
 </details>
 
-|  | 本文中的指令适用于旧版本的 FreeBSD，在新版本的操作系统上可能无法正常工作。随着 pkgbase 的可用性，freebsd-update 实用程序计划将从 FreeBSD 中移除。届时，本文将更新以反映新的过程，或完全移除。 |
-| -- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+> 本文中的指令适用于旧版本的 FreeBSD，在新版本的操作系统上可能无法正常工作。随着 pkgbase 的可用性，freebsd-update 实用程序计划将从 FreeBSD 中移除。届时，本文将更新以反映新的过程，或完全移除。 
 
  摘要
 
@@ -101,8 +100,8 @@ FreeBSD-update-server 源代码中附带的默认 build.conf 适用于构建 Fre
     export RELH=1ea1f6f652d7c5f5eab7ef9f8edbed50cb664b08ed761850f95f48e86cc71ef5 
     # Components of the world, source, and kernels
     export WORLDPARTS="base catpages dict doc games info manpages proflibs lib32"
-    export SOURCEPARTS="base bin contrib crypto etc games gnu include krb5  \
-                    lib libexec release rescue sbin secure share sys tools  \
+    export SOURCEPARTS="base bin contrib crypto etc games gnu include krb5  
+                    lib libexec release rescue sbin secure share sys tools  
                     ubin usbin cddl"
     export KERNELPARTS="generic"
 
@@ -110,9 +109,8 @@ FreeBSD-update-server 源代码中附带的默认 build.conf 适用于构建 Fre
     export EOL=1275289200 
     ```
 
-    |  | 所需版本的 sha256(1)哈希键在各自的发布公告中发布。                                                                                                             |
-    | -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    |  | 要生成 build.conf 的“终身期限”数字，请参考 FreeBSD 安全网站上发布的“预计终身期限”。 EOL 的值可以通过网站上列出的日期使用 date(1)实用程序来推导，例如：<br /><br />`% date -j -f '%Y%m%d-%H%M%S' '20090401-000000' '+%s'` |
+>所需版本的 sha256(1)哈希键在各自的发布公告中发布。                                                                                                  
+>要生成 build.conf 的“终身期限”数字，请参考 FreeBSD 安全网站上发布的“预计终身期限”。 EOL 的值可以通过网站上列出的日期使用 date(1)实用程序来推导，例如：<br /><br />`% date -j -f '%Y%m%d-%H%M%S' '20090401-000000' '+%s'` 
 
 ## 构建更新代码
 
@@ -140,8 +138,7 @@ enter aes-256-cbc encryption password:
 Verifying - enter aes-256-cbc encryption password:
 ```
 
-|  | 记下生成的密钥指纹。此值在 /etc/freebsd-update.conf 中用于二进制更新。 |
-| -- | ------------------------------------------------------------------------ |
+>记下生成的密钥指纹。此值在 /etc/freebsd-update.conf 中用于二进制更新。 
 
 到了这一步，我们已经准备好进行构建。
 
@@ -195,8 +192,7 @@ world|base|/usr/lib/libalias_ftp.a
 
 然后再次执行世界的构建，使用世界补丁。更详细的解释可以在 scripts/build.subr 中找到。
 
-|  | 在这第二个构建周期期间，网络时间协议守护程序 ntpd(8)已关闭。根据 FreeBSD 的安全主任 Emeritus ，"freebsd-update-server 的构建代码需要识别存储在文件中的时间戳，以便在比较构建以确定哪些文件需要更新时可以忽略它们。这种时间戳查找的工作方式是间隔 400 天进行两次构建，然后比较结果。" |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+>在这第二个构建周期期间，网络时间协议守护程序 ntpd(8)已关闭。根据 FreeBSD 的安全主任 Emeritus ，"freebsd-update-server 的构建代码需要识别存储在文件中的时间戳，以便在比较构建以确定哪些文件需要更新时可以忽略它们。这种时间戳查找的工作方式是间隔 400 天进行两次构建，然后比较结果。" 
 
 ```
 Mon Aug 24 17:54:07 PDT 2009 Extracting world+src for FreeBSD/amd64 7.2-RELEASE
@@ -303,8 +299,7 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 
 更新客户端的 KeyPrint 和 ServerName 在 /etc/freebsd-update.conf，并按照手册中 FreeBSD 更新部分的说明进行更新。
 
-|  | 为了使 FreeBSD Update Server 正常工作，需要构建当前版本和想要升级到的版本的更新内容。这对于确定不同版本之间文件差异是必要的。例如，当将 FreeBSD 系统从 7.1-RELEASE 升级到 7.2-RELEASE 时，需要构建并上传两个版本的更新内容到您的分发服务器。 |
-| -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+>为了使 FreeBSD Update Server 正常工作，需要构建当前版本和想要升级到的版本的更新内容。这对于确定不同版本之间文件差异是必要的。例如，当将 FreeBSD 系统从 7.1-RELEASE 升级到 7.2-RELEASE 时，需要构建并上传两个版本的更新内容到您的分发服务器。 
 
 供参考，init.sh 的整个运行附在此处。
 
@@ -334,11 +329,11 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 % cd /usr/local/freebsd-update-server/patches/7.1-RELEASE/; mv bind.patch 7-SA-09:12.bind
 ```
 
-|  | 运行补丁级别构建时，假定已存在先前的补丁。当运行补丁构建时，它将运行补丁目录中包含的所有补丁。<br /><br />可以向任何构建添加定制补丁。使用零号或任何其他数字。 |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+>运行补丁级别构建时，假定已存在先前的补丁。当运行补丁构建时，它将运行补丁目录中包含的所有补丁。
+>
+>可以向任何构建添加定制补丁。使用零号或任何其他数字。 
 
-|  | 由 FreeBSD 更新服务器管理员采取适当措施验证每个补丁的真实性。 |
-| -- | --------------------------------------------------------------- |
+>由 FreeBSD 更新服务器管理员采取适当措施验证每个补丁的真实性。 
 
 此时，diff 已准备好进行构建。软件在运行 diff 构建之前首先检查是否在相应的版本发布前运行了 scripts/init.sh。
 

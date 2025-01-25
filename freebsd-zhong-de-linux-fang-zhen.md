@@ -128,7 +128,7 @@ FreeBSD 有一个称为执行类载入器的抽象概念，它是 execve(2) 系�
 
 FreeBSD 操作系统遵循传统的 UNIX® 方案，其中每个进程都有一个唯一的标识号，即所谓的 PID（进程 ID）。PID 号码是线性或随机分配的，范围从 0 到 PID_MAX 。PID 号码的分配是通过线性搜索 PID 空间来完成的。进程中的每个线程通过 getpid(2) 调用都会收到相同的 PID 号码作为结果。
 
-FreeBSD 目前有两种实现线程的方法。第一种方法是 M:N 线程模型，接着是 1:1 线程模型。默认使用的库是 M:N 线程模型（ libpthread ），您可以在运行时切换到 1:1 线程模型（ libthr ）。计划很快将默认切换到 1:1 库。尽管这两个库使用相同的内核原语，但它们通过不同的 API 访问。M:N 库使用 kse*\* 系列的系统调用，而 1:1 库使用 thr*\* 系列的系统调用。由于这一点，在内核和用户空间之间没有线程 ID 的通用概念。当然，这两个线程库都实现了 pthread 线程 ID API。每个内核线程（如 struct thread 所述）都有一个 td tid 标识符，但这并不能直接从用户空间访问，而且仅仅为内核的需求服务。它也被用作 1:1 线程库的 pthread 线程 ID，但这个处理是内部库处理的，不能依赖它。
+FreeBSD 目前有两种实现线程的方法。第一种方法是 M:N 线程模型，接着是 1:1 线程模型。默认使用的库是 M:N 线程模型（ libpthread ），您可以在运行时切换到 1:1 线程模型（ libthr ）。计划很快将默认切换到 1:1 库。尽管这两个库使用相同的内核原语，但它们通过不同的 API 访问。M:N 库使用 kse** 系列的系统调用，而 1:1 库使用 thr** 系列的系统调用。由于这一点，在内核和用户空间之间没有线程 ID 的通用概念。当然，这两个线程库都实现了 pthread 线程 ID API。每个内核线程（如 struct thread 所述）都有一个 td tid 标识符，但这并不能直接从用户空间访问，而且仅仅为内核的需求服务。它也被用作 1:1 线程库的 pthread 线程 ID，但这个处理是内部库处理的，不能依赖它。
 
 正如之前所述，在 FreeBSD 中有两种线程实现。M:N 库将工作划分为内核空间和用户空间。线程是在内核中调度的实体，但它可以代表多个用户空间线程。 M 个用户空间线程映射到 N 个内核线程，从而节省资源，同时保持利用多处理器并行性的能力。有关该实现的更多信息可以从 man 页面或[1]获取。 1:1 库直接将用户空间线程映射到内核线程，从而极大地简化了方案。这些设计都没有实现公平机制（尽管曾经实现过一种机制，但最近已经移除，因为它导致严重减速并使代码更难处理）。
 
@@ -188,7 +188,7 @@ Linux® 遵循传统的 UNIX® 方案，将进程的运行划分为两个部分�
 - CLONE_CHILD_CLEARTID - 在子级中清除 TID
 - CLONE_CHILD_SETTID - 在子级中设置 TID
 
-CLONE*PARENT 将真实父进程设置为调用者的父进程。对于线程来说很有用，因为如果线程 A 创建线程 B，我们希望线程 B 被赋予整个线程组的父进程。 CLONE_THREAD 正好做了与 CLONE_PARENT 、 CLONE_VM 和 CLONE_SIGHAND 相同的事情，重写 PID 为调用者的 PID，设置退出信号为无，然后进入线程组。 CLONE_SETTLS 设置 GDT 条目以处理 TLS。一组 CLONE* _\__ TID 标志设置/清除用户提供的地址为 TID 或 0。
+CLONE*PARENT 将真实父进程设置为调用者的父进程。对于线程来说很有用，因为如果线程 A 创建线程 B，我们希望线程 B 被赋予整个线程组的父进程。 CLONE_THREAD 正好做了与 CLONE_PARENT 、 CLONE_VM 和 CLONE_SIGHAND 相同的事情，重写 PID 为调用者的 PID，设置退出信号为无，然后进入线程组。 CLONE_SETTLS 设置 GDT 条目以处理 TLS。一组 CLONE* ___ TID 标志设置/清除用户提供的地址为 TID 或 0。
 
 正如您所见， CLONE_THREAD 完成了大部分工作，但似乎不太适合这个方案。最初的意图不清楚（即使对于代码的作者来说，根据代码中的注释），但我认为最初有一个线程标志，然后被分成许多其他标志，但这种分离从未完全完成。不清楚这种分区有何用处，因为 glibc 不使用它，所以只有手工编写的 clone 使用允许程序员访问这些功能。
 
@@ -346,7 +346,7 @@ if (__predict_true(p->p_sysent != &elf_Linux(R)_sysvec))
 	  return;
 ```
 
-正如您所看到的，我们有效地使用 \_\_predict_true 修饰符将最常见的情况（FreeBSD 进程）折叠为简单的返回操作，从而保持高性能。这段代码应该转换为宏，因为当前它并不是很灵活，即我们不支持 Linux®64 仿真，也不支持 i386 上的 A.OUT Linux® 进程。
+正如您所看到的，我们有效地使用 __predict_true 修饰符将最常见的情况（FreeBSD 进程）折叠为简单的返回操作，从而保持高性能。这段代码应该转换为宏，因为当前它并不是很灵活，即我们不支持 Linux®64 仿真，也不支持 i386 上的 A.OUT Linux® 进程。
 
 #### 3.2.3. VFS
 
@@ -693,7 +693,7 @@ Futexes 实现以下操作：
 - `FUTEX_OP_AND`
 - `FUTEX_OP_XOR`
 
-|     | futex 原型中没有 val2 参数。 val2 参数是从 struct timespec \*timeout 参数中获取，用于操作 FUTEX_REQUEUE ， FUTEX_CMP_REQUEUE 和 FUTEX_WAKE_OP 。 |
+|     | futex 原型中没有 val2 参数。 val2 参数是从 struct timespec *timeout 参数中获取，用于操作 FUTEX_REQUEUE ， FUTEX_CMP_REQUEUE 和 FUTEX_WAKE_OP 。 |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 #### 5.4.4. FreeBSD 中的 Futex 仿真
@@ -759,36 +759,36 @@ Futex implementation uses two lock lists protecting `sx_lock` and global locks (
 
 在这一部分，我将描述一些较小的系统调用，这些系统调用值得一提，因为它们的实现并不明显，或者从其他角度看这些系统调用很有趣。
 
-#### 5.5.1. \*at 系列的系统调用
+#### 5.5.1. *at 系列的系统调用
 
-在 Linux® 2.6.16 内核的开发过程中，\*at 系列的系统调用被添加进来了。这些系统调用（例如 openat ）与它们的非 at 版本完全相同，只是在 dirfd 参数上稍有不同。这个参数改变了要在哪个文件上执行系统调用。当 filename 参数是绝对路径时， dirfd 会被忽略，但当文件路径是相对路径时，它就会起作用。 dirfd 参数是一个相对于哪个目录来检查相对路径名的目录。 dirfd 参数是一些目录或 AT_FDCWD 的文件描述符。所以例如 openat 系统调用可以是这样的：
+在 Linux® 2.6.16 内核的开发过程中，*at 系列的系统调用被添加进来了。这些系统调用（例如 openat ）与它们的非 at 版本完全相同，只是在 dirfd 参数上稍有不同。这个参数改变了要在哪个文件上执行系统调用。当 filename 参数是绝对路径时， dirfd 会被忽略，但当文件路径是相对路径时，它就会起作用。 dirfd 参数是一个相对于哪个目录来检查相对路径名的目录。 dirfd 参数是一些目录或 AT_FDCWD 的文件描述符。所以例如 openat 系统调用可以是这样的：
 
 ```c
 file descriptor 123 = /tmp/foo/, current working directory = /tmp/
 
-openat(123, /tmp/bah\, flags, mode)	/* opens /tmp/bah */
-openat(123, bah\, flags, mode)		/* opens /tmp/foo/bah */
-openat(AT_FDWCWD, bah\, flags, mode)	/* opens /tmp/bah */
-openat(stdio, bah\, flags, mode)	/* returns error because stdio is not a directory */
+openat(123, /tmp/bah, flags, mode)	/* opens /tmp/bah */
+openat(123, bah, flags, mode)		/* opens /tmp/foo/bah */
+openat(AT_FDWCWD, bah, flags, mode)	/* opens /tmp/bah */
+openat(stdio, bah, flags, mode)	/* returns error because stdio is not a directory */
 ```
 
 此基础设施是为了避免在工作目录之外打开文件时发生竞争。 想象一个进程由两个线程组成，线程 A 和线程 B。 线程 A 发出 open(./tmp/foo/bah., flags, mode) ，然后在返回之前被抢占，线程 B 运行。 线程 B 不关心线程 A 的需求，并重命名或删除/tmp/foo/。 我们就会发生竞争。 为了避免这种情况，我们可以打开/tmp/foo 并将其用作 dirfd 的 openat 系统调用。 这还可以使用户实现每个线程的工作目录。
 
-Linux® \*at 系统调用系列包括： linux_openat ， linux_mkdirat ， linux_mknodat ， linux_fchownat ， linux_futimesat ， linux_fstatat64 ， linux_unlinkat ， linux_renameat ， linux_linkat ， linux_symlinkat ， linux_readlinkat ， linux_fchmodat 和 linux_faccessat 。 所有这些都是使用修改后的 namei(9)例程和简单封装层实现的。
+Linux® *at 系统调用系列包括： linux_openat ， linux_mkdirat ， linux_mknodat ， linux_fchownat ， linux_futimesat ， linux_fstatat64 ， linux_unlinkat ， linux_renameat ， linux_linkat ， linux_symlinkat ， linux_readlinkat ， linux_fchmodat 和 linux_faccessat 。 所有这些都是使用修改后的 namei(9)例程和简单封装层实现的。
 
 ##### 5.5.1.1. 实现
 
-实现是通过修改上述描述的 namei（9）例程来完成的，以便在其结构中添加附加参数 dirfd ，该参数指定路径名查找的起始点，而不是每次都使用当前工作目录。从文件描述符号到 vnode 的解析是在本机\*at 系统调用中完成的。当 dirfd 是 AT_FDCWD 时， nameidata 结构中的 dvp 条目是 NULL ，但是当 dirfd 是一个不同的数字时，我们获取这个文件描述符的文件，检查这个文件是否有效，如果有 vnode 连接到它，然后我们获得一个 vnode。然后我们检查这个 vnode 是否是一个目录。在实际的 namei（9）例程中，我们只需将 dvp vnode 替换为 namei（9）函数中的 dp 变量，该函数确定起始点。namei（9）并不直接使用，而是通过各个级别的不同函数的跟踪。例如 openat 如下所示：
+实现是通过修改上述描述的 namei（9）例程来完成的，以便在其结构中添加附加参数 dirfd ，该参数指定路径名查找的起始点，而不是每次都使用当前工作目录。从文件描述符号到 vnode 的解析是在本机*at 系统调用中完成的。当 dirfd 是 AT_FDCWD 时， nameidata 结构中的 dvp 条目是 NULL ，但是当 dirfd 是一个不同的数字时，我们获取这个文件描述符的文件，检查这个文件是否有效，如果有 vnode 连接到它，然后我们获得一个 vnode。然后我们检查这个 vnode 是否是一个目录。在实际的 namei（9）例程中，我们只需将 dvp vnode 替换为 namei（9）函数中的 dp 变量，该函数确定起始点。namei（9）并不直接使用，而是通过各个级别的不同函数的跟踪。例如 openat 如下所示：
 
 ```c
 openat() --> kern_openat() --> vn_open() -> namei()
 ```
 
-因此，必须修改 kern_open 和 vn_open 以包含额外的 dirfd 参数。对于这些情况，没有为其创建兼容层，因为这些情况的用户并不多，而且用户可以很容易地转换。这种通用实现使 FreeBSD 能够实现自己的\*at 系统调用。这正在讨论中。
+因此，必须修改 kern_open 和 vn_open 以包含额外的 dirfd 参数。对于这些情况，没有为其创建兼容层，因为这些情况的用户并不多，而且用户可以很容易地转换。这种通用实现使 FreeBSD 能够实现自己的*at 系统调用。这正在讨论中。
 
 #### 5.5.2. Ioctl
 
-ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux® 和 FreeBSD 之间的设备有所不同，因此必须谨慎地进行 ioctl 仿真工作。 ioctl 处理实现在 linux_ioctl.c 中，其中定义了 linux_ioctl 函数。该函数简单地遍历 ioctl 处理程序集以查找实现给定命令的处理程序。 ioctl 系统调用有三个参数，文件描述符、命令和一个参数。 命令是一个 16 位数字，理论上分为确定 ioctl 命令类别的高 8 位和给定集合中实际命令的低 8 位。仿真利用了这种划分。我们为每个集合实现处理程序，例如 sound_handler 或 disk_handler 。每个处理程序都有最大命令和最小命令定义，用于确定使用哪个处理程序。这种方法存在一些小问题，因为 Linux® 未一致使用集合划分，因此有时不属于其应属于的集合中（SCSI 通用 ioctl 在 cdrom 集合中等）。目前 FreeBSD 没有实现许多 Linux®ioctls（例如与 NetBSD 相比），但计划从 NetBSD 中 port 这些 ioctls。趋势是在本地 FreeBSD 驱动程序中甚至使用 Linux®ioctls，因为这些应用程序易于移植。
+ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux® 和 FreeBSD 之间的设备有所不同，因此必须谨慎地进行 ioctl 仿真工作。 ioctl 处理实现在 linux_ioctl.c 中，其中定义了 linux_ioctl 函数。该函数简单地遍历 ioctl 处理程序集以查找实现给定命令的处理程序。 ioctl 系统调用有三个参数，文件描述符、命令和一个参数。 命令是一个 16 位数字，理论上分为确定 ioctl 命令类别的高 8 位和给定中实际命令的低 8 位。仿真利用了这种划分。我们为每个实现处理程序，例如 sound_handler 或 disk_handler 。每个处理程序都有最大命令和最小命令定义，用于确定使用哪个处理程序。这种方法存在一些小问题，因为 Linux® 未一致使用划分，因此有时不属于其应属于的中（SCSI 通用 ioctl 在 cdrom 中等）。目前 FreeBSD 没有实现许多 Linux®ioctls（例如与 NetBSD 相比），但计划从 NetBSD 中 port 这些 ioctls。趋势是在本地 FreeBSD 驱动程序中甚至使用 Linux®ioctls，因为这些应用程序易于移植。
 
 #### 5.5.3. 调试
 
@@ -798,7 +798,7 @@ ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux®
 
 ### 6.1. 结果
 
-截至 2007 年 4 月，FreeBSD 的 Linux® 仿真层能够很好地仿真 Linux® 2.6.16 内核。剩余的问题涉及 futexes，未完成的\*at 系统调用系列，信号传递问题，缺少 epoll 和 inotify ，可能还有一些尚未发现的 bug。尽管如此，我们能够基本运行 FreeBSD Ports 收藏中包含的所有 Linux® 程序，使用的是 Fedora Core 4 和 2.6.16 内核，并且有一些初步的成功报告表明在 Fedora Core 6 和 2.6.16 上也能运行。最近提交了 Fedora Core 6 的 linux_base，进一步测试了仿真层，并提供了一些线索，告诉我们在实现缺失功能方面应该投入更多的努力。
+截至 2007 年 4 月，FreeBSD 的 Linux® 仿真层能够很好地仿真 Linux® 2.6.16 内核。剩余的问题涉及 futexes，未完成的*at 系统调用系列，信号传递问题，缺少 epoll 和 inotify ，可能还有一些尚未发现的 bug。尽管如此，我们能够基本运行 FreeBSD Ports 收藏中包含的所有 Linux® 程序，使用的是 Fedora Core 4 和 2.6.16 内核，并且有一些初步的成功报告表明在 Fedora Core 6 和 2.6.16 上也能运行。最近提交了 Fedora Core 6 的 linux_base，进一步测试了仿真层，并提供了一些线索，告诉我们在实现缺失功能方面应该投入更多的努力。
 
 我们能够运行像 www/linux-firefox、net-im/skype 这样的最常用的应用程序，以及 Ports 系列中的一些游戏。一些程序在 2.6 模拟下表现出不良行为，但当前正在调查中，希望很快能解决。已知无法运行的唯一大型应用程序是 Linux® Java™ 开发工具包，这是因为需要 epoll 设施，这与 Linux® 内核 2.6 并不直接相关。
 
@@ -806,7 +806,7 @@ ioctl 接口由于其通用性而非常脆弱。我们必须记住，在 Linux®
 
 ### 6.2. 未来工作
 
-未来的工作应集中于修复与 futex 相关的剩余问题，实现 \*at 系列系统调用，修复信号传递，并可能实现 epoll 和 inotify 设施。
+未来的工作应集中于修复与 futex 相关的剩余问题，实现 *at 系列系统调用，修复信号传递，并可能实现 epoll 和 inotify 设施。
 
 我们希望能够尽快无缝运行最重要的程序，以便可以默认切换到 2.6 模拟，并将 Fedora Core 6 设为默认的 linux_base，因为我们目前使用的 Fedora Core 4 不再受到支持。
 

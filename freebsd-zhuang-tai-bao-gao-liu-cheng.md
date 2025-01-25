@@ -92,7 +92,7 @@ AsciiDoc 示例报告模板可用。
 本部分描述了审阅和发布流程的工作原理。
 
 | 状态报告主网页                                                                 | [https://www.FreeBSD.org/status/](https://www.freebsd.org/status/) |
-| -------------------------------------------------------------------------------- | -- |
+| -------------------------------------------------------------------------------- | --- |
 | 存档 GitHub 存储库的状态报告（用于 2017 年第四季度到 2022 年第四季度的报告）： | [https://github.com/freebsd/freebsd-quarterly](https://www.github.com/freebsd/freebsd-quarterly) |
 | 主要状态团队电子邮件地址                                                       | [status@FreeBSD.org](mailto:status@FreeBSD.org) |
 | 报告提交的电子邮件地址                                                         | [status-submissions@FreeBSD.org](mailto:status-submissions@FreeBSD.org) |
@@ -137,8 +137,7 @@ AsciiDoc 示例报告模板可用。
 0      0       1,15,24 3,6,9,12        *       cd ~/doc/tools/sendcalls && git pull && ./sendcalls -s 'Lorenzo Salvadore'
 ```
 
-|  | 如果您负责发送状态报告和确实使用 cron 作业，请在 freefall 上运行它，并用您的名字签名，以便在出现问题时可以推断出是谁配置了 cron 作业。另请使用您的名字更新上面的示例，作为额外的安全措施。 |
-| -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+>如果您负责发送状态报告和确实使用 cron 作业，请在 freefall 上运行它，并用您的名字签名，以便在出现问题时可以推断出是谁配置了 cron 作业。另请使用您的名字更新上面的示例，作为额外的安全措施。 
 
 也许也值得在论坛上要求报告，就像过去做过的那样。
 
@@ -164,7 +163,7 @@ AsciiDoc 示例报告模板可用。
 [[news]]
 date = "2021-01-16"
 title = "October-December 2020 Status Report"
-description = "The <a href=\"https://www.FreeBSD.org/status/report-2020-10-2020-12.html\">October to December 2020 Status Report</a> is now available with 42 entries."
+description = "The <a href="https://www.FreeBSD.org/status/report-2020-10-2020-12.html">October to December 2020 Status Report</a> is now available with 42 entries."
 ```
 
 一旦报告的 HTML 版本构建完成并上线，使用 w3m(1) 将网站以纯文本形式转储，例如：
@@ -183,7 +182,6 @@ w3m(1)拥有完整的 Unicode 支持。 -dump 只是简单地输出 HTML 代码�
 
 * 一封发送到 freebsd-announce@FreeBSD.org；
 
-|  | 这封邮件必须被批准，因此如果您负责发送此邮件，请确保有人批准（如果时间过长，请联系邮件管理员）。 |
-| -- | -------------------------------------------------------------------------------------------------- |
+>这封邮件必须被批准，因此如果您负责发送此邮件，请确保有人批准（如果时间过长，请联系邮件管理员）。 
 
 * 一封邮件发送至 freebsd-hackers@FreeBSD.org，抄送 freebsd-current@FreeBSD.org 和 freebsd-stable@FreeBSD.org，密送 developers@FreeBSD.org 。

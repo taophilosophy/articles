@@ -163,7 +163,7 @@ FreeBSD 存储库具有多个组件，这些组件在组合时支持基本操作
 
 ### 其他树提交者活动政策
 
-- 所有提交者可以修改 src/share/misc/committers-\*.dot，src/usr.bin/calendar/calendars/calendar.freebsd 和 ports/astro/xearth/files。
+- 所有提交者可以修改 src/share/misc/committers-*.dot，src/usr.bin/calendar/calendars/calendar.freebsd 和 ports/astro/xearth/files。
 - 文档提交者可以在不需要 src 提交者批准的情况下向 src 文件提交文档更改，例如手册页面、README、幸运数据库、日历文件和注释修复，但仍需按照常规的提交程序进行。
 - 任何提交者都可以在获得具有相应权限且未被指导的提交者的“批准”的情况下更改任何其他树。被指导的提交者可以提供“审阅”，但不能提供“批准”。
 - 提交者可以通过通常的过程获得额外的权限，即找到一位导师将他们提议给核心团队、文档工程团队或端口管理团队，并在获得批准后，他们将被添加到“访问”列表中，并进行正常的指导期，这期间将继续涉及“批准”。
@@ -179,7 +179,7 @@ FreeBSD 存储库具有多个组件，这些组件在组合时支持基本操作
 
 多年来，在文档树中授予了一些隐式许可。此列表显示了最常见的情况：
 
-- 更改文档/content/en/books/porters-handbook/versions/_index.adoc _ \_\_FreeBSD_version 值（Porter's Handbook），主要用于 src 提交者。
+- 更改文档/content/en/books/porters-handbook/versions/_index.adoc _ __FreeBSD_version 值（Porter's Handbook），主要用于 src 提交者。
 - 文档/shared/contrib-additional.adoc 附加的 FreeBSD 贡献者维护变更。
 - 新提交者的所有步骤，与文档相关
 - 安全公告；勘误通知；发布版本；由安全官员团队 <security-officer@FreeBSD.org> 和发布工程团队 <re@FreeBSD.org> 使用。
@@ -1570,11 +1570,15 @@ FreeBSD ports 存储库于 2012 年 7 月 14 日从 CVS 切换到 Subversion。�
 2. 更新开发人员和贡献者列表 doc/shared/contrib-committers.adoc - 添加一个条目，然后将出现在“开发人员”部分的贡献者列表中。条目按姓氏排序。
    doc/shared/contrib-additional.adoc - 删除该条目。条目按名字排序。
 3. 在 doc/website/data/en/news/news.toml 中添加一个新闻条目 - 添加一条条目。查找其他宣布新提交者的条目，按照格式进行操作。使用批准邮件中的日期。
-4. | 添加一个 PGP 密钥 Dag-Erling Smørgrav <<a href="mailto:des@FreeBSD.org">des@FreeBSD.org</a>> 编写了一个 shell 脚本（doc/documentation/tools/addkey.sh），以便更轻松地进行此操作。有关更多信息，请参阅 README 文件。 | |
-   | 使用 doc/documentation/tools/checkkey.sh 来验证密钥是否符合最低的最佳实践标准。 | |
-   | 添加和检查密钥后，将更新后的文件添加到源代码控制，然后提交它们。此文件中的条目按姓氏排序。 | |
-   | | 在版本库中非常重要有一个当前的 PGP/GnuPG 密钥。该密钥可能需要用于提交者的积极身份验证。例如， FreeBSD Administrators <<a href="mailto:admins@FreeBSD.org">admins@FreeBSD.org</a>> 可能需要它来进行账户恢复。可从 https://docs.FreeBSD.org/pgpkeys/pgpkeys.txt 下载完整的 FreeBSD.org 用户密钥环。 |
-   | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -- |
+4. 添加一个 PGP 密钥 Dag-Erling Smørgrav <<a href="mailto:des@FreeBSD.org">des@FreeBSD.org</a>> 编写了一个 shell 脚本（doc/documentation/tools/addkey.sh），以便更轻松地进行此操作。有关更多信息，请参阅 README 文件。 
+
+   使用 doc/documentation/tools/checkkey.sh 来验证密钥是否符合最低的最佳实践标准。 
+   
+   
+   添加和检查密钥后，将更新后的文件添加到源代码控制，然后提交它们。此文件中的条目按姓氏排序。 
+   
+   在版本库中非常重要有一个当前的 PGP/GnuPG 密钥。该密钥可能需要用于提交者的积极身份验证。例如， FreeBSD Administrators <<a href="mailto:admins@FreeBSD.org">admins@FreeBSD.org</a>> 可能需要它来进行账户恢复。可从 https://docs.FreeBSD.org/pgpkeys/pgpkeys.txt 下载完整的 FreeBSD.org 用户密钥环。 
+   
 5. 更新导师和学员信息 src/share/misc/committers-.dot - 在当前提交者部分添加一个条目，其中仓库是 doc ， ports 或 src ，具体取决于授予的提交特权。
    在底部部分为每个额外的导师/受导者关系添加一个条目。
 6. 生成 Kerberos 密码 参见 FreeBSD 集群的 Kerberos 和 LDAP 网络密码以生成或设置 Kerberos 账户，以便与其他 FreeBSD 服务（如 bug 跟踪数据库）一起使用（在该步骤中，您将获得一个 bug 跟踪账户）。
@@ -1586,14 +1590,12 @@ FreeBSD ports 存储库于 2012 年 7 月 14 日从 CVS 切换到 Subversion。�
 ### 7.2. 对于每个人
 
 1. 向其他开发者介绍自己，否则没有人会知道你是谁，也不知道你在 FreeBSD 上正在做什么。介绍不需要很详细，只需写一两段关于你是谁，作为 FreeBSD 开发者计划做什么，以及谁会是你的导师的内容。将此电子邮件发送到 FreeBSD 开发者邮件列表，你就可以开始了！
-2. | 登录 freefall.FreeBSD.org ，创建一个 /var/forward/user 文件（其中 user 是你的用户名），其中包含你希望邮件转发到 yourusername@FreeBSD.org 的电子邮件地址。这包括所有提交消息以及发送到 FreeBSD 提交者邮件列表和 FreeBSD 开发者邮件列表的所有其他邮件。如果空间需要释放，已经在 freefall 上占据永久居住的非常大的邮箱可能会被截断而没有警告，因此请转发或将其保存到其他地方。 | |
-   | | 如果你的电子邮件系统使用严格规则的 SPF，你应该将 mx2.FreeBSD.org 排除在 SPF 检查之外。 |
-   | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -- |
+2. 登录 freefall.FreeBSD.org ，创建一个 /var/forward/user 文件（其中 user 是你的用户名），其中包含你希望邮件转发到 yourusername@FreeBSD.org 的电子邮件地址。这包括所有提交消息以及发送到 FreeBSD 提交者邮件列表和 FreeBSD 开发者邮件列表的所有其他邮件。如果空间需要释放，已经在 freefall 上占据永久居住的非常大的邮箱可能会被截断而没有警告，因此请转发或将其保存到其他地方。 
 
+   如果你的电子邮件系统使用严格规则的 SPF，你应该将 mx2.FreeBSD.org 排除在 SPF 检查之外。 
    由于处理垃圾邮件给处理邮件列表的中央邮件服务器带来了严重负担，前端服务器会进行一些基本检查，并会根据这些检查丢弃一些消息。目前，对连接主机进行正确的 DNS 信息检查是唯一的检查，但这可能会改变。有些人将这些检查归咎于弹回有效电子邮件。要关闭你电子邮件的这些检查，请在 freefall.FreeBSD.org 上创建一个名为~/.spam_lover 的文件。
 
-   |     | 那些是开发人员但不是提交者的人将不会被订阅到提交者或开发人员的邮件列表。订阅是根据访问权限派生的。 |
-   | --- | -------------------------------------------------------------------------------------------------- |
+>那些是开发人员但不是提交者的人将不会被订阅到提交者或开发人员的邮件列表。订阅是根据访问权限派生的。 
 
 #### 7.2.1. SMTP 访问设置
 
@@ -1602,12 +1604,10 @@ FreeBSD ports 存储库于 2012 年 7 月 14 日从 CVS 切换到 Subversion。�
 1. 将您的邮件客户端指向 smtp.FreeBSD.org:587 。
 2. 启用 STARTTLS。
 3. 确保您的 From: 地址设置为 <em>yourusername</em>@FreeBSD.org 。
-4. | 对于认证，您可以使用您的 FreeBSD Kerberos 用户名和密码（请参阅 FreeBSD 集群的 Kerberos 和 LDAP 网密码）。首选 <em>yourusername</em>/mail 主体，因为它仅适用于对邮件资源的认证。 | |
-   | | 在输入用户名时，请勿包含 @FreeBSD.org 。 |
-   | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -- |
+4. 对于认证，您可以使用您的 FreeBSD Kerberos 用户名和密码（请参阅 FreeBSD 集群的 Kerberos 和 LDAP 网密码）。首选 <em>yourusername</em>/mail 主体，因为它仅适用于对邮件资源的认证。 
+在输入用户名时，请勿包含 @FreeBSD.org 。 
 
-   |     | 附加说明<br />*仅接受来自 <em>yourusername</em>@FreeBSD.org 的邮件。如果您以一个用户的身份进行验证，则不允许从另一个用户发送邮件。*将添加一个标头，显示 SASL 用户名：( Authenticated sender:<span> </span><em>username</em> )。\* 主机设有各种速率限制，以减少暴力攻击的尝试。 |
-   | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+>附加说明<br />*仅接受来自 <em>yourusername</em>@FreeBSD.org 的邮件。如果您以一个用户的身份进行验证，则不允许从另一个用户发送邮件。*将添加一个标头，显示 SASL 用户名：( Authenticated sender:<span> </span><em>username</em> )。* 主机设有各种速率限制，以减少暴力攻击的尝试。 
 
 ##### 7.2.1.1. 使用本地 MTA 将电子邮件转发到 FreeBSD.org SMTP 服务
 
@@ -1836,7 +1836,7 @@ git log 和 git format-patch 缩进提交消息四个空格。将消息限制在
 | `Submitted by:`<br /> (已废弃) | 这已被 git 弃用；提交的补丁应该通过使用 git commit --author 设置作者，作者应使用全名和有效电子邮件。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `Reviewed by:`                 | 更改审阅者的姓名和电子邮件地址；对于开发者来说，只需提供在 FreeBSD 集群上的用户名。如果补丁提交到邮件列表进行审查，并且审查结果是积极的，那么只需包括列表名称。如果审阅者不是项目成员，请提供姓名、电子邮件地址，以及如果 ports 是外部角色如维护者：<br /><br /> 由开发者审阅：<br /><br />`Reviewed by: username`<br /><br />由不是开发者的 ports 维护者审阅：<br /><br />`Reviewed by: Full Name <valid@email> (maintainer)`                                                                                                                                                           |
 | `Tested by:`                   | 测试更改的人员姓名和电子邮件地址；对于开发人员，只需在 FreeBSD 集群上使用用户名。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `Approved by:`                 | 批准更改的人员姓名和电子邮件地址；对于开发人员，只需在 FreeBSD 集群上使用用户名。<br /><br />有几种情况下是习惯性批准的：<br />_ 在新提交者在指导下 _ 提交到由 LOCKS 文件（src）覆盖的树区域 _ 在发布周期期间 _ 提交到您没有提交位的仓库（例如，src 提交者提交到 docs） \* 提交到由其他人维护的 port<br /><br />在指导下，请获得导师的批准再进行提交。在此字段中输入导师的用户名，并注明他们是导师：<br /><br />`Approved by: username-of-mentor (mentor)`<br /><br />如果团队批准了这些提交，则在括号中包括团队名称，后跟批准者的用户名。例如：<br /><br />`Approved by: re (username)` |
+| `Approved by:`                 | 批准更改的人员姓名和电子邮件地址；对于开发人员，只需在 FreeBSD 集群上使用用户名。<br /><br />有几种情况下是习惯性批准的：<br />_ 在新提交者在指导下 _ 提交到由 LOCKS 文件（src）覆盖的树区域 _ 在发布周期期间 _ 提交到您没有提交位的仓库（例如，src 提交者提交到 docs） * 提交到由其他人维护的 port<br /><br />在指导下，请获得导师的批准再进行提交。在此字段中输入导师的用户名，并注明他们是导师：<br /><br />`Approved by: username-of-mentor (mentor)`<br /><br />如果团队批准了这些提交，则在括号中包括团队名称，后跟批准者的用户名。例如：<br /><br />`Approved by: re (username)` |
 | `Obtained from:`               | 从获得代码的项目的名称（如果有的话）。不要使用此行来表示个人的姓名。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `Fixes:`                       | 由此更改修复的提交的 Git 短哈希和标题行，由 git log -n 1 --oneline GIT-COMMIT-HASH 返回。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `MFC after:`                   | 要在以后收到一封电子邮件提醒进行 MFC，请指定计划进行 MFC 之后的天数、周数或月数。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -2003,8 +2003,7 @@ FreeBSD 项目反对完全新的许可证和标准许可证的变体。新的许
 
 如果查询无人回答，或者提交者表示对受影响区域不感兴趣，请继续提交。
 
-|     | 避免给维护者发送私人邮件。其他人可能对对话感兴趣，而不仅仅是最终结果。 |
-| --- | ---------------------------------------------------------------------- |
+> 避免给维护者发送私人邮件。其他人可能对对话感兴趣，而不仅仅是最终结果。 
 
 如果对提交有任何疑问，请在提交前进行审查。最好在那时就解决问题，而不是在它成为代码库的一部分时。如果提交引发争议，建议在问题解决之前考虑撤回更改。请记住，使用版本控制系统我们可以随时更改回来。
 
@@ -2056,8 +2055,7 @@ FreeBSD.org 非 Phabricator 账户的参与者可以按照以下步骤将旧账�
 1. 将您的 Phabricator 账户电子邮件更改为您的 FreeBSD.org 电子邮件。
 2. 使用您的 FreeBSD.org 帐户在我们的错误跟踪器上打开新 bug，请参阅 Bugzilla 了解更多信息。选择 Services 作为产品， Code Review 作为组件。在 bug 描述中请求重命名您的 Phabricator 帐户，并提供指向您的 Phabricator 用户的链接。例如， https://reviews.freebsd.org/p/bob_example.com/
 
-|     | Fabrik 帐户无法合并，请勿开设新帐户。 |
-| --- | ------------------------------------- |
+> Fabrik 帐户无法合并，请勿开设新帐户。
 
 ## 17. Who 是谁
 
@@ -2352,7 +2350,7 @@ Porter 手册的测试章节包含更详细的说明。请参阅 Portclippy / Po
 
 首先，请阅读关于存储库副本的部分。在移除 port 之前，您必须验证没有其他依赖于它的 ports。
 
-- 确保 ports 集合中没有对 port 的依赖关系：
+- 确保 ports 中没有对 port 的依赖关系：
 
   - 在最近的 INDEX 文件中，port 的 PKGNAME 只出现在一行中。
   - | 没有其他 1001 包含在其 Makefiles 中任何对 1002 的目录或 PKGNAME 的引用。 |     |     |     | 使用 Git 时，考虑使用 git-grep(1)，它比 0 快得多。 |
@@ -2369,7 +2367,7 @@ Porter 手册的测试章节包含更详细的说明。请参阅 Portclippy / Po
 
 ### 22.3. 如何将 port 移动到新位置？
 
-1. 对 ports 集合进行彻底检查，查找旧 port 位置/名称的任何依赖项，并进行更新。仅在 INDEX 上运行 grep 是不够的，因为一些 ports 已启用编译时选项的依赖项。建议对 ports 集合进行完整的 git-grep(1) 检查。
+1. 对 ports 进行彻底检查，查找旧 port 位置/名称的任何依赖项，并进行更新。仅在 INDEX 上运行 grep 是不够的，因为一些 ports 已启用编译时选项的依赖项。建议对 ports 进行完整的 git-grep(1) 检查。
 2. 从旧类别 Makefile 中删除 SUBDIR 条目，并在新类别 Makefile 中添加 SUBDIR 条目。
 3. 向 ports/MOVED 添加一个条目。
 4. 在 ports/security/vuxml 中搜索 xml 文件中的条目，并相应地调整它们。特别检查具有新名称的先前软件包，其版本可能包含新的 port。
@@ -2469,7 +2467,7 @@ Porter 手册的测试章节包含更详细的说明。请参阅 Portclippy / Po
 
 #### 22.8.4. 我还有其他不允许触碰的文件吗？
 
-直接位于 ports/ 下的任何文件，或者以大写字母开头的子目录中的任何文件（如 Mk/、Tools/ 等）。特别是，Ports 管理团队 < portmgr@FreeBSD.org> 对 ports/Mk/bsd.port\*.mk 文件非常保护，所以不要提交对这些文件的更改，除非你想面对他们的愤怒。
+直接位于 ports/ 下的任何文件，或者以大写字母开头的子目录中的任何文件（如 Mk/、Tools/ 等）。特别是，Ports 管理团队 < portmgr@FreeBSD.org> 对 ports/Mk/bsd.port*.mk 文件非常保护，所以不要提交对这些文件的更改，除非你想面对他们的愤怒。
 
 #### 22.8.5. 当 port distfile 的校验和在文件变化时没有版本更改时，更新的正确过程是什么？
 

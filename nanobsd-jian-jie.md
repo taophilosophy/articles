@@ -210,7 +210,7 @@ NanoBSD 的功能包括：
 
 ```
 cust_foo () (
-	echo "bar=baz" > \
+	echo "bar=baz" > 
 		${NANO_WORLDDIR}/etc/foo
 )
 customize_cmd cust_foo
@@ -228,10 +228,10 @@ customize_cmd cust_etc_size
 
 有几个默认预定义的自定义功能可供使用：
 
-- cust_comconsole - 禁用 VGA 设备上的 getty(8)（/dev/ttyv\*设备节点），并启用 COM1 串口 port 作为系统控制台。
+- cust_comconsole - 禁用 VGA 设备上的 getty(8)（/dev/ttyv*设备节点），并启用 COM1 串口 port 作为系统控制台。
 - cust_allow_ssh_root - 允许 root 通过 sshd(8) 登录。
 - cust_install_files - 从 nanobsd/Files 目录安装文件，该目录包含一些用于系统管理的实用脚本。
-- cust_pkgng - 从 nanobsd/Pkg 目录安装软件包（还需要 pkg-\* 软件包进行引导）。
+- cust_pkgng - 从 nanobsd/Pkg 目录安装软件包（还需要 pkg-* 软件包进行引导）。
 
 #### 2.3.3. 添加软件包
 
@@ -291,7 +291,7 @@ FlashDevice SanDisk 1G
 
 cust_nobeastie() (
 	touch ${NANO_WORLDDIR}/boot/loader.conf
-	echo "beastie_disable=\"YES\"" >> ${NANO_WORLDDIR}/boot/loader.conf
+	echo "beastie_disable="YES"" >> ${NANO_WORLDDIR}/boot/loader.conf
 )
 
 customize_cmd cust_comconsole
