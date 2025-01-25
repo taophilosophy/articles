@@ -16,7 +16,7 @@ FreeBSD 是 FreeBSD 基金会的注册商标.
 
 为了遵循本指南，我们需要安装某些要求。我们需要一个 Language server， ccls 或 clangd ，以及一个可选的编译数据库。
 
-Language server 的安装可以通过 pkg 或通过ports进行。如果我们选择 clangd ，我们需要安装 llvm 。
+Language server 的安装可以通过 pkg 或通过 ports 进行。如果我们选择 clangd ，我们需要安装 llvm 。
 
 使用 pkg 来安装 ccls ：
 
@@ -30,22 +30,24 @@ Language server 的安装可以通过 pkg 或通过ports进行。如果我们选
 # pkg install llvm15
 ```
 
-要通过ports安装，请从以下每个类别中选择喜爱的工具组合：
+要通过 ports 安装，请从以下每个类别中选择喜爱的工具组合：
 
-* 语言服务器实现
+- 语言服务器实现
 
-  * [ 开发/ccls](https://cgit.freebsd.org/ports/tree/devel/ccls/)
-  * 开发/llvm12（其他版本也可以，但更新的更好。如果使用其他版本，请使用 clangdN 替换 clangd12 。）
-* 编辑
+  - [ 开发/ccls](https://cgit.freebsd.org/ports/tree/devel/ccls/)
+  - 开发/llvm12（其他版本也可以，但更新的更好。如果使用其他版本，请使用 clangdN 替换 clangd12 。）
 
-  * [ 编辑器/vim](https://cgit.freebsd.org/ports/tree/editors/vim/)
-  * [ 编辑器/neovim](https://cgit.freebsd.org/ports/tree/editors/neovim/)
-  * [ 编辑器/vscode](https://cgit.freebsd.org/ports/tree/editors/vscode/)
-* 编译数据库生成器
+- 编辑
 
-  * devel/python（用于 llvm 的 scan-build-py 实现）
-  * devel/py-pip（用于 rizsotto 的 scan-build 实现）
-  * [ 开发/bear](https://cgit.freebsd.org/ports/tree/devel/bear/)
+  - [ 编辑器/vim](https://cgit.freebsd.org/ports/tree/editors/vim/)
+  - [ 编辑器/neovim](https://cgit.freebsd.org/ports/tree/editors/neovim/)
+  - [ 编辑器/vscode](https://cgit.freebsd.org/ports/tree/editors/vscode/)
+
+- 编译数据库生成器
+
+  - devel/python（用于 llvm 的 scan-build-py 实现）
+  - devel/py-pip（用于 rizsotto 的 scan-build 实现）
+  - [ 开发/bear](https://cgit.freebsd.org/ports/tree/devel/bear/)
 
 ## 3. 编辑器设置
 
@@ -62,7 +64,7 @@ Language server 的安装可以通过 pkg 或通过ports进行。如果我们选
 # git clone https://github.com/prabirshrestha/vim-lsp ~/.config/nvim/pack/lsp/start/vim-lsp
 ```
 
- 对于 Vim：
+对于 Vim：
 
 ```
 # mkdir -p ~/.vim/pack/lsp/start
@@ -71,7 +73,7 @@ Language server 的安装可以通过 pkg 或通过ports进行。如果我们选
 
 要在编辑器中启用 LSP 客户端插件，请在使用 Neovim 时将以下代码片段添加到 ~/.config/nvim/init.vim 中，或者在使用 Vim 时添加到 ~/.vim/vimrc 中：
 
- 对于 ccls
+对于 ccls
 
 ```
 au User lsp_setup call lsp#register_server({
@@ -85,7 +87,7 @@ au User lsp_setup call lsp#register_server({
     \ }})
 ```
 
- 对于 clangd
+对于 clangd
 
 ```
 au User lsp_setup call lsp#register_server({
@@ -136,9 +138,9 @@ LSP 客户端插件需要启动语言服务器守护程序。按 Ctrl+Shift+X �
 
 然后，按 Ctrl+Shift+P 以显示编辑器命令面板。在面板中输入 Preferences: Open Settings (JSON) ，然后按 Enter 打开 settings.json。根据语言服务器的实现，将以下 JSON 键/值对之一放入 settings.json：
 
- 对于 clangd
+对于 clangd
 
-```
+```c
 [
     /* Begin of your existing configurations */
     ...
@@ -151,9 +153,9 @@ LSP 客户端插件需要启动语言服务器守护程序。按 Ctrl+Shift+X �
 ]
 ```
 
- 为 ccls
+为 ccls
 
-```
+```c
 [
     /* Begin of your existing configurations */
     ...
