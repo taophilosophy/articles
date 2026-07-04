@@ -4,11 +4,11 @@
 
 ## 1. 介绍
 
-本指南介绍了如何设置带有源代码索引的 FreeBSD src 树，使用语言服务器进行代码索引。该指南涵盖了 Vim/NeoVim 和 VSCode 的设置步骤。如果你使用其他文本编辑器，可以将本指南作为参考，并搜索适用于你首选编辑器的相应命令。
+本指南介绍如何设置 FreeBSD src 树，并使用语言服务器执行源代码索引。该指南涵盖了 Vim/NeoVim 和 VSCode 的设置步骤。如果你使用其他文本编辑器，可以将本指南作为参考，并搜索适用于你首选编辑器的相应命令。
 
 ## 2. 系统要求
 
-为了跟随本指南，我们需要安装一些必备组件。我们需要一个语言服务器，`ccls` 或 `clangd`，以及一个可选的编译数据库。
+为了按照本指南操作，我们需要安装一些必备组件。我们需要语言服务器，`ccls` 或 `clangd`，以及可选的编译数据库。
 
 语言服务器的安装可以通过 `pkg` 或者 Ports 来完成。如果我们选择 `clangd`，则需要安装 `llvm`。
 
@@ -29,7 +29,7 @@
 - 语言服务器实现
 
   - [devel/ccls](https://cgit.freebsd.org/ports/tree/devel/ccls/)
-  - [devel/llvm12](https://cgit.freebsd.org/ports/tree/devel/llvm12/) （其他版本也可以，但版本较新的更好。如果使用其他版本，请将 `clangd12` 替换为 `clangdN`）
+  - [devel/llvm12](https://cgit.freebsd.org/ports/tree/devel/llvm12/) （其他版本也可以，但较新的版本更好。如果使用其他版本，请将 `clangd12` 替换为 `clangdN`）
 - 编辑器
 
   - [editors/vim](https://cgit.freebsd.org/ports/tree/editors/vim/)
@@ -47,7 +47,7 @@
 
 #### 3.1.1. LSP 客户端插件
 
-本示例中使用的是内置插件管理器，LSP 客户端插件为 [prabirshrestha/vim-lsp](https://github.com/prabirshrestha/vim-lsp)。
+本示例中两个编辑器均使用内置插件管理器，LSP 客户端插件为 [prabirshrestha/vim-lsp](https://github.com/prabirshrestha/vim-lsp)。
 
 为 Neovim 设置 LSP 客户端插件：
 
@@ -63,7 +63,7 @@
 # git clone https://github.com/prabirshrestha/vim-lsp ~/.vim/pack/lsp/start/vim-lsp
 ```
 
-启用编辑器中的 LSP 客户端插件时，在 Neovim 中将以下代码片段添加到 **\~/.config/nvim/init.vim**，在 Vim 中添加到 **\~/.vim/vimrc**：
+要在编辑器中启用 LSP 客户端插件，在 Neovim 中将以下代码片段添加到 **~/.config/nvim/init.vim**，在 Vim 中添加到 **~/.vim/vimrc**：
 
 对于 ccls
 
@@ -94,7 +94,7 @@ au User lsp_setup call lsp#register_server({
 
 请参考 [https://github.com/prabirshrestha/vim-lsp/blob/master/README.md#registering-servers](https://github.com/prabirshrestha/vim-lsp/blob/master/README.md#registering-servers) 了解如何设置快捷键和代码补全。`clangd` 的官网是 [https://clangd.llvm.org](https://clangd.llvm.org/)，而 ccls 的仓库链接是 [https://github.com/MaskRay/ccls/](https://github.com/MaskRay/ccls/)。
 
-以下是关键绑定和代码补全的参考设置。将以下代码片段添加到 **\~/.config/nvim/init.vim**，或者 Vim 用户可以将其添加到 **\~/.vim/vimrc** 以使用：
+以下是快捷键和代码补全的参考设置。将以下代码片段添加到 **~/.config/nvim/init.vim**，或者 Vim 用户可将其添加到 **~/.vim/vimrc**：
 
 ```ini
 function! s:on_lsp_buffer_enabled() abort
@@ -158,7 +158,7 @@ LSP 客户端插件是启动语言服务器守护进程所必需的。按 `Ctrl+
 
 ## 4. 编译数据库
 
-编译数据库包含一个编译命令对象数组。每个对象指定了一种编译源文件的方式。编译数据库文件通常为 **compile\_commands.json**。该数据库由语言服务器实现用于索引。
+编译数据库包含一个编译命令对象数组。每个对象指定了一种编译源文件的方式。编译数据库文件通常为 **compile_commands.json**。该数据库由语言服务器实现用于索引。
 
 有关编译数据库文件格式的详细信息，请参考 [https://clang.llvm.org/docs/JSONCompilationDatabase.html#format](https://clang.llvm.org/docs/JSONCompilationDatabase.html#format)。
 
@@ -182,7 +182,7 @@ LSP 客户端插件是启动语言服务器守护进程所必需的。按 `Ctrl+
 alias intercept-build='/path/to/llvm-project/clang/tools/scan-build-py/bin/intercept-build'
 ```
 
-[rizsotto/scan-build](https://github.com/rizsotto/scan-build) 可以替代 LLVM 的 scan-build-py。LLVM 的 scan-build-py 已被合并到 rizsotto/scan-build 中。可以通过 `pip install --user scan-build` 来安装这个实现。`intercept-build` 脚本默认位于 **\~/.local/bin** 中。
+[rizsotto/scan-build](https://github.com/rizsotto/scan-build) 可以替代 LLVM 的 scan-build-py。rizsotto/scan-build 已被合并入 LLVM 代码树，成为 LLVM 的 scan-build-py。可以通过 `pip install --user scan-build` 来安装这个实现。`intercept-build` 脚本默认位于 **~/.local/bin** 中。
 
 ##### 4.1.1.2. 使用方法
 
@@ -192,7 +192,7 @@ alias intercept-build='/path/to/llvm-project/clang/tools/scan-build-py/bin/inter
 # intercept-build --append make buildworld buildkernel -j`sysctl -n hw.ncpu`
 ```
 
-`--append` 标志告诉 `intercept-build` 读取现有的编译数据库（如果存在），并将结果追加到数据库中。具有重复命令键的条目将被合并。默认情况下，生成的编译数据库保存在当前工作目录下，文件名为 **compile\_commands.json**。
+`--append` 标志告诉 `intercept-build` 读取现有的编译数据库（如果存在），并将结果追加到数据库中。具有重复命令键的条目将被合并。默认情况下，生成的编译数据库保存在当前工作目录下，文件名为 **compile_commands.json**。
 
 #### 4.1.2. 使用 devel/bear
 
@@ -204,7 +204,7 @@ alias intercept-build='/path/to/llvm-project/clang/tools/scan-build-py/bin/inter
 # bear --append -- make buildworld buildkernel -j`sysctl -n hw.ncpu`
 ```
 
-`--append` 标志告诉 `bear` 如果现有的编译数据库存在，则读取并将结果追加到数据库中。具有重复命令键的条目将被合并。默认情况下，生成的编译数据库保存在当前工作目录下，文件名为 **compile\_commands.json**。
+`--append` 标志告诉 `bear` 读取现有的编译数据库（如果存在），并将结果追加到数据库中。具有重复命令键的条目将被合并。默认情况下，生成的编译数据库保存在当前工作目录下，文件名为 **compile_commands.json**。
 
 ## 5. 最终步骤
 

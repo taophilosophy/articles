@@ -14,13 +14,13 @@ IPsec 包含以下子协议：
 
 IPsec 支持两种操作模式。第一种模式是 *Transport Mode*，保护两个主机之间的通信。第二种模式是 *Tunnel Mode*，用于建立虚拟隧道，通常称为虚拟专用网络（VPN）。有关 FreeBSD 中 IPsec 子系统的详细信息，请参考 [ipsec(4)](https://man.freebsd.org/cgi/man.cgi?query=ipsec&sektion=4&format=html)。
 
-本文演示了如何在家庭网络和公司网络之间设置 IPsecVPN。
+本文演示了如何在家庭网络和公司网络之间设置 IPsec VPN。
 
 在示例场景中：
 
 - 两个站点都通过运行 FreeBSD 的网关连接到互联网。
-- 每个网络的网关至少有一个外部 IP 地址。在此示例中，公司 LAN 的外部 IP 地址是 `172.16.5.4`，家庭 LAN 的外部 IP 地址是 `192.168.1.12`。
-- 两个网络的内部地址可以是公共或私有 IP 地址。然而，地址空间不得重叠。在此示例中，公司 LAN 的内部 IP 地址是 `10.246.38.1`，家庭 LAN 的内部 IP 地址是 `10.0.0.5`。
+- 每个网络的网关至少有一个外部 IP 地址。在此示例中，公司 LAN 的外部 IP 地址是 **172.16.5.4**，家庭 LAN 的外部 IP 地址是 **192.168.1.12**。
+- 两个网络的内部地址可以是公共或私有 IP 地址。然而，地址空间不得重叠。在此示例中，公司 LAN 的内部 IP 地址是 **10.246.38.1**，家庭 LAN 的内部 IP 地址是 **10.0.0.5**。
 
 ```sh
            公司                          家
@@ -31,7 +31,7 @@ IPsec 支持两种操作模式。第一种模式是 *Transport Mode*，保护两
 
 首先，必须从 Ports Collection 安装 [security/ipsec-tools](https://cgit.freebsd.org/ports/tree/security/ipsec-tools/)。该软件提供了多个支持配置的应用程序。
 
-接下来的要求是创建两个 [gif(4)](https://man.freebsd.org/cgi/man.cgi?query=gif&sektion=4&format=html) 虚拟设备，用于隧道数据包并允许两个网络正确通信。作为 `root` 用户，在每个网关上运行以下命令：
+接下来需要创建两个 [gif(4)](https://man.freebsd.org/cgi/man.cgi?query=gif&sektion=4&format=html) 虚拟设备，用于隧道数据包并允许两个网络正确通信。作为 `root` 用户，在每个网关上运行以下命令：
 
 ```sh
 corp-gw# ifconfig gif0 create
@@ -89,7 +89,7 @@ PING 10.246.38.1 (10.246.38.1): 56 data bytes
 round-trip min/avg/max/stddev = 28.106/94.594/154.524/49.814 ms
 ```
 
-正如预期的那样，双方能够从私有配置的地址发送和接收 ICMP 包。接下来，必须告诉两个网关如何路由数据包，以便正确地从每个网关后面的网络发送流量。以下命令将实现此目标：
+正如预期，双方能够从私有配置的地址发送和接收 ICMP 包。接下来，必须告诉两个网关如何路由数据包，以便正确地从每个网关后面的网络发送流量。以下命令将实现此目标：
 
 ```sh
 corp-gw# route add 10.0.0.0 10.0.0.5 255.255.255.0
@@ -98,7 +98,7 @@ home-gw# route add 10.246.38.0 10.246.38.1 255.255.255.0
 home-gw# route add host 10.246.38.0: gateway 10.246.38.1
 ```
 
-内部机器应该能够从每个网关以及网关后的机器上访问。同样，使用 [ping(8)](https://man.freebsd.org/cgi/man.cgi?query=ping&sektion=8&format=html) 来确认：
+内部机器应该能够从每个网关以及网关后面的机器访问。同样，使用 [ping(8)](https://man.freebsd.org/cgi/man.cgi?query=ping&sektion=8&format=html) 来确认：
 
 ```sh
 corp-gw# ping -c 3 10.0.0.8
@@ -187,7 +187,7 @@ sainfo  (address 10.246.38.0/24 any address 10.0.0.0/24 any)	# 地址 $network/$
 
 需要配置安全策略数据库（SPD），以便 FreeBSD 和 racoon 能够加密和解密主机之间的网络流量。
 
-可以通过类似以下的 shell 脚本在公司网关上实现这一点。该文件将在系统初始化期间使用，并应保存为 **/usr/local/etc/racoon/setkey.conf**。
+在公司网关上，可以通过类似以下的 shell 脚本来实现这一点。该文件将在系统初始化期间使用，并应保存为 **/usr/local/etc/racoon/setkey.conf**。
 
 ```ini
 flush;
@@ -248,7 +248,7 @@ ipfw add 00204 allow log udp from any 500 to any
 >规则号可能需要根据当前主机配置进行修改。
 
 
-对于 [pf(4)](https://man.freebsd.org/cgi/man.cgi?query=pf&sektion=4&format=html) 或 [ipf(8)](https://man.freebsd.org/cgi/man.cgi?query=ipf&sektion=8&format=html) 的用户，以下规则应该可以实现：
+对于 [pf(4)](https://man.freebsd.org/cgi/man.cgi?query=pf&sektion=4&format=html) 或 [ipf(8)](https://man.freebsd.org/cgi/man.cgi?query=ipf&sektion=8&format=html) 的用户，以下规则应该可以起作用：
 
 ```sh
 pass in quick proto esp from any to any

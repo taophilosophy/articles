@@ -9,7 +9,7 @@
 
 ## 1. 前言
 
-本文旨在帮助读者获得足够的 LDAP 知识，从而能够配置一台 LDAP 服务器。本文还将尝试解释如何使用 [net/nss\_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/) 与 [security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 配置客户端服务，使其与 LDAP 服务器协同工作。
+本文旨在帮助读者获得足够的 LDAP 知识，从而能够配置一台 LDAP 服务器。本文还将尝试解释如何使用 [net/nss_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/) 与 [security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 配置客户端服务，使其与 LDAP 服务器协同工作。
 
 阅读完毕后，读者应能够配置并部署一台可以托管 LDAP 目录的 FreeBSD 服务器，并能够配置并部署一台可以通过 LDAP 目录进行身份验证的 FreeBSD 服务器。
 
@@ -56,7 +56,7 @@ SSL 与 TLS 使用不同端口的原因在于：TLS 连接以明文开始，在�
 
 >**注意**
 >
->本节内容特定于 OpenLDAP。如果使用其它服务器，请查阅相应文档。我们将配置 OpenLDAP 使用 TLS，因为 SSL 被认为已过时。
+>我们将配置 OpenLDAP 使用 TLS，因为 SSL 已被弃用。
 
 OpenLDAP 安装完成后，在 **/usr/local/etc/openldap/slapd.conf** 中添加以下配置参数以启用 TLS：
 
@@ -97,7 +97,7 @@ subject=/C=AU/ST=Some-State/O=Internet Widgits Pty Ltd
 Getting Private key
 ```
 
-这将创建一个可用于 **slapd.conf** 中配置项的自签名证书，其中 **cert.crt** 与 **cacert.crt** 可为同一文件。如果你计划使用多个 OpenLDAP 服务器（例如通过 `slurpd` 进行复制），请参阅 [LDAP 中的 OpenSSL 证书](https://docs.freebsd.org/en/articles/ldap-auth/#ssl-ca) 以生成 CA 密钥，并使用该密钥为每台服务器签发证书。
+这将创建可用于 **slapd.conf** 中配置项的自签名证书，其中 **cert.crt** 与 **cacert.crt** 可为同一文件。如果你计划使用多个 OpenLDAP 服务器（例如通过 `slurpd` 进行复制），请参阅 [LDAP 中的 OpenSSL 证书](https://docs.freebsd.org/en/articles/ldap-auth/#ssl-ca) 以生成 CA 密钥，并使用该密钥为每台服务器签发证书。
 
 完成后，在 **/etc/rc.conf** 中加入以下内容：
 
@@ -114,7 +114,7 @@ ldap     slapd      3261  7  tcp4   *:389                 *:*
 
 #### 2.1.3. 配置客户端
 
-为 OpenLDAP 库安装 [net/openldap26-client](https://cgit.freebsd.org/ports/tree/net/openldap26-client/) Port。客户端始终会使用 OpenLDAP 库，因为目前 [security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 与 [net/nss\_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/) 只支持 OpenLDAP。
+为 OpenLDAP 库安装 [net/openldap26-client](https://cgit.freebsd.org/ports/tree/net/openldap26-client/) Port。客户端始终会使用 OpenLDAP 库，因为目前 [security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 与 [net/nss_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/) 只支持 OpenLDAP。
 
 OpenLDAP 库的配置文件为 **/usr/local/etc/openldap/ldap.conf**。编辑该文件，加入如下内容：
 
@@ -127,22 +127,22 @@ tls_cacert /path/to/your/cacert.crt
 
 >**注意**
 >
->本节内容特定于 OpenLDAP。如果使用其它服务器，请查阅相应文档。客户端必须能够访问 **cacert.crt** 文件，否则将无法建立连接。
+>客户端必须能够访问 **cacert.crt** 文件，否则将无法建立连接。
 
 >**注意**
 >
->本节内容特定于 OpenLDAP。如果使用其它服务器，请查阅相应文档。系统中有两个名为 **ldap.conf** 的文件。第一个是上述用于 OpenLDAP 库的文件，用于定义如何连接服务器；第二个是 **/usr/local/etc/ldap.conf**，用于 pam\_ldap。
+>系统中有两个名为 **ldap.conf** 的文件。第一个是上述用于 OpenLDAP 库的文件，用于定义如何连接服务器；第二个是 **/usr/local/etc/ldap.conf**，用于 `pam_ldap`。
 
 此时，你应可在客户端运行 `ldapsearch -Z`；其中 `-Z` 表示“使用 TLS”。若遇到错误，说明配置存在问题，最常见的是证书问题。可使用 [openssl(1)](https://man.freebsd.org/cgi/man.cgi?query=openssl&sektion=1&format=html) 的 `s_client` 与 `s_server` 工具确认证书是否配置正确并已签名。
 
 
 ### 2.2. 数据库中的条目
 
-对 LDAP 目录的认证通常是通过尝试以连接用户的身份绑定到目录来完成的。这是通过在目录上建立一个“简单”绑定并提供用户名来实现的。如果存在一个条目的 `uid` 等于该用户名，并且该条目的 `userPassword` 属性与提供的密码匹配，那么绑定就会成功。
+对 LDAP 目录的认证通常是通过尝试以连接用户的身份绑定到目录来完成的。这是通过在目录上建立“简单”绑定并提供用户名来实现的。如果存在条目的 `uid` 等于该用户名，并且该条目的 `userPassword` 属性与提供的密码匹配，那么绑定就会成功。
 
 我们首先需要弄清楚用户在目录中的位置。
 
-我们的数据库的基本条目是 `dc=example,dc=org`。大多数客户端默认期望用户位于 `ou=people,base` 这样的路径下，因此我们也采用这个结构。不过要注意，这一点是可以配置的。
+我们数据库的基本条目是 `dc=example,dc=org`。大多数客户端默认期望用户位于 `ou=people,base` 这样的路径下，因此我们也采用这个结构。不过要注意，这一点是可以配置的。
 
 因此，`people` 这个组织单位的 ldif 条目应如下所示：
 
@@ -159,7 +159,7 @@ ou: people
 
 在本例中我们使用 `person` 对象类。如果你使用 `inetOrgPerson`，步骤基本相同，但需要额外提供 `sn` 属性。
 
-为了添加一个名为 `tuser` 的测试用户，ldif 文件应如下：
+为了添加名为 `tuser` 的测试用户，ldif 文件应如下：
 
 ```sh
 dn: uid=tuser,ou=people,dc=example,dc=org
@@ -202,17 +202,17 @@ cn: tuser
 
 客户端应该已经从 [配置客户端](https://docs.freebsd.org/en/articles/ldap-auth/#ldap-connect-client) 中安装了 OpenLDAP 库，但如果你要配置多台客户端机器，那么每台机器都需要安装 [net/openldap26-client](https://cgit.freebsd.org/ports/tree/net/openldap26-client/)。
 
-FreeBSD 需要安装两个 Port 才能对 LDAP 服务器进行认证：[security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 和 [net/nss\_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/)。
+FreeBSD 需要安装两个 Port 才能对 LDAP 服务器进行认证：[security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 和 [net/nss_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/)。
 
 ### 3.1. 认证
 
-[security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 通过 **/usr/local/etc/ldap.conf** 文件进行配置。
+[security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 通过 **/usr/local/etc/ldap.conf** 文件进行配置。
 
 >**注意**
 >
 >这个文件与 OpenLDAP 库函数的配置文件 **/usr/local/etc/openldap/ldap.conf** 是 *不同的文件*；不过它接受许多相同的选项；事实上，它是后者的超集。下文中提到的 **ldap.conf** 均指 **/usr/local/etc/ldap.conf**。
 
-因此，我们需要将原先配置文件 **openldap/ldap.conf** 中的所有参数复制到新的 **ldap.conf** 中。完成此操作后，我们需要告知 [security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 要在目录服务器上查找哪些内容。
+因此，我们需要将原先配置文件 **openldap/ldap.conf** 中的所有参数复制到新的 **ldap.conf** 中。完成此操作后，我们需要告知 [security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 要在目录服务器上查找哪些内容。
 
 我们通过 `uid` 属性来识别用户。要配置这一点（尽管它是默认值），请在 **ldap.conf** 中设置 `pam_login_attribute` 指令：
 
@@ -222,7 +222,7 @@ FreeBSD 需要安装两个 Port 才能对 LDAP 服务器进行认证：[security
 pam_login_attribute uid
 ```
 
-设置之后，[security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 将在 `base` 所指定的整个 LDAP 目录中搜索 `uid=username` 这一值。如果只找到一个匹配条目，它将尝试以该用户绑定，并使用提供的密码进行验证。若绑定成功，则允许访问；否则验证失败。
+设置之后，[security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 将在 `base` 所指定的整个 LDAP 目录中搜索 `uid=username` 这一值。如果只找到一个匹配条目，它将尝试以该用户绑定，并使用提供的密码进行验证。若绑定成功，则允许访问；否则验证失败。
 
 如果用户的 shell 不在 **/etc/shells** 中，将无法登录。这一点在 LDAP 服务器为用户设置 Bash shell 时尤为重要。FreeBSD 的默认安装并不包含 Bash。当通过包或 Port 安装 Bash 时，它位于 **/usr/local/bin/bash**。需要确认服务器上的 shell 路径设置正确：
 
@@ -230,7 +230,7 @@ pam_login_attribute uid
 % getent passwd username
 ```
 
-如果输出的最后一列显示为 `/bin/bash`，有两种解决方式：一种是将 LDAP 服务器上的用户条目改为 **/usr/local/bin/bash**；另一种是在 LDAP 客户端机器上创建一个符号链接：
+如果输出的最后一列显示为 `/bin/bash`，有两种解决方式：一种是将 LDAP 服务器上的用户条目改为 **/usr/local/bin/bash**；另一种是在 LDAP 客户端机器上创建符号链接：
 
 ```sh
 # ln -s /usr/local/bin/bash /bin/bash
@@ -243,7 +243,7 @@ pam_login_attribute uid
 
 PAM 是“可插拔认证模块”（Pluggable Authentication Modules）的缩写，是 FreeBSD 用于认证大多数会话的机制。要告诉 FreeBSD 我们希望使用 LDAP 服务器，需要向合适的 PAM 文件添加一行配置。
 
-通常情况下，如果你希望通过 SSH 使用 LDAP 认证，则应修改 **/etc/pam.d/sshd** 文件（同时记得在 **/etc/ssh/sshd\_config** 中设置相关选项，否则 SSH 不会使用 PAM）。
+通常情况下，如果你希望通过 SSH 使用 LDAP 认证，则应修改 **/etc/pam.d/sshd** 文件（同时记得在 **/etc/ssh/sshd_config** 中设置相关选项，否则 SSH 不会使用 PAM）。
 
 要启用 PAM 认证，请添加如下行：
 
@@ -275,7 +275,7 @@ memberUid: uid=someuser,ou=people,dc=example,dc=org
 
 你的 **pam.d/sshd** 文件可能最终如下所示：
 
-**示例 5. **pam.d/sshd** 示例**
+**示例 5. pam.d/sshd 示例**
 
 ```ini
 auth            required        pam_nologin.so          no_warn
@@ -295,11 +295,11 @@ account         required        /usr/local/lib/pam_ldap.so      no_warn ignore_a
 
 ### 3.2. 名称服务切换（Name Service Switch）
 
-NSS 是一款将属性映射为名称的服务。例如，如果一个文件归属用户 `1001`，某个应用程序就会通过 NSS 查询 `1001` 对应的用户名，可能返回的是 `bob`、`ted` 或者其他名称。
+NSS 是将属性映射为名称的服务。例如，如果文件归属用户 `1001`，某个应用程序就会通过 NSS 查询 `1001` 对应的用户名，可能返回的是 `bob`、`ted` 或者其他名称。
 
 现在我们的用户信息存储在 LDAP 中了，因此我们需要告诉 NSS，在被查询时应从那里查找。
 
-[net/nss\_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/) Port 提供了这个功能。它使用与 [security/pam\_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 相同的配置文件，安装后通常不需要额外的参数。接下来我们只需编辑 **/etc/nsswitch.conf**，以启用目录服务支持。只需将如下几行：
+[net/nss_ldap](https://cgit.freebsd.org/ports/tree/net/nss_ldap/) Port 提供了这个功能。它使用与 [security/pam_ldap](https://cgit.freebsd.org/ports/tree/security/pam_ldap/) 相同的配置文件，安装后通常不需要额外的参数。接下来我们只需编辑 **/etc/nsswitch.conf**，以启用目录服务支持。只需将如下几行：
 
 ```ini
 group: compat
@@ -346,13 +346,13 @@ ldappasswd -D uid="$USER",ou=people,dc=example,dc=org \
 
 >**小心**
 >
->该脚本几乎不进行任何错误检查，更重要的是它对密码的处理非常草率。如果你确实打算使用此类方法，至少应调整 `security.bsd.see_other_uids` 这个 sysctl 参数：
+>该脚本几乎不进行任何错误检查，更重要的是它对密码的存储非常草率。如果你确实打算使用此类方法，至少应调整 `security.bsd.see_other_uids` 这个 sysctl 参数：
 >
 >```sh
 ># sysctl security.bsd.see_other_uids=0
 >```
 
-一种更灵活（也可能更安全）的方法是编写一个自定义程序，甚至是 Web 接口。以下是一个 Ruby 库的部分内容，它可以更改 LDAP 密码，既可用于命令行，也可用于 Web。
+一种更灵活（也可能更安全）的方法是编写自定义程序，甚至是 Web 接口。以下是 Ruby 库的部分内容，它可以更改 LDAP 密码，既可用于命令行，也可用于 Web。
 
 **示例 7. 用于更改密码的 Ruby 脚本**
 
@@ -398,7 +398,7 @@ conn.modify(luser, [replace])
 
 ## 4. 安全注意事项（Security Considerations）
 
-现在你的机器（甚至可能包括其他服务）已经开始依赖 LDAP 服务器进行身份验证，这台服务器的安全性至少应与常规服务器上的 **/etc/master.passwd** 文件持平，甚至更高。因为待 LDAP 服务器被破坏或攻破，所有客户端服务也将随之瘫痪。
+现在你的机器（甚至可能包括其他服务）已经开始依赖 LDAP 服务器进行身份验证，这台服务器的安全性至少应与常规服务器上的 **/etc/master.passwd** 文件持平，甚至更高。因为一旦 LDAP 服务器被破坏或攻破，所有客户端服务也将随之瘫痪。
 
 请注意，本节并不穷尽所有内容。你应持续审查自己的配置和操作流程，以便改进。
 
@@ -450,13 +450,13 @@ access to *
 
 ### 4.2. `root` 账户定义
 
-LDAP 服务的 `root` 或管理账户通常会直接写在配置文件中。以 OpenLDAP 为例，它支持这种做法，也确实可行，但待 **slapd.conf** 被泄露，就会带来麻烦。更好的做法是只在最初引导 LDAP 系统时使用这个账户，之后在 LDAP 数据库中创建一个 `root` 账户。
+LDAP 服务的 `root` 或管理账户通常会直接写在配置文件中。以 OpenLDAP 为例，它支持这种做法，也确实可行，但如果 **slapd.conf** 被泄露，就会带来麻烦。更好的做法是只在最初引导 LDAP 系统时使用这个账户，之后在 LDAP 数据库中创建 `root` 账户。
 
 进一步的改进是完全不使用 `root` 账户，而是创建权限受限的账户。例如：被授权添加或删除用户账户的用户属于一个特定的组，但他们自己却不能修改该组的成员。这类安全策略有助于降低密码泄露带来的风险。
 
 #### 4.2.1. 创建管理组（Creating a Management Group）
 
-假设你希望 IT 部门的成员能够修改用户的 home 目录，但不希望他们拥有添加或删除用户的权限。实现这一目标的方法是为这些管理员添加一个组：
+假设你希望 IT 部门的成员能够修改用户的 home 目录，但不希望他们所有人都能够添加或删除用户。实现这一目标的方法是为这些管理员添加组：
 
 **示例 10. 创建管理组**
 
@@ -483,7 +483,7 @@ access to dn.subtree="ou=people,dc=example,dc=org"
 
 现在，`tuser` 和 `user2` 就可以更改其他用户的 home 目录了。
 
-在这个例子中，我们将部分管理权限赋予某些用户，而没有授予他们在其他领域的权限。其思想是：最终不再有单个用户账户拥有类似 `root` 的权限，但 `root` 曾拥有的每一项权限，都至少有一个用户拥有。如此一来，`root` 账户就变得不再必要，可以移除。
+在这个例子中，我们将部分管理权限赋予某些用户，而没有授予他们在其他领域的权限。其思想是：最终不再有单个用户账户拥有 `root` 账户的权限，但 `root` 曾拥有的每一项权限，都至少有一个用户拥有。如此一来，`root` 账户就变得不再必要，可以移除。
 
 
 
@@ -499,7 +499,7 @@ access to dn.subtree="ou=people,dc=example,dc=org"
 
 有一些额外的程序可能会对你有所帮助，尤其当你拥有大量用户而又不希望手动配置一切时。
 
-[security/pam\_mkhomedir](https://cgit.freebsd.org/ports/tree/security/pam_mkhomedir/) 是一个 PAM 模块，它总是会“成功”；它的作用是为没有 home 目录的用户自动创建 home 目录。如果你拥有几十台客户端服务器和上百名用户，使用它并设置 skeleton 目录将远比为每个用户手动准备 home 目录来得容易。
+[security/pam_mkhomedir](https://cgit.freebsd.org/ports/tree/security/pam_mkhomedir/) 是一个 PAM 模块，它总是会“成功”；它的作用是为没有 home 目录的用户自动创建 home 目录。如果你拥有几十台客户端服务器和上百名用户，使用它并设置 skeleton 目录将远比为每个用户手动准备 home 目录来得容易。
 
 [sysutils/ldapvi](https://cgit.freebsd.org/ports/tree/sysutils/ldapvi/) 是一个非常优秀的工具，它允许你用类 LDIF 的语法编辑 LDAP 条目。目录（或其中某一子集）会以你通过 `EDITOR` 环境变量指定的编辑器打开。这让你无需编写自定义工具，也能轻松批量修改目录内容。
 
@@ -511,7 +511,7 @@ access to dn.subtree="ou=people,dc=example,dc=org"
 
 以下操作步骤将直接展示过程，不会详细解释其原理——你可以参考 [openssl(1)](https://man.freebsd.org/cgi/man.cgi?query=openssl&sektion=1&format=html) 及相关文档以获得进一步解释。
 
-要创建一个证书颁发机构，我们只需要一个自签名证书和对应密钥。具体步骤如下：
+要创建证书颁发机构，我们只需要自签名证书和对应密钥。具体步骤如下：
 
 **示例 12. 创建证书**
 
@@ -523,11 +523,11 @@ access to dn.subtree="ou=people,dc=example,dc=org"
 
 这将生成你的根 CA 密钥和证书。你应该对该密钥进行加密，并将其保存在阴凉干燥的安全地点；任何获得该密钥的人都可以伪装成你的 LDAP 服务器。
 
-接下来，使用上述前两步创建密钥 **ldap-server-one.key** 和证书签名请求 **ldap-server-one.csr**。待使用 **root.key** 对签名请求进行签名，你就可以在 LDAP 服务器上使用 **ldap-server-one.\*** 文件了。
+接下来，使用上述前两步创建密钥 **ldap-server-one.key** 和证书签名请求 **ldap-server-one.csr**。使用 **root.key** 对签名请求进行签名后，你就可以在 LDAP 服务器上使用 `ldap-server-one.*` 文件了。
 
 >**注意**
 >
->生成证书签名请求时，不要忘记将“通用名称”（common name）属性设置为完全限定域名（FQDN）；否则客户端会拒绝与你的连接，而且诊断这种问题非常困难。
+>生成证书签名请求时，不要忘记将“Common Name”属性设置为完全限定域名（FQDN）；否则客户端会拒绝与你的连接，而且诊断这种问题非常困难。
 
 要对密钥进行签名，请使用 `-CA` 和 `-CAkey` 参数，而不是 `-signkey`：
 

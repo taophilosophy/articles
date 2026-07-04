@@ -38,7 +38,7 @@
 * 多网络适配器支持
 * PCI 直通
 * 可为 guest 指定 UTC 时间
-* 可通过配置文件为 guest 启用设备 `virtio-rnd` 
+* 可通过配置文件为 guest 启用设备 `virtio-rnd`
 * 所有需要 grub 命令的 `grub-bhyve` guest 使用自定义 grub 配置文件。这些 guest 会在控制台显示可访问的启动菜单。
 * 对基于 ZFS 的 guest 可进行快照、回滚与克隆
 * 可创建基于 ZFS 的 guest 镜像，并据此部署新 guest
@@ -57,42 +57,42 @@
 * [ ] 用户可控制用于直通设备的 slot/function，同时可以配置 vm-bhyve 在自动设备中应从哪个 slot 开始。
 * [ ] 通过 `wired_memory="yes"` 控制联动内存（wired memory）的功能。注意，已无法再通过 `bhyve_options="-S"` 实现该目的。`bhyve_options` 仍然存在，但我们不再扫描其中的 `-S` 参数来传递相同选项给 bhyveload。
 * [ ] 使用新的 bhyve CPU 语法控制 CPU 拓扑。据我所知，主机需要是 FreeBSD 12。
-* [ ] 选项 `graphics_vga=on|off|io`，用于控制 fbuf 参数 `vga`。在 UEFI 下的 OpenBSD 指令中使用此设置。
+* [ ] 选项 `graphics_vga=on|off|io`，用于控制 fbuf 参数 `vga`。在 UEFI 下的 OpenBSD 配置中使用此设置。
 * [ ] 若安装介质文件名不以 `.iso` 结尾，vm-bhyve 将自动切换为 `ahci-hd`，并将此设备设置为只读。
 
 ### 1.2 版本（当前 FreeBSD Ports 版本）
 
 这是当前的开发版本，有以下新特性：
 
-* [ ] 支持在单个控制器上使用高达 32 个 AHCI 设备。此前，bhyve 会为每个设备添加一个新的 AHCI 控制器，这在 UEFI guest 中极大制约了可附加设备数量。（仅限 FreeBSD 12）
+* [ ] 支持在单个控制器上使用高达 32 个 AHCI 设备。此前，bhyve 会为每个设备添加一个新的 AHCI 控制器，这在 UEFI guest 中严重限制了可附加设备的数量。（仅限 FreeBSD 12）
 * [ ] 新增命令 `vm set` 与 `vm get` 来管理全局配置变量。目前仅支持变量 `console`，但这为将来更多基本功能的可配置化铺平了道路。
 * [ ] “交互模式”支持：在 `tmux` 会话中启动 guest。与普通模式不同，`tmux` 会话不会分离，这提供了类似前台模式的体验；优势在于仍可手动分离 `tmux` 会话，让 guest 在后台继续运行。
 * [ ] 命令部分匹配支持，例如可使用 `vm sw l` 列出虚拟交换机。
 * [ ] 1.2 默认对所有 guest 使用 UTC 时钟，除非明确禁用。这种行为更一致、更可预期。
-* [ ] “media” 数据存储支持。如果你已有存放 ISO 镜像的目录，就没必要把它们复制到 `$vm_dir/.iso`。现在你可以直接把该目录添加为媒体数据存储，我们会在此目录中查找 ISO 文件。运行安装命令时也可直接使用 ISO 的完整路径，我们会在当前目录中查找。
+* [ ] “media” 数据存储支持。如果你已有存放 ISO 镜像的目录，就没必要把它们复制到 **$vm_dir/.iso**。现在你可以直接把该目录添加为媒体数据存储，我们会在此目录中查找 ISO 文件。运行安装命令时也可直接使用 ISO 的完整路径，我们会在当前目录中查找。
 * [ ] 命令 `vm start` 现在能同时启动多个 guest。
 * [ ] 重构虚拟交换机。现在桥接以交换机命名，代码模块化。
 * [ ] 更好地支持 virtio-console 设备。
 
 
-### 1.1 版本 
+### 1.1 版本
 
 
-* [ ] 新增概念 “datastore”（数据存储）与命令集 `vm datastore`。可创建多个虚拟机存储位置。guest 可在特定数据存储上创建，我们会在所有位置中查找用户指定的 guest。
-* [ ] 将“global”（全局）配置移入 `$vm_dir/.config/system.conf`。之前有独立的配置文件 `switch` 和 `datastore`，现已合并。我们添加了新的函数 `__config` 用于加载与访问该文件，无需频繁调用 `sysrc`。
+* [ ] 新增概念 “datastore”（数据存储）与命令集 `vm datastore`。可创建多个虚拟机存储位置。可在特定数据存储上创建 guest，我们会在所有位置中查找用户指定的 guest。
+* [ ] 将“global”（全局）配置移入 **$vm_dir/.config/system.conf**。之前有独立的配置文件 `switch` 和 `datastore`，现已合并。我们添加了新的函数 `__config` 用于加载与访问该文件，无需频繁调用 `sysrc`。
 * [ ] 移除了配置项 `guest`。用户需确保为所需的 guest 指定了 `loader="grub"` 或 `loader="bhyveload"`。
 * [ ] 支持通过 VNC 实现 UEFI 图形界面。
 * [ ] 支持使用 `tmux` 替代 `cu` 作为 guest 的串行控制台。
 
 
-### 1.0 版本 
+### 1.0 版本
 
 
-当前计划是将现有代码库（截至 0.12.5）稳定为 1.0 版本，待确认无明显错误即可发布。我对当前功能很满意。已测试了 FreeBSD / Linux / NetBSD / OpenBSD / Windows 多种 guest，运行正常。我尝试设置了在主机启动时自动启动的 guest（5 个），均无问题。
+当前计划是将现有代码库（截至 0.12.5）稳定为 1.0 版本，待确认无明显错误即可发布。我对当前功能很满意。测试了 FreeBSD / Linux / NetBSD / OpenBSD / Windows 多种 guest，运行正常。我尝试设置了在主机启动时自动启动的 guest（5 个），均无问题。
 
-截至 4 月 15 日，当前代码已升级为 1.0-beta。我计划保留一到两周，此期间只递增修订号/构建号（现在为独立整数）。之后我将发布 1.0 并提交 Port 更新。其他功能变更将纳入 1.1，并暂时仅在 GitHub 发布。我不希望频繁提交 Port 更新到 FreeBSD；想要最新功能的用户可从 GitHub 获取，其他用户则可在 Ports 获取稳定的 1.0。
+截至 4 月 15 日，当前代码升级为 1.0-beta。我计划保留一到两周，此期间只递增修订号/构建号（现在为独立整数）。之后我将发布 1.0 并提交 Port 更新。其他功能变更将纳入 1.1，并暂时仅在 GitHub 发布。我不希望频繁提交 Port 更新到 FreeBSD；想要最新功能的用户可从 GitHub 获取，其他用户则可在 Ports 获取稳定的 1.0。
 
-该版本已分支为 1-0.stable。待确认脱离 beta 状态，Ports 将更新此版本。版本号简化为 1.0，并附加构建号。如需修复，将在此分支完成，并在必要时以 1.0-pX 形式更新 Ports。
+该版本分支为 1-0.stable。待确认脱离 beta 状态，Ports 将更新此版本。版本号简化为 1.0，并附加构建号。如需修复，将在此分支完成，并在必要时以 1.0-pX 形式更新 Ports。
 
 
 ### 0.12.5 版本（已完成）
@@ -114,7 +114,7 @@
 
 * [ ] 加载器始终在 guest 控制台运行，因此若 guest 启动失败，用户可通过 `vm console` 命令访问加载器。
 * [ ] 如果用户从控制台重启 guest，加载器会出现，用户可以选择启动默认选项（会自动启动），或进入 grub 命令行。
-* [ ] 在旧版本中，若启动命令错误，`grub-bhyve` 可能挂起并占用 100% CPU。此问题已解决。
+* [ ] 在旧版本中，若启动命令错误，`grub-bhyve` 可能挂起并占用 100% CPU。此问题解决完成。
 * [ ] 配置文件中不再需要 `boot` 命令，简化了配置。
 
 
@@ -155,11 +155,11 @@
 
 **第 3–4 行**
 
-在 `/etc/rc.conf` 中启用 `vm-bhyve` 并设置要使用的数据集。如果不使用 ZFS，只需设置 `$vm_dir="/my/vm/folder"`。
+在 **/etc/rc.conf** 中启用 `vm-bhyve` 并设置要使用的数据集。如果不使用 ZFS，只需设置 `$vm_dir="/my/vm/folder"`。
 
 **第 5 行**
 
-运行 `vm init` 命令，在 `$vm_dir` 下创建所需目录并加载内核模块。
+运行 `vm init` 命令，在 **$vm_dir** 下创建所需目录并加载内核模块。
 
 **第 6 行**
 
@@ -175,17 +175,17 @@
 
 **第 10–12 行**
 
-使用 FreeBSD 的 `default.conf` 模板创建新的 guest，运行安装程序并连接到其控制台。此时可像普通系统一样进行安装。如果在安装命令前添加选项 `-f`，guest 将直接在你的终端上运行，因此不需要再执行 console 命令（请注意，选项 `-f` 仅在 `vm-bhyve-0.12.5+` 中可用）。
+使用 FreeBSD 的 `default.conf` 模板创建新的 guest，运行安装程序并连接到其控制台。此时可像普通系统一样进行安装。如果在安装命令前添加选项 `-f`，guest 将直接在你的终端上运行，因此不需要再执行 `vm console` 命令（请注意，选项 `-f` 仅在 `vm-bhyve-0.12.5+` 中可用）。
 
 ## 完整示例模板
 
-**November, 2025**
+**Oct 11, 2025**
 
 以下是运行 FreeBSD guest 的完整模板示例。
 
 其他操作系统的配置示例请参见 [Supported Guest Examples](https://github.com/churchers/vm-bhyve/wiki/Supported-Guest-Examples) 页面。
 
-所有模板均存放在目录 `$vm_dir/.templates` 下，文件名应为 `[我的模板名].conf`。你可以创建任意数量的模板，并在创建 guest 时指定，例如：
+所有模板均存放在目录 **$vm_dir/.templates** 下，文件名应为 `[我的模板名].conf`。你可以创建任意数量的模板，并在创建 guest 时指定，例如：
 
 ```sh
 vm create -t 我的模板名 myguest
@@ -226,7 +226,7 @@ FreeBSD guest 需要使用 `bhyveload` 作为加载器。
 
 **Oct 3, 2022**
 
-在默认情况下，`vm-bhyve` 使用 `cu`/`nmdm` 作为控制台会话管理工具。如果你希望虚拟机运行在 `tmux` 会话中，从 v1.1+ 开始支持此功能。只需在 `$vm_dir/.config/system.conf` 中设置选项 `console`：
+在默认情况下，`vm-bhyve` 使用 `cu`/`nmdm` 作为控制台会话管理工具。如果你希望虚拟机运行在 `tmux` 会话中，从 v1.1+ 开始支持此功能。只需在 **$vm_dir/.config/system.conf** 中设置选项 `console`：
 
 ```sh
 vm set console=tmux
@@ -245,9 +245,9 @@ fbsd: 1 windows (created Tue Jun 28 10:42:22 2016) [168x46]
 
 ## 受支持的 Guest 示例
 
-该文件列出了已经测试过的 guest，并展示了安装器和 guest 启动时可使用的配置选项。目标是建立配置清单，供大家在自己的模板中选用。在大多数情况下，guest 都是使用其默认安装选项进行测试的。
+该文件列出了测试过的 guest，并展示了安装器和 guest 启动时可使用的配置选项。目标是建立配置清单，供大家在自己的模板中选用。在大多数情况下，guest 都是使用其默认安装选项进行测试的。
 
-如果你成功地使用了这里未列出的 guest 操作系统，请告知我，以便更新列表。
+如果你成功使用了这里未列出的 guest 操作系统，请告知我，以便更新列表。
 
 请注意，我在这些示例中都省略了网络和磁盘设置，因为所有 guest 的格式都是相同的。不同配置请参见网络或磁盘示例页面。
 
@@ -275,7 +275,7 @@ loader="bhyveload"
 
 ### Windows
 
-建议至少为 Windows 准备 1G 内存，磁盘仿真需要使用 ahci-hd。
+建议至少为 Windows 准备 1G 内存，磁盘仿真需要使用 `ahci-hd`。
 
 ```ini
 guest="windows"
@@ -298,7 +298,7 @@ grub_run1="boot"
 
 ### OpenBSD
 
-以下示例针对 OpenBSD 6.2 amd64，因为安装命令有版本号和架构。我已成功运行 5.2，其他版本只要更新安装命令中的版本号也应可用。i386 guest 同样可用，但需更新安装命令。
+以下示例针对 OpenBSD 6.2 amd64，因为安装命令有版本号和架构。我成功运行了 5.2，其他版本只要更新安装命令中的版本号也应可用。i386 guest 同样可用，但需更新安装命令。
 
 ```ini
 loader="grub"
@@ -384,7 +384,7 @@ OpenBSD UEFI 注意事项：
 * 安装器默认会选择错误的根磁盘，请确保选择了正确的磁盘（sd1）。
 * 安装完成后，请执行 `vm poweroff openbsd-vm`，否则 VM 会重新启动到安装盘。
 * 对于 UEFI，安装盘需要的格式是 `.img`，而不能是 `.iso`。
-* 使用命令：`sudo vm iso https://cdn.openbsd.org/pub/OpenBSD/7.6/amd64/install76.img`
+* 使用命令：`# vm iso https://cdn.openbsd.org/pub/OpenBSD/7.6/amd64/install76.img`
 
 ### Alpine Linux
 
@@ -429,7 +429,7 @@ grub_run2="boot"
 
 请注意，CentOS 的 kernel 和 initramfs 文件带内核版本号，如果系统没有内核 `2.6.32-573.el6`，需要修改配置。
 
-如果你熟悉 Linux，可以在 guest 中安装 grub2，并配置 `vm-bhyve` 使用 grub 配置文件。默认情况下，`vm-bhyve` 会查找 `/boot/grub/grub.cfg`，也可通过 `grub_run_dir` 和 `grub_run_file` 配置修改。（参见下文 CentOS 7 使用 guest 中 `/grub2/grub.cfg` 启动的示例）
+如果你熟悉 Linux，可以在 guest 中安装 grub2，并配置 `vm-bhyve` 使用 grub 配置文件。默认情况下，`vm-bhyve` 会查找 **/boot/grub/grub.cfg**，也可通过 `grub_run_dir` 和 `grub_run_file` 配置修改。（参见下文 CentOS 7 使用 guest 中 **/grub2/grub.cfg** 启动的示例）
 
 ```ini
 guest="linux"
@@ -554,11 +554,11 @@ grub_run0="linux /boot/vmlinuz-64 crashkernel=16M"
 grub_run1="initrd /boot/initrd.rgz"
 ```
 
-通过对 MikroTik 官网下载的镜像进行一些修改，可以按照 [教程](https://it-notes.dragas.net/2023/03/21/creating-a-mikrotik-chr-routeros-7-bhyve-vm-in-freebsd-2/) 正确运行基于 RouterOS 7.x 的 CHR。
+修改 MikroTik 官网下载的镜像后，可以按照 [教程](https://it-notes.dragas.net/2023/03/21/creating-a-mikrotik-chr-routeros-7-bhyve-vm-in-freebsd-2/) 正确运行基于 RouterOS 7.x 的 CHR。
 
 ### Gentoo
 
-使用 `/boot` 替代 `/isolinux`（参见 [https://github.com/churchers/vm-bhyve/issues/186）：](https://github.com/churchers/vm-bhyve/issues/186）：)
+使用 **/boot** 替代 **/isolinux**（参见 [issue 186](https://github.com/churchers/vm-bhyve/issues/186)）。
 
 安装模板：
 
@@ -611,16 +611,16 @@ disk0_name="openwrt-19.07.1-x86-64-combined-ext4.img"
 
 以下配置在 `uefi` 下使用 `virtio` 驱动，并为 LAN 创建了额外的 `switch`。
 
-* 使用命令 `sudo vm switch create openwrt` 创建额外 switch。
+* 使用命令 `# vm switch create openwrt` 创建额外 switch。
 
 配置文件中 `network1` 的 switch 设置为 `public`，因为 OpenWRT 会自动使用 `eth1` 作为 WAN 并通过 DHCP 获取 IP。
 
-OpenWRT 也会自动将 LAN 子网设置为 `192.168.1.0/24`（eth0），如果 WAN 和 LAN 子网相同，将导致路由表冲突，因此需要修改 LAN 子网。
+OpenWRT 也会自动将 LAN 子网设置为 `192.168.1.0/24`（eth0），如果 WAN 和 LAN 子网相同，会导致路由表冲突，因此需要修改 LAN 子网。
 
 * 下载 x86/64 ext4 efi 镜像，用 gzip 解压，然后复制到 VM 目录，并重命名为 `disk0.img`，替换已创建的 `disk0.img`。
 
 ```sh
-sudo vm iso https://downloads.openwrt.org/releases/24.10.0/targets/x86/64/openwrt-24.10.0-x86-64-generic-ext4-combined-efi.img.gz
+# vm iso https://downloads.openwrt.org/releases/24.10.0/targets/x86/64/openwrt-24.10.0-x86-64-generic-ext4-combined-efi.img.gz
 ```
 
 配置示例：
@@ -668,7 +668,7 @@ disk0_dev="sparse-zvol"
 
 ### 自定义磁盘
 
-可自定义磁盘镜像的路径。磁盘可以是稀疏文件、ZVOL，甚至是 `/dev/` 下的物理磁盘：
+可自定义磁盘镜像的路径。磁盘可以是稀疏文件、ZVOL，甚至是 **/dev/** 下的物理磁盘：
 
 ```ini
 disk0_type="virtio-blk"
@@ -714,7 +714,7 @@ disk1_dev="custom"
 # vm configure myguest
 
 disk1_type="virtio-9p"
-disk1_name="sharename=/path/to/share" 
+disk1_name="sharename=/path/to/share"
 disk1_dev="custom"
 ```
 
@@ -749,7 +749,7 @@ network0_switch="public"
 
 ### 自定义 MAC 地址
 
-请注意，首次运行时，如果网络接口没有 MAC 地址，`vm-bhyve` 将自动为其分配一个静态 MAC 地址，并写入配置文件。
+请注意，首次运行时，如果网络接口没有 MAC 地址，`vm-bhyve` 将自动为其分配静态 MAC 地址，并写入配置文件。
 
 ```ini
 network0_type="virtio-net"
@@ -763,7 +763,7 @@ network0_mac="00:11:22:33:44:55"
 
 默认情况下，`vm-bhyve` 会为每个接口创建动态 tap 设备。如果需要进行复杂配置，需要手动设置网络，这可能会成为问题，因为设备在启动 guest 之前并不存在。
 
-通过指定自定义设备，你可以在 `rc.conf` 自行配置该设备。请注意，我省略了配置选项 `switch`。如果指定了，tap 设备会自动附加到虚拟交换机。如果你已按需求配置了自定义设备，可以省略 switch 设置。
+通过指定自定义设备，你可以在 `rc.conf` 自行配置该设备。请注意，我省略了配置选项 `switch`。如果指定了，tap 设备会自动附加到虚拟交换机。如果你按需求配置了自定义设备，可以省略 switch 设置。
 
 ```sh
 network0_type="virtio-net"
@@ -776,7 +776,7 @@ network0_device="tap0"
 
 vm-bhyve 1.1 现在支持多个数据存储（datastore），并新增了一组用于管理数据存储的命令。
 
-基本配置与以前相同。你需要为 `vm-bhyve` 的配置和 guest 创建一个目录或 ZFS 数据集，并在 `/etc/rc.conf` 中设置：
+基本配置与以前相同。你需要为 `vm-bhyve` 的配置和 guest 创建一个目录或 ZFS 数据集，并在 **/etc/rc.conf** 中设置：
 
 ```ini
 vm_dir="zfs:sys/data/vm"
@@ -826,7 +826,7 @@ ssd             zfs         /data/vm2                 sys/data/vm2
 # vm create -d ssd -t centos7 -s 50G centos-ssd
 ```
 
-命令 `list` 和 `info` 也已更新，能显示数据存储信息：
+命令 `list` 和 `info` 也更新完成，能显示数据存储信息：
 
 ```sh
 # vm list
@@ -845,17 +845,17 @@ Virtual Machine: fb2
 ....
 ```
 
-请注意，guest 名称仍需在所有数据存储中唯一。如果有多个相同名称的 guest（例如添加一个已包含 guest 的数据存储），`vm-bhyve` 命令会按添加顺序搜索数据存储，仅操作找到的第一个 guest。
+请注意，guest 名称仍需在所有数据存储中唯一。如果有多个相同名称的 guest（例如添加包含 guest 的数据存储），`vm-bhyve` 命令会按添加顺序搜索数据存储，仅操作找到的第一个 guest。
 
 ## 虚拟交换机
 
 **Jun 29, 2020**
 
-`vm-bhyve` 的设计理念是基于“虚拟交换机”。你可以创建任意数量的虚拟交换机，每个交换机都有一个简单的名称。
+`vm-bhyve` 的设计理念是基于“虚拟交换机”。你可以创建任意数量的虚拟交换机，每个交换机都有简单的名称。
 
-在配置 guest 时，你可以为每个网络接口指定要连接的交换机名称。当 guest 启动时，会创建一个虚拟以太网（`tap`）设备，并自动将其添加到指定的虚拟交换机中。
+在配置 guest 时，你可以为每个网络接口指定要连接的交换机名称。当 guest 启动时，会创建虚拟以太网（`tap`）设备，并自动将其添加到指定的虚拟交换机中。
 
-在后台，每个虚拟交换机对应系统上的一个简单 `bridge` 接口。`vm-bhyve` 会跟踪每个交换机对应的 bridge（使用 `ifconfig` 的 groups 功能），并利用此信息将每个 tap 接口连接到正确的 bridge。如果交换机名称少于 12 个字符，则接口命名为 `vm-{name}`，这在配置其他工具（如 pf/dnsmasq）时非常有用。
+在后台，每个虚拟交换机对应系统上的简单 `bridge` 接口。`vm-bhyve` 会跟踪每个交换机对应的 bridge（使用 `ifconfig` 的 groups 功能），并利用此信息将每个 tap 接口连接到正确的 bridge。如果交换机名称少于 12 个字符，则接口命名为 `vm-{name}`，这在配置其他工具（如 pf/dnsmasq）时非常有用。
 
 ### 查看虚拟交换机信息
 
@@ -900,7 +900,7 @@ Virtual Switch: public
 
 ### 分配 VLAN 号
 
-为虚拟交换机分配 VLAN 号，会为连接的每个物理接口创建一个 `vlan` 接口，并将其连接到交换机，而非真实接口。这样，交换机上的 guest 可以正常通信，经过物理接口的数据包会带上指定的 VLAN 标签：
+为虚拟交换机分配 VLAN 号，会为连接的每个物理接口创建 `vlan` 接口，并将其连接到交换机，而非真实接口。这样，交换机上的 guest 可以正常通信，经过物理接口的数据包会带上指定的 VLAN 标签：
 
 ```sh
 # vm switch vlan public 10
@@ -914,13 +914,13 @@ Virtual Switch: public
 
 ### 使用自定义 bridge
 
-有时你可能希望手动配置 `bridge` 接口，以使用 `vm-bhyve` 不直接支持的功能。在这种情况下，可以先在 `/etc/rc.conf` 手动创建 bridge，然后导入到 `vm-bhyve`：
+有时你可能希望手动配置 `bridge` 接口，以使用 `vm-bhyve` 不直接支持的功能。在这种情况下，可以先在 **/etc/rc.conf** 手动创建 bridge，然后导入到 `vm-bhyve`：
 
 ```sh
 # vm switch create -t manual -b bridge0 customswitch
 ```
 
-该命令假定你已手动创建了 `bridge0`。运行后，`vm-bhyve` 会为 bridge 接口分配描述。如果 guest 配置中指定 `networkX_switch="customswitch"`，该接口将连接到你的自定义 bridge。
+该命令假定你手动创建了 `bridge0`。运行后，`vm-bhyve` 会为 bridge 接口分配描述。如果 guest 配置中指定 `networkX_switch="customswitch"`，该接口将连接到你的自定义 bridge。
 
 ### NAT
 
@@ -938,7 +938,7 @@ Virtual Switch: public
 
 **Oct 18, 2018**
 
-不幸的是，从 v1.2 起，`vm-bhyve` 移除了内部 NAT 配置。作为 shell 脚本，之前依赖配置外部系统（如 pf 和 dnsmasq）来提供 NAT 功能。有些用户想使用其他工具或防火墙，并且很多用户由于已有的 pf 或 dnsmasq 配置而导致 NAT 出现问题。因此，现在可以说通过手动配置 NAT 比尝试使用 `vm-bhyve` 启用 NAT 并手动安装或调整生成的配置更简单且出错率更低。
+不幸的是，从 v1.2 起，`vm-bhyve` 移除了内部 NAT 配置。由于是 shell 脚本，我们之前依赖配置外部系统（如 pf 和 dnsmasq）来提供 NAT 功能。有些用户想使用其他工具或防火墙，并且许多用户因已有的 pf 或 dnsmasq 配置导致 NAT 无法正常工作。现在的情况是，手动配置 NAT 比通过 `vm-bhyve` 启用 NAT 再手动安装或调整生成的配置更简单，出错率也更低。
 
 下面是使用 pf 为 `vm-bhyve` guests 设置 NAT 主机的一些基础指南。
 
@@ -946,14 +946,14 @@ Virtual Switch: public
 
 在此示例中，我选择为 guest 使用 `192.168.8.x` 网络，网关为 `192.168.8.1`。
 
-我们需要启用网关功能，使主机能够在公有网络和 NAT 网络之间转发数据包。同时需要启动 pf 服务，在 `/etc/rc.conf` 中配置如下：
+我们需要启用网关功能，使主机能在公共网络和 NAT 网络之间转发数据包。同时需要启动 pf 服务，在 **/etc/rc.conf** 中配置如下：
 
 ```ini
 gateway_enable="yes"
 pf_enable="yes"
 ```
 
-接下来在 `/etc/pf.conf` 中创建 NAT 规则，将私有网络的数据包进行 NAT。此示例中，`em0` 是主机面向公网的接口：
+接下来在 **/etc/pf.conf** 中创建 NAT 规则，将私有网络的数据包进行 NAT。此示例中，`em0` 是主机面向公网的接口：
 
 ```sh
 nat on em0 from {192.168.8.0/24} to any -> (em0)
@@ -968,7 +968,7 @@ nat on em0 from {192.168.8.0/24} to any -> (em0)
 
 ### vm-bhyve 配置
 
-现在需要创建交换机，用于连接 guest。应为该交换机分配一个 NAT 网络范围内的 IP，用作 guest 的网关。我将其命名为 `public`，这是所有 `vm-bhyve` 示例中使用的默认交换机名称，你也可以根据环境自定义名称：
+现在需要创建交换机，用于连接 guest。应为该交换机分配 NAT 网络范围内的 IP，用作 guest 的网关。我将其命名为 `public`，这是所有 `vm-bhyve` 示例中使用的默认交换机名称，你也可以根据环境自定义名称：
 
 ```sh
 # vm switch create -a 192.168.8.1/24 public     <-- 如果是新建交换机
@@ -1031,7 +1031,7 @@ Grub 加载器运行在 guest 控制台上，因此当 guest 处于 `Bootloader`
 
 ### 无配置
 
-如果完全未指定 grub 配置，`grub2-bhyve` 会在 guest 的 `hd0` 分区 `1` 上查找 `/boot/grub/grub.cfg` 文件。如果文件存在，它会被处理，大多数情况下会显示带有选项的启动菜单。
+如果完全未指定 grub 配置，`grub2-bhyve` 会在 guest 的 `hd0` 分区 `1` 上查找 **/boot/grub/grub.cfg** 文件。如果文件存在，会加载该文件，大多数情况下会显示带有选项的启动菜单。
 
 如果未找到 GRUB2 配置文件，grub2-bhyve 会直接进入 `grub>` 命令行界面。
 
@@ -1039,13 +1039,13 @@ Grub 加载器运行在 guest 控制台上，因此当 guest 处于 `Bootloader`
 
 如果 guest 有 GRUB2 配置文件，但不在 `grub2-bhyve` 查找的标准位置，可在 guest 配置文件中使用 `grub_run_dir` 和 `grub_run_file` 指定文件位置。
 
-例如，CentOS 7 使用 `/grub2/grub.cfg`，文件名未变，仅需指定新目录：
+例如，CentOS 7 使用 **/grub2/grub.cfg**，文件名未变，仅需指定新目录：
 
 ```sh
 grub_run_dir="/grub2"
 ```
 
-若 guest 系统文件名为 `/grub2/grub2.conf`，则可指定：
+若 guest 系统文件名为 **/grub2/grub2.conf**，则可指定：
 
 ```sh
 grub_run_dir="/grub2"
@@ -1090,7 +1090,7 @@ grub_run0="knetbsd -h -r ld0a /netbsd"
 
 ### 安装器命令
 
-在正常情况下，`grub2-bhyve` 会在 CD 的 `/boot/grub/grub.cfg` 查找 grub 配置文件，如找不到，则进入 `grub>` CLI。我们未提供配置选项指定其他位置，但提供了自定义启动命令的功能。例如 CentOS 6 样例模板的 ISO 安装命令如下：
+在正常情况下，`grub2-bhyve` 会在 CD 的 **/boot/grub/grub.cfg** 查找 grub 配置文件，如找不到，则进入 `grub>` CLI。我们未提供配置选项指定其他位置，但提供了自定义启动命令的功能。例如 CentOS 6 样例模板的 ISO 安装命令如下：
 
 ```ini
 grub_install0="linux /isolinux/vmlinuz"
@@ -1103,7 +1103,7 @@ grub_install1="initrd /isolinux/initrd.img"
 
 如果想运行 Windows，强烈建议使用 FreeBSD 11 及以上版本，并启用 UEFI 图形支持。
 
-首先需要确保系统已经安装 UEFI 固件（如果尚未安装）：
+首先需要确保系统已安装 UEFI 固件（如果尚未安装）：
 
 ```sh
 # pkg install bhyve-firmware
@@ -1111,7 +1111,7 @@ grub_install1="initrd /isolinux/initrd.img"
 
 ### Guest 配置
 
-使用 Windows 模板创建 guest。默认配置为 2 个 CPU 和 2GB 内存，同时使用 Windows 原生支持的 Intel 网络适配器 `e1000` 。如果需要修改配置选项，可使用命令 `vm configure guest`。
+使用 Windows 模板创建 guest。默认配置为 2 个 CPU 和 2GB 内存，同时使用 Windows 原生支持的 Intel 网络适配器 `e1000`。如果需要修改配置选项，可使用命令 `vm configure guest`。
 
 > **注意**
 >
@@ -1123,7 +1123,7 @@ grub_install1="initrd /isolinux/initrd.img"
 
 ### 安装
 
-通过指定 Windows ISO 文件正常启动安装。在安装模式下运行时，`vm-bhyve` 将等待 VNC 客户端，在 VNC 连接后再启动 guest，以便捕捉 Windows 的选项 “Boot from CD/DVD”（从 CD/DVD 启动）。在此期间，`vm list` 中显示 guest 为锁定状态。
+通过指定 Windows ISO 文件正常启动安装。在安装模式下运行时，`vm-bhyve` 将等待 VNC 客户端，在 VNC 连接后再启动 guest，以便捕捉 Windows 可能显示的 “Boot from CD/DVD”（从 CD/DVD 启动）选项。在此期间，`vm list` 中显示 guest 为锁定状态。
 
 ```sh
 # vm install winguest Windows-Installer.iso
@@ -1133,7 +1133,7 @@ grub_install1="initrd /isolinux/initrd.img"
 
 ### 添加 VirtIO 网络驱动
 
-虽然网络适配器 `e1000` 能开箱即用，提供网络访问，但建议尽可能的使用设备 `virtio-net`。安装驱动的方法有几种：
+虽然网络适配器 `e1000` 能开箱即用，提供网络访问，但建议尽量使用设备 `virtio-net`。安装驱动的方法有几种：
 
 * 如果 guest 可以通过 e1000 上网，可直接在 guest 内下载并安装 VirtIO 驱动，安装完成后关闭 guest，更改 guest 配置为 VirtIO 设备并重启。
 * 在安装模式下启动 guest，并指定 VirtIO ISO 文件：
@@ -1152,11 +1152,11 @@ disk1_name="/full/path/to/virtio-installer.iso"
 
 ### CPU 设置
 
-部分 Windows 版本（多数桌面版）不支持一个以上的物理 CPU。在默认情况下，bhyve 会将每个虚拟 CPU 配置为一个独立 package。
+部分 Windows 版本（多数桌面版）不支持一个以上的物理 CPU。在默认情况下，bhyve 会将每个虚拟 CPU 配置为独立 package。
 
-可通过修改 sysctl  `hw.vmm.topology.cores_per_package` 来创建每个 CPU 的多个核心而不是多个 package。例如，将其设置为 4，将使 8 vCPU 的 guest 配置为 2 x 4 核 package。
+可通过修改 sysctl `hw.vmm.topology.cores_per_package` 来创建每个 CPU 的多个核心而不是多个 package。例如，将其设置为 4，将使 8 vCPU 的 guest 配置为 2 x 4 核 package。
 
-必须在 `/boot/loader.conf` 中设置该 sysctl，重启生效。
+必须在 **/boot/loader.conf** 中设置该 sysctl，重启生效。
 
 在 FreeBSD 12，使用 vm-bhyve 1.3，可通过配置文件为每个 guest 控制 CPU 拓扑：
 
@@ -1206,11 +1206,11 @@ passthru0="4/0/0"
 
 **Jan 26, 2022**
 
-OmniOS 的开发已在 OmniOSce 中延续，由 OmniOS 社区和基金会提供支持。现在不再需要修改安装介质，这在旧版本的 OmniOS 中是必须的（可查看此页面的旧版本）。
+OmniOS 的开发在 OmniOSce 中延续，由 OmniOS 社区和基金会提供支持。现在不再需要修改安装介质，这在旧版本的 OmniOS 中是必须的（可查看此页面的旧版本）。
 
 ### 下载最新版本
 
-大约每六个月发布一个稳定版本，并享有一年的支持。建议访问官方 [OmniOSce 下载页面](https://omniosce.org/download.html)。
+大约每六个月发布一个稳定版本，并提供一年支持。建议访问官方 [OmniOSce 下载页面](https://omniosce.org/download.html)。
 
 ```sh
 vm iso https://downloads.omniosce.org/media/stable/omniosce-r151028b.iso
@@ -1222,7 +1222,7 @@ vm iso https://downloads.omniosce.org/media/stable/omniosce-r151028b.iso
 vm create omniosce
 ```
 
-OmniOSce 支持 `virtio-net` 驱动，相比 `e1000` 提供的性能更佳：
+OmniOSce 支持 `virtio-net` 驱动，相比 `e1000` 性能更佳：
 
 ```ini
 loader="uefi"
@@ -1264,13 +1264,13 @@ internal error: Argument out of domain
 * 继续安装：`2  Install OmniOS straight on to a preconfigured rpool`
 
 [illumos bug tracker](https://www.illumos.org/issues/12237)
-[待修复提交](https://code.illumos.org/c/illumos-gate/+/347/1/usr/src/lib/libzfs/common/libzfs_pool.c)
+[待定修复](https://code.illumos.org/c/illumos-gate/+/347/1/usr/src/lib/libzfs/common/libzfs_pool.c)
 
 ### 配置 OmniOSce 串行控制台
 
 在最新版本，不再必须使用串行控制台。你可以通过 UEFI loader 使用 VNC 查看器。不过，如果你想用串行控制台，可以按如下方式启用：
 
-安装程序的最后一步可通过 shell 提示来自定义安装，使用菜单项：**Shell (for post-install ops on /mnt)**。
+安装程序的最后一步可通过 shell 提示符来自定义安装，使用菜单项：**Shell (for post-install ops on /mnt)**。
 
 ![OmniOSce 安装器 postmenu](https://omniosce.org/assets/images/install/r26/postmenu.png?raw=true)
 
@@ -1312,15 +1312,15 @@ sysctl net.link.bridge.pfil_bridge=0
 sysctl net.link.bridge.pfil_member=0
 ```
 
-在我的情况下，前两个值是自动设置的（可能是由 vm-bhyve 完成的），所以我只需要设置后两个。
+我这里前两个值是自动设置的（可能是由 vm-bhyve 完成的），所以我只需要设置后两个。
 
 >**注意**
 >
->如果你的防火墙是 `ipfw`/`firewall`，那么这些设置可适用；如果你使用 `pf`，也许需要另外的设置。
+>如果你的防火墙是 `ipfw`/`firewall`，那么这些设置可适用；如果你使用 `pf`，可能需要其他设置。
 
 出处：[FreeBSD 论坛](https://forums.freebsd.org/threads/bhyve-and-firewall-on-host.75089/)
 
-要在开机时生效，请将所需值追加到 `/etc/sysctl.conf` 中，但省略 `sysctl ` 字样。在我的例子中，我添加了：
+要在开机时生效，请将所需值追加到 **/etc/sysctl.conf** 中，但省略 `sysctl` 字样。我添加了：
 
 ```ini
 # 禁用在网络桥上传输的数据包过滤：
@@ -1347,14 +1347,14 @@ Press any key to continue...
 
 按任意键后，在 GRUB 菜单按 `c` 进入 grub 命令行。输入 `ls` 查看可用设备，对于 `alpine-virt-3.13.2-x86_64.iso`，结果为：`(cd0) (cd0,msdos2) (hd0) (host)`
 
-逐层查看文件树，找到位于 `/boot` 的内核：
+逐层查看文件树，找到位于 **/boot** 的内核：
 
 ```sh
 ls (cd0)/
 apks/ boot/ efi/
 ```
 
-继续查看 `/boot`：
+继续查看 **/boot**：
 
 ```sh
 grub> ls (cd0)/boot/
@@ -1365,7 +1365,7 @@ config-virt dtbs-virt/ grub/ initramfs-virt modloop-virt syslinux/ System.map-vi
 
 你可以通过输入 `reboot` 退出控制台，等待几秒钟，然后按 `~+Ctrl+d` 返回主机终端。
 
-接下来，编辑该虚拟机的配置文件：`vm config alpine`（将 `alpine` 替换为你的虚拟机名称），或者复制模板创建自己的模板。对于本例中的 ISO，需要将所有 `vanilla` 替换为 `virt`，即将 `/boot/vmlinuz-vanilla` 替换为 `/boot/vmlinuz-virt`，`/boot/initramfs-vanilla` 替换为 `/boot/initramfs-virt`。
+接下来，编辑该虚拟机的配置文件：`vm config alpine`（将 `alpine` 替换为你的虚拟机名称），或者复制模板创建自己的模板。对于本例中的 ISO，需要将所有 `vanilla` 替换为 `virt`，即将 **/boot/vmlinuz-vanilla** 替换为 **/boot/vmlinuz-virt**，**/boot/initramfs-vanilla** 替换为 **/boot/initramfs-virt**。
 
 如果使用 `vm config alpine`，只需重新运行：`vm install alpine alpine-virt-3.13.2-x86_64.iso`，然后 `vm console alpine`
 
@@ -1399,19 +1399,19 @@ UEFI 图形（VNC）支持说明
 
 > **更新**
 >
-> 现在 `pkg install sysutils/bhyve-firmware` 会自动安装 `edk2-bhyve` 和 `uefi-edk2-bhyve-csm`。原 Port `sysutils/uefi-edk2-bhyve` 已删除。
+> 现在 `pkg install sysutils/bhyve-firmware` 会自动安装 `edk2-bhyve` 和 `uefi-edk2-bhyve-csm`。原 Port `sysutils/uefi-edk2-bhyve` 删除完成。
 
 对于 vm-bhyve 1.1-p3 及以后版本，安装包即可自动查找固件路径。旧版本需手动复制固件至虚拟机目录下的 `.config`。
 
 ### 更新虚拟机配置
 
-在已经使用 UEFI 的 Windows 虚拟机上，添加以下配置：
+在已使用 UEFI 的 Windows 虚拟机上，添加以下配置：
 
 ```ini
 graphics="yes"
 ```
 
-启动虚拟机时，会添加一个 800x600 的帧缓冲设备。VNC 端口会动态分配，可在 `vm list` 或 `vm info guest` 下的 console-ports 查看。
+启动虚拟机时，会添加 800x600 的帧缓冲设备。VNC 端口会动态分配，可在 `vm list` 或 `vm info guest` 下的 console-ports 查看。
 
 ### 其他配置选项
 
@@ -1422,7 +1422,7 @@ graphics="yes"
 xhci_mouse="yes"
 ```
 
-* FreeBSD 13.0 及以后，启用 HMS 驱动：
+* FreeBSD 13.0 及以后，启用 hms(4) 驱动：
 
 ```sh
 # /boot/loader.conf
@@ -1430,7 +1430,7 @@ hw.usb.usbhid.enable=1
 usbhid_load="YES"
 ```
 
-* FreeBSD 13.0 前，使用 `misc/utouch-kmod` Port。
+* FreeBSD 13.0 前，使用 [utouch](https://github.com/wulf7/utouch)（Port `misc/utouch-kmod`）。
 
 * 指定 VNC 监听的主机 IP：
 
@@ -1464,7 +1464,7 @@ graphics_res="1600x900"
 640x480
 ```
 
-* 等待 VNC 客户端连接（可在安装过程中暂停启动，默认 `auto`）：
+* 等待 VNC 客户端连接（在安装过程中需要在启动早期按键时非常有用。默认为 `auto`，即 vm-bhyve 在安装模式下首次启动时会等待；设置为 `no` 时，guest 永远不会等待，即使在安装模式下）：
 
 ```ini
 graphics_wait="yes"
@@ -1553,7 +1553,7 @@ guest 当前占用的主机内存大小。
 
 #### 控制台端口
 
-列出 guest 配置的各种控制台或图形端口。com 端口会显示连接的 `/dev/nmdm` 设备，若启用 tmux（仅 1.2 版本），会显示 tmux 会话。图形（VNC）控制台会显示 VNC 服务器监听的 IP 和端口。
+列出 guest 配置的各种控制台或图形端口。com 端口会显示连接的 **/dev/nmdm** 设备，若启用 tmux（仅 1.2 版本），会显示 tmux 会话。图形（VNC）控制台会显示 VNC 服务器监听的 IP 和端口。
 
 #### 网络接口
 
@@ -1593,9 +1593,9 @@ guest 当前占用的主机内存大小。
 
 该虚拟交换机对应的主机 bridge 接口名称。
 
-##### Bytes In / Bytes Out（已接收 / 发送的字节数）
+##### Bytes In / Bytes Out（接收 / 发送的字节数）
 
-接口已接收 / 发送的字节数。
+接口接收 / 发送的字节数。
 
 #### 虚拟磁盘
 
@@ -1670,7 +1670,7 @@ Virtual Switch: public
 
 #### Virtual Port（虚拟端口）
 
-每个连接到交换机的虚拟机都会显示一个虚拟端口条目。
+每个连接到交换机的虚拟机都会显示虚拟端口条目。
 
 ##### Device（设备）
 
@@ -1685,11 +1685,11 @@ Virtual Switch: public
 
 **Jun 29, 2025**
 
-如果你使用 `loader="grub"`，所需的命令会自动注入，以确保串行输出正常。不幸的是，像 Ubuntu 20.20 LTS 这样的现代 Linux 发行版要求使用 UEFI 才能在不修改上游镜像的情况下正确启动。为了启用正确的输出，我们必须修改 guest 内的 grub 配置。
+如果你使用 `loader="grub"`，所需的命令会自动注入，以确保串行输出正常。不幸的是，像 Ubuntu 20.04 LTS 这样的现代 Linux 发行版要求使用 UEFI 才能在不修改上游镜像的情况下正确启动。为了启用正确的输出，我们必须修改 guest 内的 grub 配置。
 
-### Ubuntu 20.20 LTS
+### Ubuntu 20.04 LTS
 
-创建文件 `/etc/default/grub.d/99-bhyve.cfg`，内容如下：
+创建文件 **/etc/default/grub.d/99-bhyve.cfg**，内容如下：
 
 ```ini
 GRUB_CMDLINE_LINUX_DEFAULT=""
@@ -1703,7 +1703,7 @@ GRUB_SERIAL_COMMAND="serial --speed=115200 --unit=0 --word=8 --parity=no --stop=
 
 ### Ubuntu 22.04 LTS
 
-创建文件 `/etc/default/grub.d/99-bhyve.cfg`，内容如下：
+创建文件 **/etc/default/grub.d/99-bhyve.cfg**，内容如下：
 
 ```ini
 GRUB_CMDLINE_LINUX="console=tty1 console=ttyS0,115200"
@@ -1711,11 +1711,11 @@ GRUB_TERMINAL="console serial"
 GRUB_SERIAL_COMMAND="serial --speed=115200"
 ```
 
-然后运行 `sudo update-grub` 激活新设置。下次重启后，使用 `vm console <guest>` 应该可以输出控制台内容。
+然后运行 `# update-grub` 激活新设置。下次重启后，使用 `vm console <guest>` 应该可以输出控制台内容。
 
 ### CentOS 7
 
-按照 [示例模板](https://github.com/churchers/vm-bhyve/blob/master/sample-templates/centos7.conf) 和 [Red Hat 官方文档](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-working_with_the_grub_2_boot_loader) 操作，打开 `/etc/default/grub` 并更新为：
+按照 [示例模板](https://github.com/churchers/vm-bhyve/blob/master/sample-templates/centos7.conf) 和 [Red Hat 官方文档](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-working_with_the_grub_2_boot_loader) 操作，打开 **/etc/default/grub** 并更新为：
 
 ```ini
 GRUB_CMDLINE_LINUX_DEFAULT=""
@@ -1737,7 +1737,7 @@ kernelopts=$(grub2-editenv - list | grep kernelopts)
 grub2-editenv - set "$kernelopts console=tty0 console=ttyS0,115200"
 ```
 
-注意：如果你急需通过 VNC 输入管道符号 (`|`)，可以按 `Alt+124`。参考[这里](https://www.david-scherfgen.de/loesung-pipe-symbol-in-vnc-tippen/)。
+注意：如果你迫切需要通过 VNC 输入管道符号 (`|`) 但无法输入，可以按 `Alt+124`。参考[这里](https://www.david-scherfgen.de/loesung-pipe-symbol-in-vnc-tippen/)。
 
 下次重启后，使用 `vm console <guest>` 应该可以输出控制台内容。
 
@@ -1748,13 +1748,13 @@ grub2-editenv - set "$kernelopts console=tty0 console=ttyS0,115200"
 
 ### 从本地主机迁移虚拟机到远程主机
 
-可以使用单条命令将一个虚拟机完整地从源主机迁移到目标主机。
+可以使用单条命令将虚拟机完整地从源主机迁移到目标主机。
 
 ```sh
 vm migrate -s guest-name new-host
 ```
 
-理想情况下应使用免密码的密钥认证，尽管不是严格必要的。
+理想情况下应使用免密码的密钥认证，尽管并非必须。
 
 更多详情请参见手册页：
 
@@ -1768,7 +1768,7 @@ vm migrate [-s12t] [-r name] [-i snapshot] [-d datastore] guest host
 
 ### 使用云镜像
 
-你可以使用云镜像来创建虚拟机。`vm img` 命令会将镜像下载到 datastore，并在需要时解压（支持 `.xz`、`.tar.gz` 和 `.gz` 文件）。镜像应为 RAW 或 QCOW2 格式。使用此功能需要安装软件包 `qemu` 或 `qemu-devel`：
+你可以使用云镜像来创建虚拟机。`vm img` 命令会将镜像下载到数据存储，并在需要时解压（支持 `.xz`、`.tar.gz` 和 `.gz` 文件）。镜像应为 RAW 或 QCOW2 格式。使用此功能需要安装软件包 `qemu` 或 `qemu-devel`：
 
 ```sh
 pkg install qemu
@@ -1829,7 +1829,7 @@ disk0_type="virtio-blk"
 
 ## vm-bhyve 命令行接口
 
-**October, 2025**
+**Oct 20, 2025**
 
 ### 🔧 **全局与系统命令**
 
@@ -1872,7 +1872,7 @@ disk0_type="virtio-blk"
 
 ### 🚀 **批量与电源控制**
 
-* **`vm startall`** – 启动 `/etc/rc.conf` 中 `vm_list=" "` 列出的所有虚拟机。
+* **`vm startall`** – 启动 **/etc/rc.conf** 中 `vm_list=" "` 列出的所有虚拟机。
 * **`vm stopall`** – 停止所有运行中的虚拟机。
 * **`vm reset <名称>`** – 强制重置虚拟机（类似按下重置键）。
 * **`vm poweroff <名称>`** – 强制关闭虚拟机。
@@ -1896,15 +1896,15 @@ disk0_type="virtio-blk"
 
 ## 代码布局
 
-**27, 2016**
+**Jun 27, 2016**
 
 `vm-bhyve` 文件概览及其用途。
 
 ### ./vm
 
-这是用户运行的主要命令。它几乎不包含逻辑，仅执行一些检查，确保 `vm-bhyve` 已启用、库文件和 `$vm_dir` 存在，并且操作系统和当前用户符合要求。如果运行在 ZFS 上，我们会将 `$vm_dir` 替换为指定数据集的挂载点。然后调用 `__parse_cmd` 来确定用户想执行的功能。
+这是用户运行的主要命令。它几乎不包含逻辑，仅执行一些检查，确保 `vm-bhyve` 已启用、库文件和 **$vm_dir** 存在，并且操作系统和当前用户符合要求。如果运行在 ZFS 上，我们会将 **$vm_dir** 替换为指定数据集的挂载点。然后调用 `__parse_cmd` 来确定用户想执行的功能。
 
-所有功能都存储在库文件中，通常位于 `/usr/local/lib/vm-bhyve/`。我们也会在 `./lib/` 中查找库文件，这能让你直接从当前目录运行 `vm`，便于开发。
+所有功能都存储在库文件中，通常位于 **/usr/local/lib/vm-bhyve/**。我们也会在 **./lib/** 中查找库文件，这能让你直接从当前目录运行 `vm`，便于开发。
 
 ### ./lib/vm-cmd
 
@@ -1912,11 +1912,11 @@ disk0_type="virtio-blk"
 
 ### ./lib/vm-config
 
-解析配置文件并返回配置变量的函数。我们有一个简单的配置加载器，它读取配置文件并存储在全局变量中。`__config_get` 函数在全局变量中查找所请求的设置并返回。由于此文件代码量较小，将来可能会合并到 `vm-common`。
+解析配置文件并返回配置变量的函数。我们使用简单的配置加载器，它读取配置文件并存储在全局变量中。`__config_get` 函数在全局变量中查找所请求的设置并返回。由于此文件代码量较小，将来可能会合并到 `vm-common`。
 
 ### ./lib/vm-core
 
-处理基本命令（如 `start|stop|install|iso|console` 等）的所有函数。大多数命令（除 switch 和 ZFS 特定命令外）都由此文件中的函数处理。该文件以前还包含运行 bhyve 的代码，但因文件过大，已迁移到 `vm-run`。
+处理基本命令（如 `start|stop|install|iso|console` 等）的所有函数。大多数命令（除 switch 和 ZFS 特定命令外）都由此文件中的函数处理。该文件以前还包含运行 bhyve 的代码，但因文件过大，迁移到了 `vm-run`。
 
 ### ./lib/vm-guest
 
@@ -1924,11 +1924,11 @@ disk0_type="virtio-blk"
 
 ### ./lib/vm-info
 
-`vm-bhyve` 有两个“信息”命令（`vm info [guest]` & `vm switch info [switch]`），用于输出关于 guest 和 switch 的大量信息。代码量较大，因此单独实现于此文件。
+`vm-bhyve` 有两个“信息”命令（`vm info [guest]` & `vm switch info [switch]`），用于输出关于 guest 和 switch 的大量信息。代码量较大，因此在此文件中单独实现。
 
 ### ./lib/vm-rctl
 
-为 bhyve 进程分配 rctl 限制的代码。此函数在 bhyve 启动前调用，然后等待 bhyve 启动，因为只要 bhyve 启动，我们的代码会阻塞直到其退出。
+为 bhyve 进程分配 rctl 限制的代码。此函数在 bhyve 启动前调用，然后等待 bhyve 启动，因为只要 bhyve 启动，我们的代码会阻塞直至其退出。
 
 ### ./lib/vm-run
 
@@ -1950,12 +1950,12 @@ disk0_type="virtio-blk"
 
 处理所有 ZFS 功能的函数。快照、克隆、回滚以及所有 `vm image` 命令的代码都在此文件中。
 
-还有函数 `__zfs_init`，用于在 ZFS 上正确设置 vm-bhyve。在所有情况下 `$vm_dir` 应为 vm-bhyve 数据的文件系统路径。但在 ZFS 上，用户需提供 `"zfs:pool/vm"` 而非文件系统路径。`__zfs_init` 会确保 ZFS 正在运行，然后获取指定数据集的挂载点。如果成功，挂载点存储在 `$vm_dir`，数据集存储在全局 `$VM_ZFS_DATASET` 变量中。这样，大部分 vm-bhyve 代码可以像平常一样使用 `$vm_dir`，需要直接访问 ZFS 数据集的函数可使用 `$VM_ZFS_DATASET`。
+还有函数 `__zfs_init`，用于在 ZFS 上正确设置 vm-bhyve。在所有情况下 **$vm_dir** 应为 vm-bhyve 数据的文件系统路径。但在 ZFS 上，用户需提供 `"zfs:pool/vm"` 而非文件系统路径。`__zfs_init` 会确保 ZFS 正在运行，然后获取指定数据集的挂载点。如果成功，挂载点存储在 **$vm_dir**，数据集存储在全局 **$VM_ZFS_DATASET** 变量中。这样，大部分 vm-bhyve 代码可以像平常一样使用 **$vm_dir**，需要直接访问 ZFS 数据集的函数可使用 **$VM_ZFS_DATASET**。
 
 
 ## 代码风格
 
-**30, 2016**
+**Jun 30, 2016**
 
 ### 变量
 
@@ -1978,7 +1978,7 @@ disk0_type="virtio-blk"
 lib::function_name
 ```
 
-大多数函数前会有简短说明，解释函数的功能，并列出参数和/或返回值，除非代码本身已经非常明显。
+大多数函数前会有简短说明，解释函数的功能，并列出参数和/或返回值，除非代码本身非常明显。
 
 私有函数前缀使用 `__`。
 
@@ -2038,7 +2038,7 @@ lib::bad_function(){
 
 #### 返回值
 
-在合理情况下，函数成功返回 `0`，出错返回其他整数。对于返回值，我们更倾向于使用 `setvar`，而不是 `$(func)` 和 `echo`，因为后者需要子 Shell，而不使用子 Shell 已被证明可提升性能。
+在合理情况下，函数成功返回 `0`，出错返回其他整数。对于返回值，我们更倾向于使用 `setvar`，而不是 `$(func)` 和 `echo`，因为后者需要子 Shell，而不使用子 Shell 已证明可提升性能。
 
 ```sh
 lib::good_function(){

@@ -14,15 +14,15 @@
 
 ## 2. 默认 Shell
 
-Linux® 用户通常会感到惊讶，因为 FreeBSD 中的默认 shell 不是 Bash。事实上，Bash 并未包含在默认系统中。相反，FreeBSD 使用与 Bourne shell 兼容的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 作为默认用户 shell。对于 FreeBSD 13 及之前版本，root 用户的默认 shell 是 [tcsh(1)](https://man.freebsd.org/cgi/man.cgi?query=tcsh&sektion=1&format=html)，而对于 FreeBSD 14 及之后版本，则是 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html)。虽然 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 与 Bash 十分相似，但其功能集要小得多。通常，为 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 编写的 shell 脚本可以在 Bash 中运行，但反之并不总是成立。
+Linux® 用户通常会感到惊讶，因为 FreeBSD 中的默认 shell 不是 Bash。事实上，Bash 并未包含在默认系统中。相反，FreeBSD 使用兼容 POSIX 的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 作为默认用户 shell。对于 FreeBSD 13 及之前版本，root 用户的默认 shell 是 [tcsh(1)](https://man.freebsd.org/cgi/man.cgi?query=tcsh&sektion=1&format=html)，而对于 FreeBSD 14 及之后版本，则是 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html)。虽然 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 与 Bash 十分相似，但其功能集要小得多。通常，为 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 编写的 shell 脚本可以在 Bash 中运行，但反之并不总是成立。
 
-不过，可以通过 FreeBSD 的 [Port 和包](https://docs.freebsd.org/en/books/handbook/#ports) 来安装 Bash 和其他 shell。
+不过，可以通过 FreeBSD 的 [Ports 和包](https://docs.freebsd.org/en/books/handbook/#ports) 来安装 Bash 和其他 shell。
 
 安装了其他 shell 后，可以使用 [chsh(1)](https://man.freebsd.org/cgi/man.cgi?query=chsh&sektion=1&format=html) 来更改用户的默认 shell。建议不要更改 `root` 用户的默认 shell，因为不包含在基础发行版中的 shell 是安装到 **/usr/local/bin** 目录下的。如果出现问题，可能会导致包含 **/usr/local/bin** 的文件系统未挂载，在这种情况下，`root` 用户将无法访问默认 shell，无法登录并修复问题。
 
-## 3. Port 和包：在 FreeBSD 中添加软件
+## 3. Ports 和包：在 FreeBSD 中添加软件
 
-FreeBSD 提供了两种安装应用程序的方法：二进制包和编译 Port。每种方法都有其优点：
+FreeBSD 提供了两种安装应用程序的方法：二进制包和编译 Ports。每种方法都有其优点：
 
 **二进制包**
 
@@ -30,14 +30,14 @@ FreeBSD 提供了两种安装应用程序的方法：二进制包和编译 Port�
 - 不需要了解如何编译软件。
 - 不需要安装编译器。
 
-**Port**
+**Ports**
 
 - 可以自定义安装选项。
 - 可以应用自定义补丁。
 
-如果应用程序的安装无需任何定制，安装二进制包即可。如果应用程序需要定制默认选项，则应编译 Port。必要时，可以通过 `make package` 从 Port 编译自定义包。
+如果应用程序的安装无需任何定制，安装二进制包即可。如果应用程序需要定制默认选项，则应编译 Port。必要时，可以通过 `make package` 从 Ports 编译自定义包。
 
-可以在 [这里](https://ports.freebsd.org/) 找到所有可用的 Port 和包的完整列表。
+可以在 [这里](https://ports.freebsd.org/) 找到所有可用的 Ports 和包的完整列表。
 
 ### 3.1. 包
 
@@ -47,22 +47,22 @@ FreeBSD 提供了两种安装应用程序的方法：二进制包和编译 Port�
 # pkg install apache24
 ```
 
-有关包的更多信息，请参考 FreeBSD 手册第 5.4 章：[使用 pkgng 进行二进制包管理](https://docs.freebsd.org/en/books/handbook/#pkgng-intro)。
+有关包的更多信息，请参考 FreeBSD 手册第 4.4 节：[使用 pkgng 进行二进制包管理](https://docs.freebsd.org/en/books/handbook/#pkgng-intro)。
 
-### 3.2. Port
+### 3.2. Ports
 
 FreeBSD Ports 是一套专门为从源代码安装应用程序而定制的 **Makefile** 和补丁框架。在安装 Port 时，系统会获取源代码、应用所需的补丁、编译代码，并安装应用程序及其所需的依赖项。
 
 Ports 有时也称为 Ports 树，可以使用 [Git](https://docs.freebsd.org/en/books/handbook/mirrors/#git) 安装到 **/usr/ports**。有关安装 Ports 的详细说明，请参见 FreeBSD 手册第 4.5.1 节。
 
-要编译一个 Port，请切换到该 Port 的目录并启动构建过程。以下示例展示了如何从 Ports 安装 Apache 2.4：
+要编译 Port，请切换到该 Port 的目录并启动构建过程。以下示例展示了如何从 Ports 安装 Apache 2.4：
 
 ```sh
 # cd /usr/ports/www/apache24
 # make install clean
 ```
 
-使用 Port 安装软件的一个好处是能够自定义安装选项。例如，以下命令指定还要安装 mod\_ldap 模块：
+使用 Ports 安装软件的一个好处是能够自定义安装选项。例如，以下命令指定还要安装 `mod_ldap` 模块：
 
 ```sh
 # cd /usr/ports/www/apache24
@@ -75,9 +75,9 @@ Ports 有时也称为 Ports 树，可以使用 [Git](https://docs.freebsd.org/en
 
 许多 Linux® 发行版使用 SysV init 系统，而 FreeBSD 使用传统的 BSD 风格的 [init(8)](https://man.freebsd.org/cgi/man.cgi?query=init&sektion=8&format=html)。在 BSD 风格的 [init(8)](https://man.freebsd.org/cgi/man.cgi?query=init&sektion=8&format=html) 下，没有运行级别，并且 **/etc/inittab** 文件不存在。相反，启动过程由 [rc(8)](https://man.freebsd.org/cgi/man.cgi?query=rc&sektion=8&format=html) 脚本控制。系统启动时，**/etc/rc** 会读取 **/etc/rc.conf** 和 **/etc/defaults/rc.conf** 来确定要启动哪些服务。指定的服务通过运行位于 **/etc/rc.d/** 和 **/usr/local/etc/rc.d/** 中的相应服务初始化脚本来启动。这些脚本类似于 Linux® 系统中 **/etc/init.d/** 中的脚本。
 
-**/etc/rc.d/** 中的脚本用于那些属于“基本”系统的应用程序，如 [cron(8)](https://man.freebsd.org/cgi/man.cgi?query=cron&sektion=8&format=html)、[sshd(8)](https://man.freebsd.org/cgi/man.cgi?query=sshd&sektion=8&format=html) 和 [syslog(3)](https://man.freebsd.org/cgi/man.cgi?query=syslog&sektion=3&format=html)。**/usr/local/etc/rc.d/** 中的脚本用于用户安装的应用程序，如 Apache 和 Squid。
+**/etc/rc.d/** 中的脚本用于那些属于“基础”系统的应用程序，如 [cron(8)](https://man.freebsd.org/cgi/man.cgi?query=cron&sektion=8&format=html)、[sshd(8)](https://man.freebsd.org/cgi/man.cgi?query=sshd&sektion=8&format=html) 和 [syslog(3)](https://man.freebsd.org/cgi/man.cgi?query=syslog&sektion=3&format=html)。**/usr/local/etc/rc.d/** 中的脚本用于用户安装的应用程序，如 Apache 和 Squid。
 
-由于 FreeBSD 被开发为一个完整的操作系统，用户安装的应用程序不被认为是“基础”系统的一部分。用户安装的应用程序通常通过 [Port 和包](https://docs.freebsd.org/en/books/handbook/#ports-using) 安装。为了将它们与基础系统分开，用户安装的应用程序会被安装到 **/usr/local/** 下。因此，用户安装的二进制文件位于 **/usr/local/bin/**，配置文件位于 **/usr/local/etc/**，以此类推。
+由于 FreeBSD 被开发为一个完整的操作系统，用户安装的应用程序不被认为是“基础”系统的一部分。用户安装的应用程序通常通过 [Ports 和包](https://docs.freebsd.org/en/books/handbook/#ports-using) 安装。为了将它们与基础系统分开，用户安装的应用程序会被安装到 **/usr/local/** 下。因此，用户安装的二进制文件位于 **/usr/local/bin/**，配置文件位于 **/usr/local/etc/**，以此类推。
 
 通过在 **/etc/rc.conf** 中添加相应的条目来启用服务。系统默认设置位于 **/etc/defaults/rc.conf** 中，这些默认设置可以通过 **/etc/rc.conf** 中的设置进行覆盖。有关可用条目的更多信息，请参见 [rc.conf(5)](https://man.freebsd.org/cgi/man.cgi?query=rc.conf&sektion=5&format=html)。安装附加应用程序时，请查看应用程序的安装信息，以确定如何启用相关服务。
 
@@ -181,7 +181,7 @@ ipfw add allow tcp from any to me 22 in via $ext_if
 
 > **注意**
 >
-> 在使用 [cron(8)](https://man.freebsd.org/cgi/man.cgi?query=cron&sektion=8&format=html) 定时更新时，请使用 `freebsd-update cron` 在 [crontab(1)](https://man.freebsd.org/cgi/man.cgi?query=crontab&sektion=1&format=html) 中，减少多个机器同时拉取更新的可能性：
+> 在使用 [cron(8)](https://man.freebsd.org/cgi/man.cgi?query=cron&sektion=8&format=html) 定时更新时，在 [crontab(1)](https://man.freebsd.org/cgi/man.cgi?query=crontab&sektion=1&format=html) 中使用 `freebsd-update cron`，减少大量机器同时拉取更新的可能性：
 >
 > ```sh
 > 0 3 * * * root /usr/sbin/freebsd-update cron
@@ -191,7 +191,7 @@ ipfw add allow tcp from any to me 22 in via $ext_if
 
 ## 8. procfs: 已消失但未被遗忘
 
-在一些 Linux® 发行版中，可以通过查看 **/proc/sys/net/ipv4/ip\_forward** 来确定是否启用了 IP 转发。而在 FreeBSD 中，则使用 [sysctl(8)](https://man.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&format=html) 来查看此项以及其他系统设置。
+在一些 Linux® 发行版中，可以通过查看 **/proc/sys/net/ipv4/ip_forward** 来确定是否启用了 IP 转发。而在 FreeBSD 中，则使用 [sysctl(8)](https://man.freebsd.org/cgi/man.cgi?query=sysctl&sektion=8&format=html) 来查看此项以及其他系统设置。
 
 例如，使用以下命令来确定 FreeBSD 系统是否启用了 IP 转发：
 
@@ -212,7 +212,7 @@ net.inet.ip.forwarding: 0
 proc                /proc           procfs  rw,noauto       0       0
 ```
 
-包括 `noauto` 可以防止 **/proc** 在启动时自动挂载。
+包含 `noauto` 可以防止 **/proc** 在启动时自动挂载。
 
 如果不重启系统，可以使用以下命令挂载文件系统：
 

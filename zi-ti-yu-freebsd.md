@@ -4,13 +4,11 @@
 
 ## 摘要
 
-本文档包含了与 FreeBSD 和 syscons 驱动程序、X11、Ghostscript 和 Groff 配合使用的各种字体文件的描述。提供了示例，展示如何将 syscons 显示模式切换到 80x60 模式，以及如何在上述应用程序中使用 Type 1 字体。
-
----
+本文档包含了与 FreeBSD 和 syscons 驱动程序、X11、Ghostscript 和 Groff 配合使用的各种字体文件的描述。提供了实用示例，展示如何将 syscons 显示模式切换到 80x60 模式，以及如何在上述应用程序中使用 Type 1 字体。
 
 ## 1. 引言
 
-有许多字体来源可供选择，可能会有人问这些字体如何在 FreeBSD 上使用。答案可以通过仔细查阅文档来找到，特别是针对希望使用的组件。这是一个非常耗时的过程，因此本文尝试为其他感兴趣的人提供捷径。
+有许多字体来源可供选择，可能会有人问这些字体如何在 FreeBSD 上使用。可以通过仔细查阅希望使用的组件的文档找到答案。这个过程极为耗时，因此本文尝试为其他感兴趣的人提供捷径。
 
 ## 2. 基本术语
 
@@ -19,19 +17,19 @@
 **.pfa**, **.pfb**
 PostScript® Type 1 字体。**.pfa** 是 *A*scii 格式，**.pfb** 是 *B*inary 格式。
 
-.afm
+**.afm**
 与 Type 1 字体相关的字体度量信息。
 
-.pfm
+**.pfm**
 与 Type 1 字体相关的打印字体度量信息。
 
-.ttf
+**.ttf**
 TrueType® 字体
 
-.fot
+**.fot**
 指向 TrueType 字体的间接引用（不是实际的字体）
 
-.fon, **.fnt**
+**.fon**, **.fnt**
 位图屏幕字体
 
 **.fot** 文件是 Windows® 用来作为指向实际 TrueType® 字体（**.ttf**）文件的符号链接。**.fon** 字体文件也由 Windows 使用。我不知道如何在 FreeBSD 上使用这种字体格式。
@@ -58,11 +56,11 @@ Groff
 Povray
 **.ttf**
 
-**.fnt** 后缀被广泛使用。我怀疑每当有人想为他们的应用程序创建一个特殊的字体文件时，他们往往会选择这个后缀。因此，很可能具有此后缀的文件并不全是相同的格式；特别是，FreeBSD 下 syscons 使用的 **.fnt** 文件可能与在 MS-DOS®/Windows® 环境中遇到的 **.fnt** 文件格式不同。我并没有尝试使用除 FreeBSD 提供的 **.fnt** 文件之外的其他 **.fnt** 文件。
+**.fnt** 后缀被广泛使用。我猜想每当有人想为他们的应用程序创建一个特殊的字体文件时，他们往往会选择这个后缀。因此，很可能具有此后缀的文件并不全是相同的格式；特别是，FreeBSD 下 syscons 使用的 **.fnt** 文件可能与在 MS-DOS®/Windows® 环境中遇到的 **.fnt** 文件格式不同。我并没有尝试使用除 FreeBSD 提供的 **.fnt** 文件之外的其他 **.fnt** 文件。
 
 ## 4. 将虚拟控制台设置为 80x60 行模式
 
-首先，必须加载一个 8x8 字体。为此，**/etc/rc.conf** 文件应包含以下行（根据你的语言环境更改字体名称）：
+首先，必须加载 8x8 字体。为此，**/etc/rc.conf** 文件应包含以下行（根据你的语言环境更改字体名称）：
 
 ```sh
 font8x8="iso-8x8"		# 从 /usr/share/syscons/fonts/* 中获取 8x8 字体（或者 NO）。
@@ -91,13 +89,13 @@ X11 可以使用 **.pfa** 或 **.pfb** 格式的字体。X11 字体位于 **/usr
 已经有一个名为 **Type1** 的目录。最直接的添加新字体的方式是将其放入此目录。更好的方法是将所有新字体保存在单独的目录中，并使用符号链接来引用额外的字体。这样可以更轻松地跟踪自己的字体，而不会与最初提供的字体混淆。例如：
 
 ```sh
-创建一个目录来存放字体文件
+创建目录来存放字体文件
 % mkdir -p /usr/local/share/fonts/type1
 % cd /usr/local/share/fonts/type1
 
 将 .pfa、.pfb 和 .afm 文件放在这里
 
-也可以想要在这里保留 readme 文件和其他文档
+可能还希望在此保留 readme 文件和其他字体文档
 
 % cp /cdrom/fonts/atm/showboat/showboat.pfb .
 % cp /cdrom/fonts/atm/showboat/showboat.afm .
@@ -111,7 +109,7 @@ X11 可以使用 **.pfa** 或 **.pfb** 格式的字体。X11 字体位于 **/usr
 ```sh
 -bitstream-charter-medium-r-normal-xxx-0-0-0-0-p-0-iso8859-1
      |        |      |    |   |     |  | | | | | |    \    \
-     |        |      |    |   |     \  \ \ \ \ \ \     +----+- 字符集
+     |        |      |    |   |     \  \ \ \ \ \ \     +-+- 字符集
      |        |      |    |   \      \  \ \ \ \ \ +- 平均宽度
      |        |      |    |    \      \  \ \ \ \ +- 间距
      |        |      |    \	\      \  \ \ \ \ +- 垂直分辨率
@@ -122,7 +120,7 @@ X11 可以使用 **.pfa** 或 **.pfb** 格式的字体。X11 字体位于 **/usr
   字体厂商  字体家族  粗细   倾斜  宽度  额外风格
 ```
 
-每个新字体都需要创建一个新的名称。如果你有字体文档中附带的信息，可以将其作为创建名称的基础。如果没有相关信息，可以通过使用 [strings(1)](https://man.freebsd.org/cgi/man.cgi?query=strings&sektion=1&format=html) 命令查看字体文件来获取一些线索。例如：
+每个新字体都需要创建新名称。如果你有字体文档中附带的信息，可以将其作为创建名称的基础。如果没有相关信息，可以通过使用 [strings(1)](https://man.freebsd.org/cgi/man.cgi?query=strings&sektion=1&format=html) 命令查看字体文件来获取一些线索。例如：
 
 ```sh
 % strings showboat.pfb | more
@@ -152,7 +150,7 @@ end readonly def
 --stdin--
 ```
 
-使用这些信息，一个可能的字体名称是：
+使用这些信息，可能的字体名称是：
 
 ```sh
 -type1-Showboat-medium-r-normal-decorative-0-0-0-0-p-0-iso8859-1
@@ -173,10 +171,10 @@ end readonly def
 *roman*、*italic*、*oblique* 等。由于 *ItalicAngle* 为零，使用 *roman*。
 
 **Width（宽度）**
-正常、宽、紧凑、扩展等。假设为 *normal*，直到字体能被检查为止。
+正常、宽、紧凑、扩展等。在检查字体之前，假设为 *normal*。
 
 **Additional style（额外风格）**
-通常被省略，但这将指示字体包含装饰性的大写字母。
+通常被省略，但这表示字体包含装饰性大写字母。
 
 **Spacing（间距）**
 比例间距或等宽。由于 *isFixedPitch* 为 false，使用 *proportional*。
@@ -258,7 +256,7 @@ GS>quit
 
 ## 7. 使用 Type 1 字体与 Groff
 
-现在，我们可以在 X11 和 Ghostscript 中使用新字体，那么如何在 Groff 中使用这个新字体呢？首先，由于我们使用的是 Type 1 PostScript® 字体，适用于 Groff 的设备是 *ps* 设备。必须为每个字体创建一个 Groff 字体文件。Groff 字体名实际上就是 **/usr/share/groff\_font/devps** 目录中的一个文件。对于我们的示例，字体文件可以是 **/usr/share/groff\_font/devps/SHOWBOAT**。该文件必须使用 Groff 提供的工具创建。
+现在，我们可以在 X11 和 Ghostscript 中使用新字体，那么如何在 Groff 中使用这个新字体呢？首先，由于我们使用的是 Type 1 PostScript® 字体，适用于 Groff 的设备是 *ps* 设备。必须为每个字体创建 Groff 字体文件。Groff 字体名实际上就是 **/usr/share/groff_font/devps** 目录中的一个文件。对于我们的示例，字体文件可以是 **/usr/share/groff_font/devps/SHOWBOAT**。该文件必须使用 Groff 提供的工具创建。
 
 第一个工具是 `afmtodit`。这个工具通常没有安装，因此必须从源代码分发版中获取。我发现需要修改文件的第一行，所以我做了如下操作：
 
@@ -333,7 +331,7 @@ STUVWXYZ
 .ft R
 要使用它作为段落的第一个字母，它会显示如下：
 .sp 50p
-\s(48\f5H\s0\fRere 是段落的第一个字母，使用 Showboat 字体。
+\s(48\f5H\s0\fRere 是段落的第一句话，该段落使用 Showboat 字体作为首字母。
 需要额外的垂直空间来为较大的字母留出空间。
 EOF
 % groff -Tps example.t >example.ps
@@ -345,7 +343,7 @@ EOF
 % lpr -Ppostscript example.ps
 ```
 
-参考资料：**/usr/src/gnu/usr.bin/groff/afmtodit/afmtodit.man**， [groff\_font(5)](https://man.freebsd.org/cgi/man.cgi?query=groff_font&sektion=5&format=html)， [groff\_char(7)](https://man.freebsd.org/cgi/man.cgi?query=groff_char&sektion=7&format=html)， [pfbtops(1)](https://man.freebsd.org/cgi/man.cgi?query=pfbtops&sektion=1&format=html).
+参考资料：**/usr/src/gnu/usr.bin/groff/afmtodit/afmtodit.man**，[groff_font(5)](https://man.freebsd.org/cgi/man.cgi?query=groff_font&sektion=5&format=html)，[groff_char(7)](https://man.freebsd.org/cgi/man.cgi?query=groff_char&sektion=7&format=html)，[pfbtops(1)](https://man.freebsd.org/cgi/man.cgi?query=pfbtops&sektion=1&format=html)。
 
 ## 8. 将 TrueType 字体转换为适用于 Groff/PostScript 格式的字体
 
@@ -357,10 +355,10 @@ EOF
 
 感兴趣的文件包括：
 
-- **GS\_TTF.PS**
+- **GS_TTF.PS**
 - **PF2AFM.PS**
 - **ttf2pf.ps**
-  这些文件的奇怪大小写是因为它们也旨在支持 DOS shell。因此，任何重命名必须与此一致。（实际上，**GS\_TTF.PS** 和 **PFS2AFM.PS** 应该是 Ghostscript 分发版的一部分，但使用这些作为独立工具同样有效。FreeBSD 似乎没有包含后者。）你也可能希望将它们安装到 **/usr/local/share/groff\_font/devps**（？）目录下。
+  这些文件的奇怪大小写是因为它们也旨在支持 DOS shell。**ttf2pf.ps** 以大写形式使用其他文件，因此任何重命名必须与此一致。（实际上，**GS_TTF.PS** 和 **PFS2AFM.PS** 应该是 Ghostscript 分发版的一部分，但使用这些作为独立工具同样有效。FreeBSD 似乎没有包含后者。）你也可能希望将它们安装到 **/usr/local/share/groff_font/devps**（？）目录下。
 
 `afmtodit`：从 ASCII 字体度量文件创建 Groff 字体文件。通常该工具位于目录 **/usr/src/contrib/groff/afmtodit** 中，且需要一些工作才能启动。
 
@@ -374,7 +372,7 @@ EOF
 # make -f Makefile.sub afmtodit
 ```
 
-你可能还需要将 **/usr/contrib/groff/devps/generate/textmap** 复制到 **/usr/share/groff\_font/devps/generate**，如果该文件尚不存在。
+你可能还需要将 **/usr/contrib/groff/devps/generate/textmap** 复制到 **/usr/share/groff_font/devps/generate**，如果该文件尚不存在。
 
 这些工具准备好后，你就可以开始操作：
 
@@ -384,11 +382,11 @@ EOF
    % gs -dNODISPLAY -q -- ttf2pf.ps TTF_name PS_font_name AFM_name
    ```
 
-   其中，*TTF\_name* 是你的 TrueType 字体文件，*PS\_font\_name* 是 **.pfa** 的文件名，*AFM\_name* 是你希望为 **.afm** 文件指定的名称。如果你没有为 **.pfa** 或 **.afm** 文件指定输出文件名，那么将使用 TrueType 字体文件名生成默认名称。
+   其中，`TTF_name` 是你的 TrueType 字体文件，`PS_font_name` 是 **.pfa** 的文件名，`AFM_name` 是你希望为 **.afm** 文件指定的名称。如果你没有为 **.pfa** 或 **.afm** 文件指定输出文件名，那么将使用 TrueType 字体文件名生成默认名称。
 
-   这也会生成一个 **.pfa** 文件，即 ASCII PostScript 字体度量文件（**.pfb** 是二进制形式）。虽然这个文件不一定需要，但它（我认为）对于字体服务器可能会有用。
+   这也会生成 **.pfa** 文件，即 ASCII PostScript 字体度量文件（**.pfb** 是二进制形式）。虽然这个文件不一定需要，但它（我认为）对于字体服务器可能会有用。
 
-   例如，若要将 30f9 Barcode 字体转换为默认文件名，可以使用以下命令：
+   例如，若要将 3of9 Barcode 字体转换为默认文件名，可以使用以下命令：
 
    ```sh
    % gs -dNODISPLAY -- ttf2pf.ps 3of9.ttf
@@ -409,33 +407,33 @@ EOF
    ```
 
 2. 创建 Groff PostScript 文件：
-   切换到 **/usr/share/groff\_font/devps** 目录以便执行以下命令。你可能需要 root 权限来执行这些命令。（如果你不想在该目录中工作，确保引用 **DESC**、**text.enc** 和 **generate/textmap** 文件，并在此目录中找到它们。）
+   切换到 **/usr/share/groff_font/devps** 目录以便执行以下命令。你可能需要 root 权限来执行这些命令。（如果你对在该目录中工作有所顾虑，确保将 **DESC**、**text.enc** 和 **generate/textmap** 文件视为在此目录中引用。）
 
    ```sh
    % afmtodit -d DESC -e text.enc file.afm generate/textmap PS_font_name
    ```
 
-   其中，**file.afm** 是上面使用 `ttf2pf.ps` 创建的 *AFM\_name* 文件，*PS\_font\_name* 是该命令使用的字体名称，也是 [groff(1)](https://man.freebsd.org/cgi/man.cgi?query=groff&sektion=1&format=html) 用于引用此字体的名称。例如，假设你使用了第一个 `ttf2pf.ps`，那么可以使用以下命令创建 3of9 Barcode 字体：
+   其中，**file.afm** 是上面使用 `ttf2pf.ps` 创建的 `AFM_name` 文件，`PS_font_name` 是该命令使用的字体名称，也是 [groff(1)](https://man.freebsd.org/cgi/man.cgi?query=groff&sektion=1&format=html) 用于引用此字体的名称。例如，假设你使用了第一个 `ttf2pf.ps`，那么可以使用以下命令创建 3of9 Barcode 字体：
 
    ```sh
    % afmtodit -d DESC -e text.enc 3of9.afm generate/textmap 3of9
    ```
 
-   确保将生成的 *PS\_font\_name* 文件（例如上述示例中的 **3of9**）放置在 **/usr/share/groff\_font/devps** 目录中，可以通过复制或移动来完成。
+   确保将生成的 `PS_font_name` 文件（例如上述示例中的 **3of9**）放置在 **/usr/share/groff_font/devps** 目录中，可以通过复制或移动来完成。
 
-   注意，如果 **ttf2pf.ps** 使用 TrueType 字体文件中的字体名称来指定字体名称，并且你希望使用不同的名称，必须在运行 `afmtodit` 之前编辑 **.afm** 文件。此名称还必须与 Fontmap 文件中的名称匹配，如果你希望将 [groff(1)](https://man.freebsd.org/cgi/man.cgi?query=groff&sektion=1&format=html) 输入管道传递给 [gs(1)](https://man.freebsd.org/cgi/man.cgi?query=gs&sektion=1&format=html)。
+   注意，如果 **ttf2pf.ps** 使用 TrueType 字体文件中的字体名称来指定字体名称，并且你希望使用不同的名称，必须在运行 `afmtodit` 之前编辑 **.afm** 文件。如果你希望将 [groff(1)](https://man.freebsd.org/cgi/man.cgi?query=groff&sektion=1&format=html) 的输出通过管道传递给 [gs(1)](https://man.freebsd.org/cgi/man.cgi?query=gs&sektion=1&format=html)，此名称还必须与 Fontmap 文件中的名称匹配。
 
 ## 9. TrueType 字体能否与其他程序一起使用？
 
-TrueType 字体格式被 Windows、Windows 95 和 Mac 操作系统使用，十分流行，目前有大量的字体可供选择。
+TrueType 字体格式被 Windows、Windows 95 和 Mac 操作系统使用，它十分流行，目前有大量这种格式的字体可供选择。
 
-遗憾的是，目前我所知道的能够使用这种格式的应用程序不多：Ghostscript 和 Povray 就是其中之一。根据文档，Ghostscript 对 TrueType 字体的支持比较初步，效果可能不如 Type 1 字体。Povray 版本 3 也能使用 TrueType 字体，但我怀疑很少有人会创建一系列的光线追踪页面来生成文档 :-)。
+遗憾的是，目前我所知道的能够使用这种格式的应用程序不多：我想到的有 Ghostscript 和 Povray。根据文档，Ghostscript 对 TrueType 字体的支持比较初步，效果可能不如 Type 1 字体。Povray 版本 3 也能使用 TrueType 字体，但我相当怀疑是否会有很多人创建一系列光线追踪页面来组成文档 :-）。
 
-这种情况可能很快会有所改变。[FreeType 项目](http://www.freetype.org/) 正在开发一套有用的 FreeType 工具：
+这种相当令人失望的情况可能很快会有所改变。[FreeType 项目](http://www.freetype.org/) 正在开发一套有用的 FreeType 工具：
 
-- `xfsft` 字体服务器可为 X11 提供 TrueType 字体服务，除了常规字体外。虽然目前仍处于测试阶段，但据说它非常实用。更多信息请见 [Juliusz Chroboczek 的页面](http://www.dcs.ed.ac.uk/home/jec/programs/xfsft/)。FreeBSD 的移植说明可以在 [Stephen Montgomery 的软件页面](http://math.missouri.edu/~stephen/software/) 找到。
+- 除了常规字体外，`xfsft` 字体服务器还可为 X11 提供 TrueType 字体服务。虽然目前仍处于测试阶段，但据说它非常实用。更多信息请见 [Juliusz Chroboczek 的页面](http://www.dcs.ed.ac.uk/home/jec/programs/xfsft/)。FreeBSD 的移植说明可以在 [Stephen Montgomery 的软件页面](http://math.missouri.edu/~stephen/software/) 找到。
 - xfstt 是另一个 X11 字体服务器，可以在 [ftp://sunsite.unc.edu/pub/Linux/X11/fonts/](ftp://sunsite.unc.edu/pub/Linux/X11/fonts/) 获取。
-- 一个名为 `ttf2bdf` 的程序可以从 TrueType 字体文件生成适合 X 环境使用的 BDF 文件。据说 Linux 的二进制文件可以从 [ftp://crl.nmsu.edu/CLR/multiling/General/](ftp://crl.nmsu.edu/CLR/multiling/General/) 获取。
+- 名为 `ttf2bdf` 的程序可以从 TrueType 字体文件生成适合 X 环境使用的 BDF 文件。据说 Linux 的二进制文件可以从 [ftp://crl.nmsu.edu/CLR/multiling/General/](ftp://crl.nmsu.edu/CLR/multiling/General/) 获取。
 - 以及其他工具...
 
 ## 10. 从哪里可以获得其他的字体？

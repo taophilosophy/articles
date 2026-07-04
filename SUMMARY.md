@@ -2,6 +2,9 @@
 
 * [编辑日志](bian-ji-ri-zhi.md)
 * [FreeBSD 中文文章翻译项目](README.md)
+
+***
+
 * [目录](mu-lu.md)
 
 ## 文章
@@ -44,3 +47,4 @@
 * [为什么要为开源项目选用类 BSD 许可证？](wei-shen-me-yao-wei-kai-yuan-xiang-mu-xuan-yong-lei-bsd-xu-ke-zheng.md)
 * [编写 GEOM 类](bian-xie-geom-class.md)
 * [编写 FreeBSD 问题报告](bian-xie-freebsd-wen-ti-bao-gao.md)
+* [x86 汇编语言](x86-hui-bian-yu-yan.md)

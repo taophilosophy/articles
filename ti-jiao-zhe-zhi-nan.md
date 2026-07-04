@@ -46,7 +46,7 @@ FreeBSD 项目使用符合 OpenPGP（*Pretty Good Privacy*）标准的加密密�
 
 对于那些还没有 OpenPGP 密钥，或者需要新的密钥来符合 FreeBSD 安全要求的人，以下是如何生成一个密钥的步骤。
 
-1. 安装 **security/gnupg**。在 **\~/.gnupg/gpg.conf** 中输入以下内容，以设置签名和新密钥的最低默认首选项（有关更多详细信息，请参见 [GnuPG 选项文档](https://www.gnupg.org/documentation/manuals/gnupg/GPG-Options.html)）：
+1. 安装 **security/gnupg**。在 **~/.gnupg/gpg.conf** 中输入以下内容，以设置签名和新密钥的最低默认首选项（有关更多详细信息，请参见 [GnuPG 选项文档](https://www.gnupg.org/documentation/manuals/gnupg/GPG-Options.html)）：
 
    ```sh
    # 按优先顺序列出用于签名的首选算法（从强到弱）
@@ -98,18 +98,17 @@ FreeBSD 项目使用符合 OpenPGP（*Pretty Good Privacy*）标准的加密密�
 - ② 三年的密钥有效期足够短，以使得计算能力增强后不再使用过时的密钥，但又足够长，以减少密钥管理问题。
 - ③ 在此处使用真实姓名，最好与政府签发的 ID 上显示的姓名匹配，以便其他人更容易验证你的身份。在 `Comment` 部分可以输入一些帮助别人识别你的文字。
 
-输入电子邮件地址后，会请求设置密码短语。创建安全密码短语的方法存在争议。为了避免建议一种单一的方式，以下是一些描述不同方法的链接：[https://world.std.com/\~reinhold/diceware.html](https://world.std.com/~reinhold/diceware.html)，[https://www.iusmentis.com/security/passphrasefaq/](https://www.iusmentis.com/security/passphrasefaq/)，[https://xkcd.com/936/](https://xkcd.com/936/)，[https://en.wikipedia.org/wiki/Passphrase](https://en.wikipedia.org/wiki/Passphrase)。
+输入电子邮件地址后，会请求设置密码短语。创建安全密码短语的方法存在争议。为了避免建议一种单一的方式，以下是一些描述不同方法的链接：[https://world.std.com/~reinhold/diceware.html](https://world.std.com/~reinhold/diceware.html)，[https://www.iusmentis.com/security/passphrasefaq/](https://www.iusmentis.com/security/passphrasefaq/)，[https://xkcd.com/936/](https://xkcd.com/936/)，[https://en.wikipedia.org/wiki/Passphrase](https://en.wikipedia.org/wiki/Passphrase)。
 
 保护好私钥和密码短语。如果私钥或密码短语可能已被泄露或披露，请立即通知 [accounts@FreeBSD.org](mailto:accounts@FreeBSD.org) 并撤销密钥。
 
-新密钥的提交步骤请参见 \[committers-guide]\(crossref\:committers-guide)。
+新密钥的提交步骤请参见[新提交者步骤](https://docs.freebsd.org/en/articles/committers-guide/#commit-steps)。
 
 ## 3. Kerberos 和 LDAP Web 密码用于 FreeBSD 集群
 
 FreeBSD 集群需要 Kerberos 密码来访问某些服务。由于 LDAP 在集群中代理 Kerberos，Kerberos 密码也作为 LDAP Web 密码。一些需要此密码的服务包括：
 
 - [Bugzilla](https://bugs.freebsd.org/bugzilla)
-- [Jenkins](https://ci.freebsd.org/)
 
 要在 FreeBSD 集群中创建一个新的 Kerberos 账户，或使用随机密码生成器重置现有账户的 Kerberos 密码：
 
@@ -137,7 +136,7 @@ FreeBSD 仓库包含多个组件，这些组件合并后支持基本操作系统
 
 | *提交者类型* | *负责*     | *树区域组件*             |
 | ------- | -------- | ------------------- |
-| src     | core@    | src/                |
+| src     | srcmgr@  | src/                |
 | doc     | doceng@  | doc/，ports/，src/ 文档 |
 | ports   | portmgr@ | ports/              |
 
@@ -147,7 +146,7 @@ FreeBSD 仓库包含多个组件，这些组件合并后支持基本操作系统
 
 ### 4.1. 提交者在其他树区域活动的政策
 
-- 所有提交者都可以修改 **src/share/misc/committers-\*.dot**，**src/usr.bin/calendar/calendars/calendar.freebsd** 和 **ports/astro/xearth/files**。
+- 所有提交者都可以修改 **src/share/misc/committers-*.dot**，**src/usr.bin/calendar/calendars/calendar.freebsd** 和 **ports/astro/xearth/files**。
 - doc 提交者可以在没有 src 提交者批准的情况下提交文档更改，例如手册页、README 文件、fortune 数据库、日历文件以及注释修复，前提是提交时遵循正常的审查和管理程序。
 - 所有提交者都可以在拥有适当权限的非导师提交者批准的情况下对一切其他区域进行更改。导师提交者可以提供 `Reviewed by` 但不能提供 `Approved by`。
 - 提交者可以通过通常的流程获得附加的权限，寻找导师并由导师向 core、doceng 或 portmgr 提交提案，获批后将被加入到 `access` 并进入正常的导师期，在此期间会持续提供 `Approved by`。
@@ -164,15 +163,15 @@ FreeBSD 仓库包含多个组件，这些组件合并后支持基本操作系统
 
 多年来，某些隐式批准已经在文档树中获得。这些最常见的情况包括：
 
-- 更改 **documentation/content/en/books/porters-handbook/versions/\_index.adoc**
-  [\_\_FreeBSD\_version 值（Porter’s Handbook）](https://docs.freebsd.org/en/books/porters-handbook/versions/)，主要用于 src 提交者。
+- 更改 **documentation/content/en/books/porters-handbook/versions/_index.adoc**
+  [__FreeBSD_version 值（Porter's Handbook）](https://docs.freebsd.org/en/books/porters-handbook/versions/)，主要用于 src 提交者。
 - 更改 **doc/shared/contrib-additional.adoc**
   [Additional FreeBSD Contributors](https://docs.freebsd.org/en/articles/contributors/#contrib-additional) 维护。
 - 所有 [新提交者步骤](https://docs.freebsd.org/en/articles/committers-guide/#commit-steps)，文档相关。
 - 安全通告；错误通告；发布；
-  由安全官团队 \[[security-officer@FreeBSD.org](mailto:security-officer@FreeBSD.org)] 和发布工程团队 \[[re@FreeBSD.org](mailto:re@FreeBSD.org)] 使用。
+  由安全官团队 [security-officer@FreeBSD.org](mailto:security-officer@FreeBSD.org) 和发布工程团队 [re@FreeBSD.org](mailto:re@FreeBSD.org) 使用。
 - 更改 **website/content/en/donations/donors.adoc**
-  用于捐赠联络办公室 \[[donations@FreeBSD.org](mailto:donations@FreeBSD.org)]。
+  用于捐赠联络办公室 [donations@FreeBSD.org](mailto:donations@FreeBSD.org)。
 
 在提交前，必须进行构建测试；有关更多信息，请参见 [FreeBSD 文档项目初学者指南](https://docs.freebsd.org/en/books/fdp-primer/) 中的“概述”和“FreeBSD 文档构建过程”部分。
 
@@ -219,7 +218,7 @@ FreeBSD 仓库包含多个组件，这些组件合并后支持基本操作系统
   ```
 
 - 配置 FreeBSD 提交者数据：
-  在 `repo.freebsd.org` 上的提交钩子会检查 `Commit` 字段是否与 FreeBSD.org 上的提交者信息匹配。最简单的方式是通过执行 `/usr/local/bin/gen-gitconfig.sh` 脚本获取推荐的配置：
+  在 `repo.freebsd.org` 上的提交钩子会检查 `Commit` 字段是否与 FreeBSD.org 上的提交者信息匹配。最简单的方式是通过执行 **/usr/local/bin/gen-gitconfig.sh** 脚本获取推荐的配置：
 
   ```sh
   % gen-gitconfig.sh
@@ -283,7 +282,7 @@ FreeBSD 仓库包含多个组件，这些组件合并后支持基本操作系统
 git worktree add -b admin ../${repo}-admin internal/admin
 ```
 
-要在 Web 上浏览 `internal/admin` 分支：`<a href="https://cgit.freebsd.org/$%7Brepo%7D/log/?h=internal/admin" class="bare">https://cgit.freebsd.org/${repo}/log/?h=internal/admin</a>`
+要在 Web 上浏览 `internal/admin` 分支：[https://cgit.freebsd.org/${repo}/log/?h=internal/admin](https://cgit.freebsd.org/${repo}/log/?h=internal/admin)
 
 推送时，指定完整的 refspec：
 
@@ -317,7 +316,7 @@ FreeBSD-CURRENT 使用 `main` 分支。
 
 ##### 5.2.3.2. 仓库
 
-请参见 [管理详情](https://docs.freebsd.org/en/articles/committers-guide/#admin) 获取最新的 FreeBSD 源代码获取地址。\$URL 可以从该页面获取。
+请参见 [管理详情](https://docs.freebsd.org/en/articles/committers-guide/#admin) 获取最新的 FreeBSD 源代码获取地址。`$URL` 可以从该页面获取。
 
 注意：该项目不使用子模块，因为子模块与我们的工作流程和开发模型不太契合。如何跟踪第三方应用程序的变化在其他地方有讨论，通常对普通用户来说并不重要。
 
@@ -361,7 +360,7 @@ FreeBSD-CURRENT 使用 `main` 分支。
 
 因此，这里不再深入讨论。
 
-如果你想构建自定义内核，FreeBSD 手册中的 [内核配置部分](https://docs.freebsd.org/en/books/handbook/#kernelconfig) 建议在 sys/\${ARCH}/conf 下创建一个文件 MYKERNEL，针对 GENERIC 进行修改。为了让 Git 忽略 MYKERNEL，可以将它添加到 `.git/info/exclude`。
+如果你想构建自定义内核，FreeBSD 手册中的 [内核配置部分](https://docs.freebsd.org/en/books/handbook/#kernelconfig) 建议在 **sys/${ARCH}/conf** 下创建一个文件 MYKERNEL，针对 GENERIC 进行修改。为了让 Git 忽略 MYKERNEL，可以将它添加到 `.git/info/exclude`。
 
 ##### 5.2.3.6. 更新
 
@@ -471,9 +470,9 @@ Git 知道如何签名提交、标签和推送。当你签名 Git 提交或标�
 
 ports 树的操作方式相同，分支名称不同，且仓库的位置也不同。
 
-用于浏览器的 cgit 仓库 Web 界面位于 [https://cgit.FreeBSD.org/ports/](https://cgit.FreeBSD.org/ports/)。生产 Git 仓库位于 [https://git.FreeBSD.org/ports.git](https://git.FreeBSD.org/ports.git) 和 ssh://anongit\@git.FreeBSD.org/ports.git（或 [anongit@git.FreeBSD.org](mailto:anongit@git.FreeBSD.org)\:ports.git）。
+用于浏览器的 cgit 仓库 Web 界面位于 [https://cgit.FreeBSD.org/ports/](https://cgit.FreeBSD.org/ports/)。生产 Git 仓库位于 [https://git.FreeBSD.org/ports.git](https://git.FreeBSD.org/ports.git) 和 ssh://anongit@git.FreeBSD.org/ports.git（或 `anongit@git.FreeBSD.org:ports.git`）。
 
-GitHub 上也有一个镜像，查看 [外部镜像](https://docs.freebsd.org/en/books/handbook//mirrors#mirrors) 以了解概况。*最新*分支是 `main`。*季度*分支命名为 `yyyyQn`，其中 `yyyy` 为年份，`n` 为季度。
+GitHub 上也有一个镜像，查看 [外部镜像](https://docs.freebsd.org/en/books/handbook/mirrors/#mirrors) 以了解概况。*最新*分支是 `main`。*季度*分支命名为 `yyyyQn`，其中 `yyyy` 为年份，`n` 为季度。
 
 ##### 5.2.7.1. 提交信息格式
 
@@ -503,7 +502,7 @@ PR:      12345
 
 本节讨论跟踪本地更改。如果你没有本地更改，可以跳过本节。
 
-一个重要的事项是：所有的更改在推送之前都是本地的。与 Subversion 不同，Git 使用的是分布式模型。对于用户而言，大多数操作几乎没有区别。然而，如果你有本地更改，你可以使用相同的工具来管理它们，就像你使用相同的工具来拉取 FreeBSD 的更改一样。所有你尚未推送的更改都是本地的，可以轻松修改（如 `git rebase`，稍后会讨论）。
+重要的一点是：所有的更改在推送之前都是本地的。与 Subversion 不同，Git 使用的是分布式模型。对于用户而言，大多数操作几乎没有区别。然而，如果你有本地更改，你可以使用相同的工具来管理它们，就像你使用相同的工具来拉取 FreeBSD 的更改一样。所有你尚未推送的更改都是本地的，可以轻松修改（如 `git rebase`，稍后会讨论）。
 
 ##### 5.2.8.1. 保留本地更改
 
@@ -823,7 +822,7 @@ Git 提供了内建支持，使用 `git cherry` 和 `git log --cherry` 命令。
 % git tag -a vendor/NetBSD/mtree/20201211
 ```
 
-至关重要的是验证你正在导入的源代码来自可信的来源。许多开源项目使用加密签名来签署代码更改、Git 标签和/或源代码 tarball。始终验证这些签名，并使用诸如 jail、chroot 等隔离机制，结合一个专用的、非特权用户账户，该账户与你日常使用的账户不同（有关详细信息，请参阅下文的“更新 FreeBSD 源树”部分），直到你确信所导入的源代码是安全的。跟踪上游开发并偶尔检查上游代码更改，有助于提高代码质量并使所有参与者受益。导入到供应商区域之前，检查 `git diff` 结果也是一个好主意。
+至关重要的是验证你正在导入的源代码来自可信的来源。许多开源项目使用加密签名来签署代码更改、Git 标签和/或源代码 tarball。始终验证这些签名，并使用诸如 Jail、chroot 等隔离机制，结合专用的、非特权用户账户，该账户与你日常使用的账户不同（有关详细信息，请参阅下文的"更新 FreeBSD 源树"部分），直到你确信所导入的源代码是安全的。跟踪上游开发并偶尔检查上游代码更改，有助于提高代码质量并使所有参与者受益。导入到供应商区域之前，检查 `git diff` 结果也是一个好主意。
 
 始终运行 `git diff` 和 `git status` 命令，并仔细检查结果。如有疑问，使用 `git annotate` 查看供应商分支或上游 Git 仓库，了解是谁做了更改以及为什么。
 
@@ -854,9 +853,9 @@ Git 提供了内建支持，使用 `git cherry` 和 `git log --cherry` 命令。
 
 这将生成一个子树合并提交，将 `contrib/mtree` 与本地的 `vendor/NetBSD/mtree` 分支合并。检查合并结果的 diff 和上游分支的内容。如果合并减少了本地更改，仅保留了空行或缩进更改等琐碎差异，请尝试修改本地更改以减少与上游的差异，或尝试将剩余的更改贡献回上游项目。如果有冲突，你需要在提交之前解决它们。在合并提交消息中包含有关合并更改的详细信息。
 
-一些开源软件包含 `configure` 脚本，用于生成定义如何构建代码的文件；通常，这些生成的文件（如 `config.h`）应在导入过程中更新。在执行此操作时，始终记住这些脚本是在当前用户的凭据下运行的可执行代码。此过程应始终在隔离环境中运行，理想情况下是在没有网络访问权限的 jail 内，并使用非特权账户；或者，至少使用与你日常使用的账户不同的专用账户，这样可以最大限度地减少遇到可能导致数据丢失或更严重的恶意代码的风险。使用隔离的 jail 还可以防止 `configure` 脚本检测到本地安装的软件包，从而避免出现意外结果。
+一些开源软件包含 `configure` 脚本，用于生成定义如何构建代码的文件；通常，这些生成的文件（如 `config.h`）应在导入过程中更新。在执行此操作时，始终记住这些脚本是在当前用户的凭据下运行的可执行代码。此过程应始终在隔离环境中运行，理想情况下是在没有网络访问权限的 Jail 内，并使用非特权账户；或者，至少使用与你日常使用的账户不同的专用账户，这样可以最大限度地减少遇到可能导致数据丢失或更严重的恶意代码的风险。使用隔离的 Jail 还可以防止 `configure` 脚本检测到本地安装的软件包，从而避免出现意外结果。
 
-在测试你的更改时，首先在 chroot 或 jailed 环境中运行，甚至可以先在虚拟机中测试，尤其是对于内核或库的修改。这种方法有助于防止与工作环境发生不良交互。对于许多基本系统组件都使用的库修改，这尤其有益。
+在测试你的更改时，首先在 chroot 或 Jail 环境中运行，甚至可以先在虚拟机中测试，尤其是对于内核或库的修改。这种方法有助于防止与工作环境发生不良交互。对于许多基本系统组件都使用的库修改，这尤其有益。
 
 #### 5.4.6. 将你的更改与最新的 FreeBSD 源树重新基准化
 
@@ -880,7 +879,7 @@ Git 提供了内建支持，使用 `git cherry` 和 `git log --cherry` 命令。
 - 使用之前的提交消息提交结果（假设 `XXX` 分支只有一次合并提交）。
 - 确保这两个分支的内容是相同的。
 - 根据需要进行任何审查，包括让其他人检查一下，如果你认为这是必要的。
-- 推送提交，如果你再次“输掉了比赛”，只需重新执行这些步骤（参见下文的食谱）。
+- 推送提交，如果再次遇到推送竞争失败，只需重新执行这些步骤（参见下文的操作步骤）。
 - 提交到上游之后，删除这些分支，它们只是临时的。
 
 以下是使用 `mtree` 示例时，执行上述操作的命令（`#` 后面的部分是注释，用于帮助将命令与上面的描述对应起来）：
@@ -978,7 +977,7 @@ Git 提供了内建支持，使用 `git cherry` 和 `git log --cherry` 命令。
 % git fetch glorbnitz vendor/glorbnitz
 ```
 
-请注意，`vendor/glorbnitz` 分支已添加到仓库中。此时，`/some/where/glorbnitz` 可以删除，如果你愿意的话。它只是为了达到某个目的而存在。
+请注意，`vendor/glorbnitz` 分支已添加到仓库中。此时，**/some/where/glorbnitz** 可以删除，如果你愿意的话。它只是为了达到某个目的而存在。
 
 #### 5.5.4. 打标签并推送
 
@@ -1015,7 +1014,7 @@ Git 提供了内建支持，使用 `git cherry` 和 `git log --cherry` 命令。
 1. 所有正确的文件，并且没有错误的文件，已合并到 `contrib/glorbnitz` 中。
 2. 树中没有其他更改。
 3. 提交消息看起来[正常](https://docs.freebsd.org/en/articles/committers-guide/#commit-log-message)。应该包含自上次向 FreeBSD `main` 分支合并以来的更改总结以及任何警告。
-4. 如果有任何重要的用户可见更改、升级注意事项等，应更新 `UPDATING` 文件。
+4. 如果有任何重要的用户可见更改、升级注意事项等，应更新 `RELNOTES` 和 `UPDATING` 文件。
 
 >**注意**
 >
@@ -1074,7 +1073,7 @@ Git 提供了内建支持，使用 `git cherry` 和 `git log --cherry` 命令。
 freefall% gen-gitconfig.sh
 ```
 
-可以获得你可以直接使用的配方，前提是 `/usr/local/bin` 在 PATH 中。
+可以获得你可以直接使用的配方，前提是 **/usr/local/bin** 在 PATH 中。
 
 下面的命令会将 `working` 分支合并到上游的 `main` 分支。重要的是在执行此操作之前，你要确保你的更改完全符合 FreeBSD 源仓库中的要求。这种语法会将 `working` 分支推送到 `main`，将 `main` 分支推进。只有当这导致 `main` 的线性更改时（例如，没有合并）时，你才可以执行此操作。
 
@@ -1198,7 +1197,7 @@ freefall% gen-gitconfig.sh
 ```sh
 # 我们在 wilma 分支上
 % git checkout fred		# 切换到 fred 分支
-% git cherry-pick wilma		# 拷贝误提交的提交
+% git cherry-pick wilma		# 复制误提交的提交
 % git checkout wilma		# 回到 wilma 分支
 % git reset --hard HEAD^	# 将 wilma 回退到上一个提交
 ```
@@ -1276,6 +1275,39 @@ HEAD is now at 869cbd3 Encourage contributions
 
 这将产生相同的效果，但我需要阅读更多内容，而“分离头”状态不是我喜欢思考的图像。
 
+##### 5.6.2.3. 哎呀！我执行了 `git pull` 却创建了一个合并提交，该怎么办？
+
+**问：** 我习惯性地对自己的开发树执行了 `git pull`，结果在 `main` 上创建了一个合并提交。我该如何恢复？
+
+**答：** 当你在检出开发分支时调用 pull，就会出现这种情况。
+
+许多开发者使用 `git pull --rebase` 来避免这种情况。
+
+在 pull 之后，你将检出新的合并提交。Git 支持 `HEAD^#` 语法来查看合并提交的父提交：
+
+```sh
+git log --oneline HEAD^1   # 查看第一个父提交的提交
+git log --oneline HEAD^2   # 查看第二个父提交的提交
+```
+
+从这些日志中，你可以轻松识别哪个提交是你的开发工作。然后，只需将分支重置为相应的 `HEAD^#`：
+
+```sh
+git reset --hard HEAD^1
+```
+
+此外，在此阶段执行 `git pull --rebase` 会将你的更改 rebase 到最新的 `freebsd/main`。
+
+**问：** 但我还需要修复 `main` 分支。我该怎么做？
+
+**答：** Git 在 `freebsd/` 命名空间中跟踪远程仓库分支。要修复 `main` 分支，只需让它指向远程的 `main`：
+
+```sh
+git branch -f main freebsd/main
+```
+
+Git 中的分支并没有什么神奇之处：它们只是图上的标签，通过提交自动向前移动。因此上述操作可行，因为你只是移动了一个标签。分支没有需要保留的元数据。
+
 ##### 5.6.2.4. 混合和匹配分支
 
 **问：** 我有两个分支 `worker` 和 `async`，我想把它们合并成一个名为 `feature` 的分支，同时保留两个分支中的提交记录，应该怎么做？
@@ -1345,6 +1377,12 @@ git add -i foo/bar.c
 ```
 
 这将逐步显示差异，并提示你是否包含或排除每个变更块。完成后，使用 `git commit` 提交剩余的更改。如果有多个文件需要处理，你可以多次运行这个命令，通常我发现一次处理一个文件并使用 `git rebase -i` 将相关提交合并会更简单些。
+
+##### 5.6.2.5. 加入 FreeBSD GitHub 组织
+
+**问：** 我如何加入 FreeBSD GitHub 组织？
+
+**答：** 请参见 [我们的 GitHub Wiki 信息](https://wiki.freebsd.org/GitHub#Joining_the_Organisation) 页面了解详情。简而言之，所有 FreeBSD 提交者都可以加入。非提交者申请加入的，将根据具体情况进行审核。
 
 #### 5.6.3. 克隆和镜像
 
@@ -1492,14 +1530,17 @@ github https://github.com/freebsd/freebsd-src (fetch)
 github https://github.com/freebsd/freebsd-src (fetch)
 ```
 
-Pull 请求通常很简单：请求只包含一个提交。在这种情况下，可以使用简化的方法，尽管上一节中介绍的方法也可以使用。这里，创建一个分支，将更改 cherry-pick（挑选提交），调整提交信息，进行测试后再推送。示例中使用了 `staging` 分支，但它可以是任何名称。当有多个提交时，特别是需要进行小调整时，使用 `git rebase -i` 比 `git cherry-pick` 更加有效。以下是相关命令的概述：
+Pull 请求通常很简单：请求只包含一个提交。在这种情况下，可以使用简化的方法，尽管上一节中介绍的方法也可以使用。这里，创建一个分支，将更改 cherry-pick（挑选提交），调整提交信息，进行测试后再推送。示例中使用了 `staging` 分支，但它可以是任何名称。该技术适用于 Pull 请求中任意数量的提交，尤其是当更改可以干净地应用到 FreeBSD 树时。当有多个提交时，特别是需要进行小调整时，使用 `git rebase -i` 比 `git cherry-pick` 更加有效。简而言之，这些命令会创建一个分支；从 Pull 请求中 cherry-pick 更改；测试；调整提交信息；并快进合并回 `main`。下面用 `$PR` 表示 PR 编号。在调整提交信息时，添加 `Pull Request: https://github.com/freebsd-src/pull/$PR`。所有提交到 FreeBSD 仓库的 Pull 请求都应至少由一人审查。审查者不必是提交者本人，但在这种情况下，提交者应当信任其他审查者的审查能力。在将 Pull 请求推送到仓库之前进行代码审查的提交者，应在提交中添加 `Reviewed by:` 行，因为在这种情况下审查并不是隐式的。还应将任何在 GitHub 上审查并批准该提交的人添加到 `Reviewed by:` 中。一如既往，应仔细检查更改是否完成了预期功能，并且不存在恶意代码。
 
-1. 创建一个分支；
-2. cherry-pick Pull 请求中的更改；
-3. 测试它；
-4. 调整提交信息；
-5. 将其合并到 `main` 分支；
-6. 提交 Pull 请求的 GitHub 链接。
+>**注意**
+>
+>此外，请检查 Pull 请求的作者名称是否为匿名。GitHub 的 Web 编辑界面会生成类似如下的名称：
+>
+>```sh
+>Author:     github-user <38923459+github-user@users.noreply.github.com>
+>```
+>
+>应礼貌地请求作者提供更好的名称和/或电子邮件。需格外小心，确保不引入风格问题或恶意代码。
 
 ```sh
 % git fetch github pull/$PR/head:staging
@@ -1539,7 +1580,7 @@ FreeBSD `ports` 仓库在 2012 年 7 月 14 日从 CVS 转移到 Subversion。�
 
 ## 7. 设置、约定与传统
 
-作为一名新开发者，需要做一些准备工作。以下步骤仅适用于已获得提交权限的开发者。如果你没有提交权限，必须由导师来执行这些步骤。
+作为新开发者，需要做一些准备工作。以下步骤仅适用于已获得提交权限的开发者。如果你没有提交权限，必须由导师来执行这些步骤。
 
 ### 7.1. 对于新提交者
 
@@ -1577,19 +1618,24 @@ FreeBSD `ports` 仓库在 2012 年 7 月 14 日从 CVS 转移到 Subversion。�
 
    在底部部分为每个导师/学员关系添加一条记录。
 
-6. 生成 Kerberos 密码
+6. 更新 git mailmap 文件
+   **src/.mailmap**、**doc/.mailmap** 和 **ports/.mailmap** - 为你在成为 FreeBSD 提交者之前创建的提交添加一条记录。
+
+   将地址映射到你的 FreeBSD 地址，可以让我们更轻松地跟踪可能已经准备好获得提交权限的外部提交者。你也可以使用此功能来修正默认 `git log` 输出中的旧名称、拼写错误的名称等。
+
+7. 生成 Kerberos 密码
    请参阅 [Kerberos 和 LDAP Web 密码配置](https://docs.freebsd.org/en/articles/committers-guide/#kerberos-ldap)，为使用 FreeBSD 集群的其他服务（如 [bug-tracking 数据库](https://bugs.freebsd.org/bugzilla/)）生成或设置 Kerberos 账户（在此步骤中，你将获得 bug-tracking 账户）。
 
-7. 可选：启用 Wiki 账户
+8. 可选：启用 Wiki 账户
    [FreeBSD Wiki](https://wiki.freebsd.org/) 账户 - Wiki 账户允许分享项目和想法。尚未拥有账户的人可以按照 [Wiki/About 页面](https://wiki.freebsd.org/Wiki/About) 上的说明获取账户。如果需要帮助，可以联系 [wiki-admin@FreeBSD.org](mailto:wiki-admin@FreeBSD.org)。
 
-8. 可选：更新 Wiki 信息
+9. 可选：更新 Wiki 信息
    Wiki 信息 - 获得 Wiki 访问权限后，有些人会在 [How We Got Here](https://wiki.freebsd.org/HowWeGotHere)、[IRC Nicks](https://wiki.freebsd.org/IRC/Nicknames)、[Dogs of FreeBSD](https://wiki.freebsd.org/Community/Dogs) 或 [Cats of FreeBSD](https://wiki.freebsd.org/Community/Cats) 页面上添加条目。
 
-9. 可选：在 Ports 中添加个人信息
-   **ports/astro/xearth/files/freebsd.committers.markers** 和 **src/usr.bin/calendar/calendars/calendar.freebsd** - 有些人会在这些文件中为自己添加条目，以显示自己所在的位置或生日日期。
+10. 可选：在 Ports 中添加个人信息
+    **ports/astro/xearth/files/freebsd.committers.markers** 和 **src/usr.bin/calendar/calendars/calendar.freebsd** - 有些人会在这些文件中为自己添加条目，以显示自己所在的位置或生日日期。
 
-10. 可选：避免重复邮件
+11. 可选：避免重复邮件
     订阅 [doc 仓库所有分支的提交消息](https://lists.freebsd.org/subscription/dev-commits-doc-all)、[ports 仓库所有分支的提交消息](https://lists.freebsd.org/subscription/dev-commits-ports-all) 或 [src 仓库所有分支的提交消息](https://lists.freebsd.org/subscription/dev-commits-src-all) 的用户，可能希望取消订阅，以避免接收到提交消息和后续邮件的重复副本。
 
 ### 7.2. 对所有人的要求
@@ -1601,7 +1647,7 @@ FreeBSD `ports` 仓库在 2012 年 7 月 14 日从 CVS 转移到 Subversion。�
    >
    >如果你的电子邮件系统使用 SPF 严格规则，你应该将 `mx2.FreeBSD.org` 排除在 SPF 检查之外。
 
-   由于处理垃圾邮件给中央邮件服务器带来的巨大负担，前端服务器会进行一些基本检查，并根据这些检查丢弃一些邮件。目前，唯一的检查是连接主机的 DNS 信息，但这可能会发生变化。一些人把这些检查归咎于导致有效邮件的丢失。要关闭这些检查，可以在 `freefall.FreeBSD.org` 上创建文件 **\~/.spam\_lover**。
+   由于处理垃圾邮件给中央邮件服务器带来的巨大负担，前端服务器会进行一些基本检查，并根据这些检查丢弃一些邮件。目前，唯一的检查是连接主机的 DNS 信息，但这可能会发生变化。一些人把这些检查归咎于导致有效邮件的丢失。要关闭这些检查，可以在 `freefall.FreeBSD.org` 上创建文件 **~/.spam_lover**。
 
    >**注意**
    >
@@ -1645,13 +1691,13 @@ smtp_sasl_password_maps = hash:/usr/local/etc/postfix/sasl_passwd
 smtp_use_tls = yes
 ```
 
-在 **/usr/local/etc/postfix/relayhost\_maps** 中创建以下内容：
+在 **/usr/local/etc/postfix/relayhost_maps** 中创建以下内容：
 
 ```ini
 你的用户名@FreeBSD.org  [smtp.freebsd.org]:587
 ```
 
-在 **/usr/local/etc/postfix/sasl\_passwd** 中创建以下内容：
+在 **/usr/local/etc/postfix/sasl_passwd** 中创建以下内容：
 
 ```ini
 [smtp.freebsd.org]:587          你的用户名:你的密码
@@ -1664,7 +1710,7 @@ smtpd_sender_login_maps = hash:/usr/local/etc/postfix/sender_login_maps
 smtpd_sender_restrictions = reject_known_sender_login_mismatch
 ```
 
-在 **/usr/local/etc/postfix/sender\_login\_maps** 中创建以下内容：
+在 **/usr/local/etc/postfix/sender_login_maps** 中创建以下内容：
 
 ```ini
 你的用户名@FreeBSD.org 你的本地用户名
@@ -1721,7 +1767,7 @@ freebsd_plain:
   client_condition = ${if eq{$host}{smtp.freebsd.org}}
 ```
 
-在 **/usr/local/etc/exim/freebsd\_send** 中创建以下内容：
+在 **/usr/local/etc/exim/freebsd_send** 中创建以下内容：
 
 ```ini
 example@freebsd.org:smtp.freebsd.org::587
@@ -1789,15 +1835,15 @@ FreeBSD 拥有数百名活跃开发者和数十年的历史，涉及数十万次
 
 ### 9.3. 保持主题行简短
 
-主题行应尽可能简短，同时保留必要的信息。这是为了使浏览 Git 日志更高效，并确保 `git log --oneline` 能在一个 80 列的行内显示短哈希和主题。一个好的经验法则是保持在 63 个字符以内，并尽可能控制在 50 个字符以内。
+主题行应尽可能简短，同时保留必要的信息。这是为了使浏览 Git 日志更高效，并确保 `git log --oneline` 能在一个 80 列的行内显示短哈希和主题。一个好的经验法则是保持在 67 个字符以内，并尽可能控制在 50 个字符以内。
 
 ### 9.4. 如果适用，前缀主题行以组件名
 
-如果更改涉及某个特定组件，主题行可以以该组件名称和冒号（`:`）为前缀。
+如果更改涉及某个特定组件，主题行可以以该组件名称和冒号（`:`）为前缀。如果适用，请尝试使用与之前对相同文件提交时使用的前缀相同的前缀。
 
 ✓ `foo: 添加 -k 选项以保持临时数据`
 
-将前缀包含在建议的 63 字符限制内，以便 `git log --oneline` 不会换行。
+将前缀包含在建议的 67 字符限制内，以便 `git log --oneline` 不会换行。
 
 ### 9.5. 主题行首字母大写
 
@@ -1863,21 +1909,22 @@ FreeBSD 拥有数百名活跃开发者和数十年的历史，涉及数十万次
 | **`PR:`**                | 受此提交影响的缺陷报告（如果有的话）（通常是通过关闭此报告）。多个 PR 可以在一行中列出，使用逗号或空格分隔。                     |
 | ------------------------ | ---------------------------------------------------------------------------- |
 | **`Reported by:`**       | 报告问题的人的姓名和电子邮件地址；对于开发者，通常仅使用 FreeBSD 集群上的用户名。通常在没有 PR 的情况下使用，例如问题是通过邮件列表报告的。 |
-| **`Submitted by:`**（已废弃） | 该字段在 Git 中已被废弃；提交的补丁应通过 `git commit --author` 设置作者，提供完整姓名和有效电子邮件地址。          |
-|`Reviewed by:`|<p>审查此更改的人员的姓名和电子邮件地址；对于开发者，只需提供 FreeBSD 集群上的用户名。如果补丁提交到邮件列表进行审查，并且审查结果是积极的，那么只需包括列表名称。如果审查者不是项目成员，则提供姓名、电子邮件，并在 Port 的情况下，如果是外部角色，如维护者：<br>开发者审查：<br><pre><code>Reviewed by: 用户名</code></pre><br>非开发者的 Port 维护者审查：<br><pre><code>Reviewed by: 全名 &lt;有效的@email&gt; (maintainer)</code></pre></p>|
+| **`Submitted by:`**（已废弃） | 提交了更改但未提供完整有效补丁（尤其是没有有效电子邮件）的作者姓名。提交的补丁应通过 `git commit --author` 设置作者，提供完整姓名和有效电子邮件地址。在迁移到 Git 允许分开作者和提交者字段之前，此字段用于贡献的补丁。          |
+| `Reviewed by:` | 审查此更改的人员的姓名和电子邮件地址；对于开发者，只需提供 FreeBSD 集群上的用户名。如果补丁提交到邮件列表进行审查，并且审查结果是积极的，那么只需包括列表名称。如果审查者不是项目成员，则提供姓名、电子邮件，并在 Ports 的情况下，如果是外部角色，如维护者。开发者审查：`Reviewed by: 用户名`。非开发者的 Ports 维护者审查：`Reviewed by: 全名 <valid@email> (maintainer)`。 |
 | `Tested by:` | 测试此更改的人员的姓名和电子邮件地址；对于开发者，只需提供 FreeBSD 集群上的用户名。 |
 | `Discussed with:` | 提供有意义反馈、对补丁做出贡献的人员的姓名和电子邮件地址；对于开发者，只需提供 FreeBSD 集群上的用户名。通常用于感谢那些没有明确审查、测试或批准更改，但仍然为更改周围的讨论做出贡献，从而改进并更好地理解其对 FreeBSD 项目的影响的人。 |
-|`Approved by:`|<p>批准更改的人员的姓名和电子邮件地址；对于开发人员，仅为 FreeBSD 集群中的用户名。有几种情况是常见的需要批准：<ul><li>当一个新提交者处于导师指导下</li><li>提交到被 LOCKS 文件（src）覆盖的区域</li><li>在发布周期期间</li><li>提交到你没有提交权限的仓库（例如，src 提交者提交到 docs）</li><li>提交到由其他人维护的 Port </li></ul>在导师指导下时，在提交之前获得导师的批准。在此字段中输入导师的用户名，并注明他们是导师： <pre><code>Approved by: 导师的用户名 (mentor)</code></pre> 如果是团队批准了这些提交，则应包含团队名称，后跟括号中的批准者用户名。例如： <pre><code>Approved by: re (用户名)</code></pre></p>|
+| `Approved by:` | 批准更改的人员的姓名和电子邮件地址；对于开发人员，仅为 FreeBSD 集群中的用户名。有几种情况是常见的需要批准：当一个新提交者处于导师指导下；提交到被 LOCKS 文件（src）覆盖的区域；在发布周期期间；提交到你没有提交权限的仓库（例如，src 提交者提交到 docs）；提交到由其他人维护的 Port。在导师指导下时，在提交之前获得导师的批准。在此字段中输入导师的用户名，并注明他们是导师：`Approved by: 导师的用户名 (mentor)`。如果是团队批准了这些提交，则应包含团队名称，后跟括号中的批准者用户名。例如：`Approved by: re (用户名)`。 |
 | `Obtained from:`         | 获取代码的项目名称（如果有的话）。不要使用此行来注明个人的姓名。                                                                                                                                                                                                                                                                                                                            |
 | `Fixes:`                 | 此更改修复的提交的 Git 短哈希和标题行，通过 `git log -n 1 --pretty=format:'%h ("%s")' GIT-COMMIT-HASH` 返回。                                                                                                                                                                                                                                                                     |
 | `MFC after:`             | 若要接收在稍后日期 MFC 的电子邮件提醒，请指定计划进行 MFC 的天数、周数或月数。                                                                                                                                                                                                                                                                                                                |
 | `MFC to:`                | 如果提交应合并到某些稳定分支，请指定分支名称。                                                                                                                                                                                                                                                                                                                                     |
 | `MFH:`                   | 如果提交将合并到某个 ports 季度分支名称，请指定季度分支。例如 `2021Q2`。                                                                                                                                                                                                                                                                                                                |
-| `Relnotes:`              | 如果该更改是下一个发布版本的发布说明的候选项，请设置为 `yes`。                                                                                                                                                                                                                                                                                                                          |
+| `Relnotes:`              | 如果该更改是下一个发布版本的发布说明的候选项，请设置为 `yes`。候选项包括用户可见的更改、新功能、兼容性破坏等。如果忘记设置此行，或想提供更多细节，可在 src 树根目录的 `RELNOTES` 文件中添加条目。`RELNOTES` 文件用于生成下一个发布版本的发布说明。请勿使用 `Relnotes:` 行描述更改：其唯一有效值是 `yes`。                                                                                                                                                                                                                                                                                                                          |
 | `Security:`              | 如果更改与安全漏洞或安全暴露相关，请包括一个或多个参考或问题描述。如果可能，包含 VuXML URL 或 CVE ID。                                                                                                                                                                                                                                                                                                |
 | `Event:`                 | 进行此提交的事件描述。如果这是一个定期事件，请在其中添加年份甚至月份。例如，可以写为 `FooBSDcon 2019`。这一行的目的是对会议、聚会及其他类型的聚集给予认可，并展示这些活动的意义。请不要将此行用于 `Sponsored by:`，该行用于注明资助特定功能或开发人员的组织。                                                                                                                                                                                                             |
 | `Sponsored by:`          | 为此更改提供赞助的组织（如果有的话）。多个组织请用逗号分隔。如果仅部分工作得到资助，或不同作者获得了不同程度的资助，请在每个赞助商名称后给出适当的说明。例如，`Example.com (alice, code refactoring), Wormulon (bob), Momcorp (cindy)` 表示 Alice 得到了 Example.com 的资助以进行代码重构，Wormulon 资助了 Bob 的工作，Momcorp 资助了 Cindy 的工作。其他作者未获得资助或选择不列出资助。                                                                                                   |
 | `Pull Request:`          | 该更改作为拉取请求或合并请求提交到 FreeBSD 的公共只读 Git 仓库。应包括拉取请求的完整 URL，因为它们通常作为代码审查。例如：`https://github.com/freebsd/freebsd-src/pull/745`                                                                                                                                                                                                                                     |
+| `Closes:`                | 此更改结束了在指定 GitHub Pull 请求中讨论的补丁系列，并关闭该请求。应包括拉取请求的完整 URL，因为它们通常作为代码审查。例如：`https://github.com/freebsd/freebsd-src/pull/745`                                                                                                                                                                                                                                      |
 | `Co-authored-by:`        | 提交的其他作者的姓名和电子邮件地址。GitHub 对 Co-authored-by 说明有详细描述，详情见 [https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors)。 |
 | `Signed-off-by:`         | 该 ID 认证符合 [https://developercertificate.org/](https://developercertificate.org/) 的要求。                                                                                                                                                                                                                                                                       |
 | `Differential Revision:` | Phabricator 审查的完整 URL。此行 *必须是最后一行*。例如：`https://reviews.freebsd.org/D1708`。                                                                                                                                                                                                                                                                                  |
@@ -1957,42 +2004,19 @@ Relnotes:	yes
 
 ## 10. 新文件的首选许可证
 
-FreeBSD 项目的完整许可证政策可以在 [https://www.FreeBSD.org/internal/software-license](https://www.freebsd.org/internal/software-license/) 找到。本节的其余部分旨在帮助你入门。作为一条规则，若有疑问，请询问。提供建议比修复源代码树更容易。
+FreeBSD 项目的完整许可证政策记录在 [FreeBSD 许可证政策](https://docs.freebsd.org/en/articles/license-guide/) 文章中。本节的其余部分旨在帮助你入门。作为一条规则，若有疑问，请询问。提供建议比修复源代码树更容易。
 
-FreeBSD 项目建议并使用以下文本作为首选许可证方案：
+强烈推荐使用仅 SPDX 标记。FreeBSD 项目使用以下文本作为首选许可证：
 
-```txt
+```c
 /*
- * SPDX-License-Identifier: BSD-2-Clause
- *
  * Copyright (c) [year] [your name]
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * [id for your version control system, if any]
+ * SPDX-License-Identifier: BSD-2-Clause
  */
 ```
 
-FreeBSD 项目强烈不鼓励在新代码中使用所谓的 "广告条款"。由于 FreeBSD 项目有大量的贡献者，对于许多商业供应商来说，遵守该条款变得困难。如果代码中包含广告条款，请考虑将其删除。实际上，请考虑使用上述许可证为你的代码授权。
+首选顺序是版权声明在前，然后是 `SPDX-License-Identifier`，但两种顺序均可接受。对 FreeBSD 的新贡献应使用 BSD-2-Clause 许可证。FreeBSD 项目不允许在新代码中使用"广告条款"。如果树中的代码包含广告条款，请考虑切换到不含该条款的许可证。
 
 FreeBSD 项目不鼓励使用全新的许可证或标准许可证的变体。新许可证需要得到 [core@FreeBSD.org](mailto:core@FreeBSD.org) 的批准才能存入 `src` 仓库。树中使用的许可证越多，给那些希望利用这些代码的人带来的问题就越多，通常是由于不清晰的许可证条款导致的意外后果。
 
@@ -2019,9 +2043,7 @@ FreeBSD 项目的仓库中存在一些软件或数据，已授予特殊许可证
 
 ## 12. 树中的 SPDX 标签
 
-该项目在我们的源代码库中使用 [SPDX](https://spdx.dev/) 标签。目前，这些标签旨在帮助自动化工具机械地重建许可证要求。树中所有 *SPDX-License-Identifier* 标签应视为信息性标签。FreeBSD 源代码树中所有带有这些标签的文件也包含治理该文件使用的许可证副本。如果出现不一致，以原文许可证为准。该项目力图遵循 [SPDX 规范，版本 2.2](https://spdx.github.io/spdx-spec/v2.2.2)。如何标记源文件和有效的代数表达式，见 [附件 D](https://spdx.github.io/spdx-spec/v2.2.2/SPDX-license-expressions/) 和 [附件 E](https://spdx.github.io/spdx-spec/v2.2.2/using-SPDX-short-identifiers-in-source-files/)。该项目从 SPDX 的有效 [短许可证标识符列表](https://spdx.org/licenses/) 中抽取标识符。该项目仅使用 *SPDX-License-Identifier* 标签。
-
-截至 2021 年 3 月，树中的大约 25,000 个文件已被标记。
+该项目在源代码库中使用 [SPDX](https://spdx.dev/) 标签。对于新文件，强烈推荐使用仅 SPDX 标记（不复制完整的许可证文本）。当文件仅包含版权声明和 `SPDX-License-Identifier` 标签时，该 SPDX 标签指定了该文件的许可证。当文件同时包含 `SPDX-License-Identifier` 标签和完整的许可证原文时，SPDX 标签为信息性标签，出现不一致时以许可证原文为准。该项目从 SPDX 的有效[短许可证标识符列表](https://spdx.org/licenses/)中提取标识符，并仅使用 `SPDX-License-Identifier` 标签。有关 SPDX 表达式在 FreeBSD 软件集中使用的完整规范，请参见 [FreeBSD 许可证政策](https://docs.freebsd.org/en/articles/license-guide/) 文章。
 
 ## 13. 开发者关系
 
@@ -2117,12 +2139,12 @@ FreeBSD 开发者邮件列表仅供 FreeBSD 提交者使用。为了开发 FreeB
 
 1. 如果你不希望每次使用 [ssh(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh&sektion=1&format=html) 时都输入密码，并且你使用密钥进行身份验证，[ssh-agent(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-agent&sektion=1&format=html) 可以为你提供便利。如果你想使用 [ssh-agent(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-agent&sektion=1&format=html)，请确保在运行其他应用程序之前先启动它。例如，X 用户通常会在他们的 **.xsession** 或 **.xinitrc** 中执行此操作。有关详细信息，请参阅 [ssh-agent(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-agent&sektion=1&format=html)。
 
-2. 使用 [ssh-keygen(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-keygen&sektion=1&format=html) 生成密钥对。密钥对将保存在你的 **\$HOME/.ssh/** 目录中。
+2. 使用 [ssh-keygen(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-keygen&sektion=1&format=html) 生成密钥对。密钥对将保存在你的 **$HOME/.ssh/** 目录中。
    >**重要**
    >
    >仅支持 ECDSA、Ed25519 或 RSA 密钥。
 
-3. 将你的公钥（**\$HOME/.ssh/id\_ecdsa.pub**、**\$HOME/.ssh/id\_ed25519.pub** 或 **\$HOME/.ssh/id\_rsa.pub**）发送给设置你为提交者的人，以便将其放入 `freefall` 上的 **/etc/ssh-keys/** 目录中的 **yourlogin**。
+3. 将你的公钥（**$HOME/.ssh/id_ecdsa.pub**、**$HOME/.ssh/id_ed25519.pub** 或 **$HOME/.ssh/id_rsa.pub**）发送给设置你为提交者的人，以便将其放入 `freefall` 上的 **/etc/ssh-keys/** 目录中的 **yourlogin**。
 
 现在，你可以使用 [ssh-add(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-add&sektion=1&format=html) 进行一次会话的身份验证。它会提示输入私钥的密码短语，然后将其存储在身份验证代理（[ssh-agent(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-agent&sektion=1&format=html)）中。使用 `ssh-add -d` 可以从代理中移除存储的密钥。
 
@@ -2215,33 +2237,42 @@ FreeBSD 维基包含了一个小指南，供有兴趣使用 Coverity® 分析报
 
 ### 20.2. 多架构政策
 
-FreeBSD 在最近的发布周期中新增了多个架构 Port，真正不再是一个以 i386™ 为中心的操作系统。为了使 FreeBSD 在我们支持的平台上保持良好的可移植性，核心团队制定了以下规定：
+为了使 FreeBSD 在我们支持的平台上保持良好的可移植性，核心团队制定了以下规定：
 
-我们的 32 位参考平台是 i386，64 位参考平台是 amd64。重大设计工作（包括重大 API 和 ABI 更改）必须在至少一个 32 位平台和一个 64 位平台上证明其可行性，最好是在主要参考平台上，才能提交到源码树中。
+> 重大设计工作（包括重大 API 和 ABI 更改）必须先在至少一个 Tier 1 平台上证明其可行性，然后才能提交到源代码树中。
 
-开发者还应了解我们的架构长期支持的 Tier 政策。这里的规则是为了在开发过程中提供指导，并且与发布时列出的特性和架构的要求不同。在开发过程中，架构的支持规则比发布时的规则要宽松得多。
+开发者还应了解我们关于硬件架构长期支持的 Tier 政策。这里的规则旨在为开发过程提供指导，并且与该部分中列出的特性和架构要求不同。在发布时，架构上特性支持的 Tier 规则比开发过程中的更改规则更为严格。
 
 ### 20.3. 多编译器政策
 
-FreeBSD 使用 Clang 和 GCC 进行构建。该项目以一种谨慎且可控的方式进行，以最大化这种额外工作的好处，同时将额外工作的量降到最低。支持 Clang 和 GCC 提高了我们用户的灵活性。这些编译器有不同的优缺点，支持这两者让用户可以根据自己的需求选择最佳的编译器。Clang 和 GCC 支持类似的 C 和 C++ 方言，只需相对较少的条件代码。该项目通过使用两种编译器的特性，增加了代码覆盖率并提高了代码质量。通过支持这种范围，项目能够在更多用户环境中构建并利用更多 CI 环境，从而提高了用户的便利性，并为他们提供了更多测试工具。通过严格限制支持的版本范围为这些编译器的现代版本，项目避免了过度增加测试矩阵。旧的和冷门的编译器以及旧的语言方言有极其有限的支持，允许用户程序使用它们进行构建，但不要求基本系统必须使用这些编译器进行构建。具体的平衡仍在不断演变，以确保额外工作的好处大于它所带来的负担。该项目曾经支持非常旧的 Intel 编译器或旧版本的 GCC，但我们用精心选择的现代编译器替代了对这些过时编译器的支持。本节记录了我们在哪里使用不同的编译器，以及对此的期望。
+FreeBSD 基本系统使用 Clang 和 GCC 进行构建。该项目以一种谨慎且可控的方式进行，以最大化这种额外工作的好处，同时将额外工作保持在最低限度。支持 Clang 和 GCC 提高了用户的灵活性。这些编译器有不同的优缺点，支持两者让用户可以根据自己的需求选择最佳的编译器。Clang 和 GCC 支持类似的 C 和 C++ 方言，只需相对较少的条件代码。该项目通过使用两种编译器的特性，增加了代码覆盖率并提高了代码质量。通过支持这一范围，项目能够在更多用户环境中构建并利用更多 CI 环境，从而提高用户的便利性，并为他们提供更多测试工具。通过仔细地将支持的版本范围限制在这些编译器的现代版本，项目避免了过度增加测试矩阵。旧的和冷门的编译器以及旧的语言方言有极其有限的支持，允许用户程序使用它们进行构建，但不要求基本系统必须使用这些编译器进行构建。具体的平衡仍在不断演变，以确保额外工作的好处大于它所带来的负担。该项目曾经支持非常旧的 Intel 编译器或旧版本的 GCC，但我们用精心选择的现代编译器替代了对这些过时编译器的支持。本节记录了我们在哪里使用不同的编译器，以及对此的期望。
 
-FreeBSD 项目提供了一个内嵌的 Clang 编译器。由于它在源码树中，因此这是最受支持的编译器。所有更改在提交之前必须与它编译通过。根据更改的性质，应使用此编译器进行完整的测试。
+FreeBSD 基本系统包含一个内置的 Clang 编译器。由于它在源代码树中，因此这是最受支持的编译器。所有更改在提交之前必须能够用它编译通过。根据更改的性质，应使用此编译器进行完整的测试。
 
-在任何时候，FreeBSD 项目也支持一个或多个树外编译器。目前，这个编译器是 GCC 12.x。理想情况下，提交者应使用该编译器进行编译测试，尤其是对于大规模或风险较高的更改。此编译器作为 `${TARGET_ARCH}-gcc${VERSION}` 包提供，例如 [aarch64-gcc12](https://cgit.freebsd.org/ports/tree/devel/freebsd-gcc12/) 或 [riscv64-gcc12](https://cgit.freebsd.org/ports/tree/devel/freebsd-gcc12/)。该项目运行自动化 CI 任务，以使用这些编译器构建所有内容。提交者应修复他们的更改破坏的 CI 任务。提交者可以在必要时使用 `CROSS_TOOLCHAIN=aarch64-gcc12` 或 `CROSS_TOOLCHAIN=llvm15` 进行测试。
+FreeBSD 基本系统还支持多个版本的 Clang 和 GCC 作为树外编译器。对于大规模或风险较高的更改，提交者应使用受支持的 GCC 版本进行测试构建。树外编译器以包的形式提供。GCC 编译器以 `${TARGET_ARCH}-gcc${VERSION}` 包的形式提供，例如 [aarch64-gcc14](https://cgit.freebsd.org/ports/tree/devel/freebsd-gcc14/)。Clang 编译器以 `llvm${VERSION}` 包的形式提供，例如 [llvm18](https://cgit.freebsd.org/ports/tree/devel/llvm18/)。该项目运行自动化 CI 任务，以使用这些编译器构建所有内容。提交者应修复他们的更改破坏的 CI 任务。提交者可以通过将 `CROSS_TOOLCHAIN` 设置为包名来测试用户空间或单个内核的构建，例如 `CROSS_TOOLCHAIN=aarch64-gcc14` 或 `CROSS_TOOLCHAIN=llvm18`。对于 universe 或 tinderbox 构建，`USE_GCC_TOOLCHAINS=gcc${VERSION}` 使用适当的 GCC 编译器包构建所有架构。对于使用树外 Clang 的 universe 或 tinderbox 构建，传递 `CROSS_TOOLCHAIN=llvm${VERSION}`。请注意，虽然基本系统中的所有架构都可以由 Clang 编译，但只有少数架构可以完全由 GCC 构建。
 
-FreeBSD 项目还在 GitHub 上拥有一些 CI 管道。对于 GitHub 上的拉取请求和推送到 GitHub 分支的某些代码，运行了一些交叉编译作业。这些作业测试 FreeBSD 使用一个可能比内嵌编译器版本落后一个大版本的 Clang 版本进行构建。
+FreeBSD 项目还在 GitHub 上拥有一些 CI 管道。对于 GitHub 上的拉取请求和推送到 GitHub 分支的某些代码，运行了一些交叉编译作业。这些作业测试 FreeBSD 使用比内置编译器落后一个或多个主版本的 Clang 版本进行构建。
 
-FreeBSD 项目还在升级编译器。Clang 和 GCC 都是快速发展的目标。一些更改可能会在编译器到达之前先在源码树中实施，例如移除旧式的 K\&R 函数声明和定义。提交者应尽量注意这一点，并乐于调查新编译器可能带来的代码问题或更改。此外，在新的编译器版本加入源码树后，若怀疑存在未被检测的回归，可能需要使用旧版本进行编译。
+FreeBSD 项目还在升级编译器。Clang 和 GCC 都是快速发展的目标。一些更改可能会在编译器到达之前先在源代码树中实施，例如移除旧式的 K&R 函数声明和定义。提交者应尽量注意这一点，并乐于调查新编译器可能带来的代码问题或更改。此外，在新的编译器版本加入源代码树后，若怀疑存在未被检测的回归，可能需要使用旧版本进行编译。
 
 除了编译器，LLVM 的 LLD 和 GNU 的 binutils 也由编译器间接使用。提交者应注意汇编语法和链接器特性的差异，并确保两者的变种都能正常工作。这些组件将作为 FreeBSD CI 任务的一部分进行测试，适用于 Clang 或 GCC。
 
-FreeBSD 项目提供了头文件和库，允许使用其他编译器来构建非基本系统中的软件。这些头文件支持将环境尽可能严格地与标准一致，支持 ANSI-C 先前方言，直到 C89，并处理我们庞大的 Ports 中所发现的其他边缘情况。这个支持限制了旧标准在头文件中的淘汰，但不限制基本系统更新到更新的方言，也不要求基本系统整体上使用这些旧标准进行编译。破坏这一支持将导致 Ports 中的软件包构建失败，因此应尽量避免，并在容易修复时尽快修复。
+FreeBSD 项目提供了头文件和库，允许使用其他编译器来构建非基本系统中的软件。这些头文件支持将环境尽可能严格地与标准一致，支持 ANSI-C 先前方言，直到 C89，并处理我们庞大的 Ports 集合中发现的其他边缘情况。这个支持限制了旧标准在头文件等位置的淘汰，但不限制基本系统更新到更新的方言，也不要求基本系统整体上使用这些旧标准进行编译。破坏这一支持将导致 Ports 集合中的软件包构建失败，因此应尽量避免，并在容易修复时尽快修复。
 
-FreeBSD 构建系统目前适应这些不同的环境。随着编译器中新警告的加入，项目尝试修复它们。然而，有时这些警告需要大量重构，因此会通过使用根据编译器版本评估的 make 变量某种方式被抑制。开发者应注意这一点，确保任何特定于编译器的标志都能正确地进行条件处理。
+FreeBSD 构建系统目前适应这些不同的环境。随着编译器中新警告的加入，项目尝试修复它们。然而，有时这些警告需要大量重构，因此会通过使用根据编译器版本评估为适当值的 make 变量以某种方式被抑制。开发者应注意这一点，确保任何特定于编译器的标志都能正确地进行条件处理。
 
 #### 20.3.1. 当前编译器版本
 
-目前，内嵌的编译器是 Clang 15.x。目前，GCC 12 和 Clang 12、13、14、15 在 GitHub 和项目的 CI Jenkins 任务中进行了测试。相关工作正在进行，以准备将 Clang 16 版本加入源码树。最旧的项目支持分支使用 Clang 12，因此构建的引导部分必须适用于 Clang 12 至 15 的主版本。
+对于给定分支（如 `main` 或 `stable/X`），受支持的编译器版本会随时间变化。受支持编译器版本的权威来源是在 GitHub 的交叉构建操作和 Jenkins 中测试的自动化 CI 任务。
+
+| 分支 | 内置编译器 | llvm12 | llvm13 | llvm14 | llvm15 | llvm18 | amd64-gcc12 | amd64-gcc13 | amd64-gcc14 | amd64-gcc15 | riscv64-gcc15 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| main | llvm 19 | | | | Y | Y | Y | Y | Y | Y | Y |
+| stable/15 | llvm 19 | | | Y | | Y | Y | Y | Y | | |
+| stable/14 | llvm 19 | Y | Y | Y | | | Y | | Y | | |
+| stable/13 | llvm 19 | Y | Y | Y | | | Y | | Y | | |
+
+GCC 工具链通过 Jenkins 中的 CI 任务对 amd64 和 riscv64 进行测试。LLVM 工具链通过 GitHub 的交叉构建操作对 aarch64 和 amd64 进行测试。
 
 ### 20.4. 其他建议
 
@@ -2301,7 +2332,7 @@ FreeBSD 项目将平台目标分为四个级别。每个级别包括消费者可
 
 FreeBSD 内核也使用 ABI（有时称为内核二进制接口（KBI）），包括公共数据结构的语义和布局，以及内核中公共函数的参数的语义和布局。
 
-FreeBSD 内核可以支持多个用户空间 ABI。例如，FreeBSD 的 amd64 内核支持 FreeBSD amd64 和 i386 用户空间 ABI，以及 Linux x86\_64 和 i386 用户空间 ABI。FreeBSD 内核应支持一个“本地” ABI 作为默认 ABI。本地 ABI 通常与内核 ABI 共享某些特性，如 C 调用约定、基本类型的大小等。
+FreeBSD 内核可以支持多个用户空间 ABI。例如，FreeBSD 的 amd64 内核支持 FreeBSD amd64 和 i386 用户空间 ABI，以及 Linux x86_64 和 i386 用户空间 ABI。FreeBSD 内核应支持一个“本地” ABI 作为默认 ABI。本地 ABI 通常与内核 ABI 共享某些特性，如 C 调用约定、基本类型的大小等。
 
 内核和用户空间 ABI 都有相应的级别定义。在常见的情况下，平台的内核和 FreeBSD ABI 被分配到相同的级别。
 
@@ -2402,8 +2433,9 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 % git push
 ```
 
-|   | 不要忘记[设置 Git 钩子](https://docs.freebsd.org/en/articles/committers-guide/#port-commit-message-formats)，用于验证类别的 **Makefile**。 |
-| - | ------------------------------------------------------------------------------------------------------------------------- |
+>**提示**
+>
+>不要忘记按照[此处说明](https://docs.freebsd.org/en/articles/committers-guide/#port-commit-message-formats)为 Ports 树设置 Git 钩子；专门开发了特定的钩子来验证类别的 **Makefile**。
 
 #### 22.1.2. 添加新 Port 时需要注意的其他事项？
 
@@ -2453,7 +2485,7 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
   - 在 **ports/MOVED** 中添加条目。
   - 如果该 Port 在 **ports/LEGAL** 中，移除该 Port。
 
-另外，你也可以使用 **ports/Tools/scripts** 中的 rmport 脚本。此脚本由 Vasil Dimov 编写 \[[vd@FreeBSD.org](mailto:vd@FreeBSD.org)]。如有关于此脚本的问题，请将问题发送到 [FreeBSD ports 邮件列表](https://lists.freebsd.org/subscription/freebsd-ports)，并请抄送当前维护者 Chris Rees \[[crees@FreeBSD.org](mailto:crees@FreeBSD.org)]。
+另外，你也可以使用 **ports/Tools/scripts** 中的 rmport 脚本。此脚本由 Vasil Dimov 编写 [vd@FreeBSD.org](mailto:vd@FreeBSD.org)。如有关于此脚本的问题，请将问题发送到 [FreeBSD ports 邮件列表](https://lists.freebsd.org/subscription/freebsd-ports)，并请抄送当前维护者 Chris Rees [crees@FreeBSD.org](mailto:crees@FreeBSD.org)。
 
 ### 22.3. 如何将 Port 移到新位置？
 
@@ -2502,7 +2534,7 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 
 #### 22.7.1. 创建新类别的程序是什么？
 
-请参阅 [Proposing a New Category](https://docs.freebsd.org/en/books/porters-handbook/#proposing-categories) 以了解在 Porter’s Handbook 中的详细步骤。完成该程序并将 PR 分配给 Port 管理团队 \[[portmgr@FreeBSD.org](mailto:portmgr@FreeBSD.org)] 后，是否批准该请求由他们决定。如果他们批准了，责任在于：
+请参阅 [Proposing a New Category](https://docs.freebsd.org/en/books/porters-handbook/#proposing-categories) 以了解在 Porter's Handbook 中的详细步骤。完成该程序并将 PR 分配给 Ports 管理团队 [portmgr@FreeBSD.org](mailto:portmgr@FreeBSD.org) 后，是否批准该请求由他们决定。如果他们批准了，责任在于：
 
 1. 执行任何必要的迁移（仅适用于物理类别）。
 2. 更新 **ports/Mk/bsd.port.mk** 中的 `VALID_CATEGORIES` 定义。
@@ -2548,7 +2580,7 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 
 每周会多次构建包。如果 Port 失败，维护者将收到来自 `pkg-fallout@FreeBSD.org` 的电子邮件。
 
-所有包构建的报告（官方的、实验性的和非回归的）都汇总在 [pkg-status.FreeBSD.org](https://docs.freebsd.org/en/articles/committers-guide/pkg-status.FreeBSD.org)。
+所有包构建的报告（官方的、实验性的和非回归的）都汇总在 [pkg-status.FreeBSD.org](https://pkg-status.FreeBSD.org/)。
 
 #### 22.8.3. 我添加了一个新 Port 。是否需要将其添加到 **INDEX** 文件中？
 
@@ -2556,7 +2588,7 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 
 #### 22.8.4. 是否还有其他我不能触碰的文件？
 
-任何直接位于 **ports/** 下的文件，或者位于以大写字母开头的子目录中的文件（如 **Mk/**、**Tools/** 等）。特别是， Port 管理团队 \[[portmgr@FreeBSD.org](mailto:portmgr@FreeBSD.org)] 非常在意 **ports/Mk/bsd.port*.mk*\* 文件，因此除非你愿意面对他们的怒火，否则不要对这些文件进行提交更改。
+任何直接位于 **ports/** 下的文件，或者位于以大写字母开头的子目录中的文件（如 **Mk/**、**Tools/** 等）。特别是， Ports 管理团队 [portmgr@FreeBSD.org](mailto:portmgr@FreeBSD.org) 非常在意 **ports/Mk/bsd.port*.mk** 文件，因此除非你愿意面对他们的怒火，否则不要对这些文件进行提交更改。
 
 #### 22.8.5. 当分发文件更改但版本没有改变时，更新 Port 的校验和的正确程序是什么？
 
@@ -2574,10 +2606,10 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 4. 如果顶部显示“Show Advanced Fields”，点击它。它现在会显示为“Hide Advanced Fields”。此时将有更多的字段可用。如果已经显示为“Hide Advanced Fields”，则无需进行任何操作。
 5. 在“Flags”部分，将“exp-run”设置为 `?`。对于所有其他字段，将鼠标悬停在任何字段上可以查看更多详细信息。
 6. 提交。等待构建运行。
-7. Port 管理团队 \[[portmgr@FreeBSD.org](mailto:portmgr@FreeBSD.org)] 会回复可能的 fallout。
+7. Ports 管理团队 [portmgr@FreeBSD.org](mailto:portmgr@FreeBSD.org) 会回复可能的 fallout。
 8. 根据 fallout：
 
-   - 如果没有 fallout，程序到此为止，变更可以提交，前提是需要其他批准。
+   - 如果没有 fallout，程序到此为止，变更可以提交，前提是已获得其他所需的批准。
 
      1. 如果有 fallout，*必须* 修复它，你可以直接修复 Port 树中的 Port ，或将其添加到提交的补丁中。
      2. 完成修复后，返回第 6 步并说明已修复 fallout，然后等待 exp-run 再次运行。只要有破损的 Port ，就重复此过程。
@@ -2599,19 +2631,17 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 
 - [FreeBSD 提交者规则大全](https://docs.freebsd.org/en/articles/committers-guide/#rules)
 
-## 24. 关于 Google Analytics 的信息
+## 24. 关于分析的信息
 
-自 2012 年 12 月 12 日起，FreeBSD 项目网站启用了 Google 分析，以收集关于网站使用的匿名统计数据。
+自 2022 年起，FreeBSD 项目网站使用 [Plausible Analytics](https://plausible.io/) 收集关于网站使用的匿名统计数据。
 
->**注意**
->
->自 2022 年 3 月 3 日以降，FreeBSD 项目从网站中移除了 Google 分析。
+此前，Google 分析于 2012 年 12 月 12 日至 2022 年 3 月 3 日期间启用。
 
 ## 25. 杂项问题
 
 ### 25.1. 如何访问 people.FreeBSD.org 来发布个人或项目信息？
 
-`people.FreeBSD.org` 就是 `freefall.FreeBSD.org`。只需创建一个 **public\_html** 目录。你放入该目录中的任何内容将自动显示在 [https://people.FreeBSD.org/](https://people.freebsd.org/) 下。
+`people.FreeBSD.org` 就是 `freefall.FreeBSD.org`。只需创建一个 **public_html** 目录。你放入该目录中的任何内容将自动显示在 [https://people.FreeBSD.org/](https://people.freebsd.org/) 下。
 
 ### 25.2. 邮件列表归档存储在哪里？
 
@@ -2625,19 +2655,15 @@ Port 及其类别的 Makefile 准备好后，可以提交新 Port ：
 
 ### 26.1. 认可
 
-作为一名优秀的软件工程师的认可是最持久的价值。此外，有机会与每个工程师梦寐以求的最佳人合作，亦是巨大的特权！
+被认可为优秀的软件工程师，这是最持久的价值。此外，有机会与每位工程师梦寐以求想见到的最优秀的人合作，亦是巨大的福利！
 
-### 26.2. FreeBSD 商城
-
-FreeBSD 提交者可以在会议上从 [FreeBSD Mall, Inc.](http://www.freebsdmall.com/) 获得免费的 4-CD 或 DVD 套件。
-
-### 26.3. `Gandi.net`
+### 26.2. `Gandi.net`
 
 [Gandi](https://gandi.net/) 提供网站托管、云计算、域名注册和 X.509 证书服务。
 
 Gandi 向所有 FreeBSD 开发者提供 E-rate 折扣。为了简化获取折扣的过程，首先设置 Gandi 账户，填写账单信息并选择货币。然后，使用你的 `@freebsd.org` 邮件地址发送邮件至 [non-profit@gandi.net](mailto:non-profit@gandi.net)，并注明你的 Gandi 账户。
 
-### 26.4. `rsync.net`
+### 26.3. `rsync.net`
 
 [rsync.net](https://rsync.net/) 提供针对 UNIX 用户优化的云存储服务，适用于外部备份。其服务完全在 FreeBSD 和 ZFS 上运行。
 

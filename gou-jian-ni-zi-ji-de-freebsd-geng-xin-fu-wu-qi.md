@@ -5,11 +5,11 @@
 
 >**警告**
 >
->本文中的说明涉及较旧版本的 FreeBSD，可能无法在较新的操作系统版本中正常工作。随着 pkgbase 的出现，freebsd-update 工具预计将在未来从 FreeBSD 中移除。当这种情况发生时，本文将更新为反映新的程序，或者完全删除。
+>本文中的说明涉及较旧版本的 FreeBSD，可能无法在较新的操作系统版本中正常工作。随着 pkgbase 的出现，freebsd-update 工具预计将在未来从 FreeBSD 中移除。当这种情况发生时，本文将更新以反映新的流程，或者完全删除。
 
 ## 摘要
 
-本文介绍了构建内部 FreeBSD 更新服务器的过程。[freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) 由 FreeBSD 安全官员荣誉成员 `Colin Percival` 编写。对于那些认为从官方更新服务器更新系统较为方便的用户，构建自己的 FreeBSD 更新服务器可以通过支持手动调整的 FreeBSD 版本，或通过提供一个本地镜像来帮助加速多个机器的更新，从而扩展其功能。
+本文介绍了构建内部 FreeBSD 更新服务器的过程。[freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) 由 FreeBSD 荣誉安全官 Colin Percival 编写。对于那些认为从官方更新服务器更新系统较为方便的用户，构建自己的 FreeBSD 更新服务器可以通过支持手动调整的 FreeBSD 版本，或通过提供一个本地镜像来帮助加速多个机器的更新，从而扩展其功能。
 
 
 ## 1. 致谢
@@ -24,22 +24,22 @@
 
 要构建内部 FreeBSD 更新服务器，需满足一些要求。
 
-- 一个正在运行的 FreeBSD 系统。
+- 正在运行的 FreeBSD 系统。
   >**注意**
   >
-  >至少，更新需要在一个大于或等于目标发布版本的 FreeBSD 版本上构建。
+  >至少，更新需要在大于或等于目标发布版本的 FreeBSD 版本上构建。
   
 - 至少 4 GB 可用空间的用户账户。这能创建 7.1 和 7.2 的更新，但确切的空间要求可能会根据版本的不同而有所变化。
 
-- 一个 [ssh(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh&sektion=1&format=html) 账户，用于上传分发更新。
+- 在远程机器上的 [ssh(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh&sektion=1&format=html) 账户，用于上传分发更新。
 
-- 一台 Web 服务器，比如 [Apache](https://docs.freebsd.org/en/books/handbook/#network-apache)，其空间要求至少为构建所需空间的一半。例如，7.1 和 7.2 的测试构建总共消耗 4 GB，分发这些更新所需的 Web 服务器空间为 2.6 GB。
+- 一台 Web 服务器，比如 [Apache](https://docs.freebsd.org/en/books/handbook/#network-apache)，其空间要求超过构建所需空间的一半。例如，7.1 和 7.2 的测试构建总共消耗 4 GB，分发这些更新所需的 Web 服务器空间为 2.6 GB。
 
-- 基本的 Bourne shell 脚本知识，[sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html)。
+- 基本的 POSIX shell 脚本知识，[sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html)。
 
 ## 4. 配置：安装与设置
 
-通过安装 [devel/git](https://cgit.freebsd.org/ports/tree/devel/git/) 和 [security/ca\_root\_nss](https://cgit.freebsd.org/ports/tree/security/ca_root_nss/)，下载 [freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) 软件，并执行：
+通过安装 [devel/git](https://cgit.freebsd.org/ports/tree/devel/git/) 和 [security/ca_root_nss](https://cgit.freebsd.org/ports/tree/security/ca_root_nss/)，下载 [freebsd-update-server](https://github.com/freebsd/freebsd-update-build/) 软件，并执行：
 
 ```sh
 % git clone https://github.com/freebsd/freebsd-update-build.git freebsd-update-server
@@ -75,12 +75,12 @@ MASTERDIR=update-master.freebsd.org ⑤
 考虑的参数包括：
 
 - ① 这是从中下载 ISO 镜像的位置（由 **scripts/build.subr** 中的 `fetchiso()` 子程序处理）。配置的地址不限于 FTP URI，任何由标准的 [fetch(1)](https://man.freebsd.org/cgi/man.cgi?query=fetch&sektion=1&format=html) 工具支持的 URI 方案都应当能正常工作。可以通过将默认的 **build.subr** 脚本复制到发布和架构特定的目录（即 **scripts/RELEASE/ARCHITECTURE/build.subr**）并进行本地更改来安装 `fetchiso()` 代码的自定义。
-- ② 构建主机的名称。当更新系统时，执行 `% uname -v` 时会显示此信息。
-- ③用于上传文件到更新服务器的 SSH 密钥。可以通过输入 `ssh-keygen -t dsa` 来创建密钥对。此参数是可选的；当未定义 `SSHKEY` 时，将使用标准的密码身份验证作为备用身份验证方法。有关 SSH 和创建与使用密钥的详细信息，参见 [ssh-keygen(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-keygen&sektion=1&format=html) 手册。
+- ② 构建主机的名称。在已更新的系统上执行 `% uname -v` 时会显示此信息。
+- ③ 用于上传文件到更新服务器的 SSH 密钥。可以通过输入 `ssh-keygen -t dsa` 来创建密钥对。此参数是可选的；当未定义 `SSHKEY` 时，将使用标准的密码身份验证作为备用身份验证方法。有关 SSH 和创建与使用密钥的详细信息，参见 [ssh-keygen(1)](https://man.freebsd.org/cgi/man.cgi?query=ssh-keygen&sektion=1&format=html) 手册。
 - ④ 用于上传文件到更新服务器的账户。
 - ⑤ 更新服务器中上传文件的目录。
 
-默认的 **build.conf** 文件适用于构建 FreeBSD 的 i386 版本。作为构建其他架构更新服务器的示例，以下步骤概述了为 amd64 配置所需的更改：
+随 freebsd-update-server 源码附带的默认 **build.conf** 文件适用于构建 FreeBSD 的 i386 版本。作为构建其他架构更新服务器的示例，以下步骤概述了为 amd64 配置所需的更改：
 
 1. 为 amd64 创建构建环境：
 
@@ -104,7 +104,7 @@ MASTERDIR=update-master.freebsd.org ⑤
    export EOL=1275289200 ②
    ```
 
-- ① 所需发布版的 [sha256(1)](https://man.freebsd.org/cgi/man.cgi?query=sha256&sektion=1&format=html) 哈希值会在相应的 [发布公告](https://www.freebsd.org/releases/) 中发布。
+- ① 所需发布版的 [sha256(1)](https://man.freebsd.org/cgi/man.cgi?query=sha256&sektion=1&format=html) 哈希值会在相应的[发布公告](https://www.freebsd.org/releases/)中公布。
 - ② 要生成 **build.conf** 中的“生命周期结束”值，请参考 [FreeBSD 安全网站](https://www.freebsd.org/security/security/) 上发布的“预估 EOL”日期。`EOL` 的值可以通过使用 [date(1)](https://man.freebsd.org/cgi/man.cgi?query=date&sektion=1&format=html) 工具从网站上列出的日期生成，例如：
 
 ```sh
@@ -198,7 +198,7 @@ world|base|/usr/lib/libalias_ftp.a
 
 >**警告**
 >
->在第二次构建周期中，网络时间协议守护进程 [ntpd(8)](https://man.freebsd.org/cgi/man.cgi?query=ntpd&sektion=8&format=html) 会被关闭。根据 FreeBSD 安全官员荣誉成员 Colin Percival 的说法，“freebsd-update-server 构建代码需要识别存储在文件中的时间戳，以便在比较构建时忽略这些时间戳，从而确定哪些文件需要更新。这一时间戳查找过程通过进行两次相隔 400 天的构建，并比较其结果来实现。”
+>在第二次构建周期中，网络时间协议守护进程 [ntpd(8)](https://man.freebsd.org/cgi/man.cgi?query=ntpd&sektion=8&format=html) 将关闭。根据 FreeBSD 荣誉安全官 Colin Percival 的说法，“freebsd-update-server 构建代码需要识别存储在文件中的时间戳，以便在比较构建时忽略这些时间戳，从而确定哪些文件需要更新。这一时间戳查找过程通过进行两次相隔 400 天的构建，并比较其结果来实现。”
 
 ```sh
 Mon Aug 24 17:54:07 PDT 2009 Extracting world+src for FreeBSD/amd64 7.2-RELEASE
@@ -289,7 +289,7 @@ Wed Aug 26 12:50:07 PDT 2009 Updating databases for FreeBSD/amd64 7.2-RELEASE
 Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 ```
 
-批准过程完成后，可以开始上传程序。
+批准过程完成后，可以开始上传流程。
 
 ```sh
 # cd /usr/local/freebsd-update-server
@@ -307,7 +307,7 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 
 上传的文件需要位于 Web 服务器的文档根目录中，以便更新能够分发。具体的配置将根据使用的 Web 服务器有所不同。对于 Apache Web 服务器，请参考手册中的 [Apache 服务器配置](https://docs.freebsd.org/en/books/handbook/#network-apache) 部分。
 
-更新客户端的 `KeyPrint` 和 `ServerName` 配置项在 **/etc/freebsd-update.conf** 中，并按照手册中 [FreeBSD 更新](https://docs.freebsd.org/en/books/handbook/#updating-upgrading-freebsdupdate) 部分的说明进行更新。
+在 **/etc/freebsd-update.conf** 中更新客户端的 `KeyPrint` 和 `ServerName` 配置项，并按照手册中 [FreeBSD 更新](https://docs.freebsd.org/en/books/handbook/#updating-upgrading-freebsdupdate) 部分的说明进行更新。
 
 >**重要**
 >
@@ -317,9 +317,9 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 
 ## 6. 构建补丁
 
-每次发布 [安全公告](https://www.freebsd.org/security/advisories/) 或 [安全通知](https://www.freebsd.org/security/notices/) 时，都可以构建一个补丁更新。
+每次发布 [安全公告](https://www.freebsd.org/security/advisories/) 或 [安全通知](https://www.freebsd.org/security/notices/) 时，都可以构建补丁更新。
 
-在这个示例中，将使用 7.1-RELEASE。
+在此示例中，将使用 7.1-RELEASE。
 
 以下是针对不同发布版本构建补丁的几个假设：
 
@@ -343,7 +343,7 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 
 >**注意**
 >
->在运行补丁级别构建时，假定之前的补丁已经到位。当运行补丁构建时，它会运行补丁目录中包含的所有补丁。
+>在运行补丁级别构建时，假定之前的补丁已到位。当运行补丁构建时，它会运行补丁目录中包含的所有补丁。
 >
 >可以向任何构建添加自定义补丁。使用数字零，或其他任何数字。
 
@@ -351,7 +351,7 @@ Wed Aug 26 12:50:07 PDT 2009 Cleaning staging area for FreeBSD/amd64 7.2-RELEASE
 >
 >FreeBSD 更新服务器的管理员有责任采取适当措施验证每个补丁的真实性。
 
-此时，*diff* 已准备好进行构建。软件首先检查在运行差异构建之前，是否已经在相应的发布版本上运行过 **scripts/init.sh**。
+此时，*diff* 已准备好进行构建。软件首先检查在运行差异构建之前，是否已在相应的发布版本上运行过 **scripts/init.sh**。
 
 ```
 # cd /usr/local/freebsd-update-server
@@ -434,7 +434,7 @@ Wed Aug 26 17:20:39 UTC 2009
 ...
 ```
 
-更新会被打印出来，并请求批准。
+更新将打印出来，并请求批准。
 
 ```sh
 New updates:
@@ -472,11 +472,18 @@ to unmount the decrypted key once you have finished signing all
 the new builds.
 ```
 
-作为参考，已附上整个运行过程的 [diff.sh](https://docs.freebsd.org/en/source/articles/freebsd-update-server/diff.txt) 。
+批准构建后，上传软件：
+
+```sh
+# cd /usr/local/freebsd-update-server
+# sh scripts/upload.sh amd64 7.1-RELEASE
+```
+
+作为参考，已附上整个 [diff.sh](https://docs.freebsd.org/en/source/articles/freebsd-update-server/diff.txt) 运行过程。
 
 ## 7. 提示
 
-- 如果使用本地 `make release` [过程](https://docs.freebsd.org/en/articles/releng/#release-build) 构建了自定义发布版本，freebsd-update-server 代码将能从你的发布版本中运行。例如，可以通过清除与文档子程序 `findextradocs ()`、`addextradocs ()` 相关的功能，并分别在 **scripts/build.subr** 中更改 `fetchiso ()` 的下载位置，来构建一个不包含 Port 和文档的版本。最后一步，在相应的发布和架构下更改 **build.conf** 中的 [sha256(1)](https://man.freebsd.org/cgi/man.cgi?query=sha256&sektion=1&format=html) 哈希值，之后即可开始从自定义发布版本进行构建。
+- 如果使用本地 `make release` [过程](https://docs.freebsd.org/en/articles/releng/#release-build) 构建了自定义发布版本，freebsd-update-server 代码将能从你的发布版本中运行。例如，可以通过清除与文档子程序 `findextradocs ()`、`addextradocs ()` 相关的功能，并分别在 **scripts/build.subr** 中更改 `fetchiso ()` 的下载位置，来构建一个不包含 Ports 和文档的版本。最后一步，在相应的发布和架构下更改 **build.conf** 中的 [sha256(1)](https://man.freebsd.org/cgi/man.cgi?query=sha256&sektion=1&format=html) 哈希值，之后即可开始从自定义发布版本进行构建。
 
   ```sh
   # 比较 ${WORKDIR}/release 和 ${WORKDIR}/$1，找出缺少的世界或文档子组件，并
@@ -487,7 +494,7 @@ the new builds.
   addextradocs () {
   }
   ```
-- 在 **scripts/build.subr** 脚本中的 `buildworld` 和 `obj` 目标添加 `-j<span> NUMBER</span>` 标志，可以加速处理，具体取决于使用的硬件，但这不是必须的。不建议在其他目标中使用这些标志，因为它可能导致构建变得不可靠。
+- 在 **scripts/build.subr** 脚本中的 `buildworld` 和 `obj` 目标添加 `-j NUMBER` 标志，可以加速处理，具体取决于使用的硬件，但这不是必须的。不建议在其他目标中使用这些标志，因为它可能导致构建变得不可靠。
 
   ```sh
   # 构建世界
@@ -500,7 +507,7 @@ the new builds.
   		   make -j 2 obj &&
   		   make ${COMPATFLAGS} release.1 release.2 2>&1
   ```
-- 为更新服务器创建一个适当的 [DNS](https://docs.freebsd.org/en/books/handbook/#network-dns) SRV 记录，并将其他服务器放置在其后，设置不同的权重。使用此功能可以提供更新镜像，但除非你希望提供冗余服务，否则此提示并非必需。
+- 为更新服务器创建适当的 [DNS](https://docs.freebsd.org/en/books/handbook/#network-dns) SRV 记录，并将其他服务器放置在其后，设置不同的权重。使用此功能可以提供更新镜像，但除非你希望提供冗余服务，否则此提示并非必需。
 
   ```sh
   _http._tcp.update.myserver.com.		IN SRV   0 2 80   host1.myserver.com.

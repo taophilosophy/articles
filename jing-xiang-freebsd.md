@@ -28,7 +28,7 @@
 
 ### 2.2. 网络连接/带宽
 
-当然，你需要连接到互联网。所需的带宽取决于你计划如何使用镜像。如果你只是想为本地站点/内网镜像 FreeBSD 的某些部分，需求可能会比想要将文件公开提供的需求小。如果你打算成为官方镜像，所需的带宽将更高。我们只能在这里给出粗略的估算：
+当然，你需要连接到互联网。所需的带宽取决于你计划如何使用镜像。如果你只是想为本地站点/内网镜像 FreeBSD 的某些部分，需求可能会比公开提供文件时要小得多。如果你打算成为官方镜像，所需的带宽将更高。我们只能在这里给出粗略的估算：
 
 - 本地站点，无公开访问：基本上没有最低要求，但带宽小于 2 Mbps 可能会导致同步太慢。
 - 非官方公共站点：大约 34 Mbps 是一个不错的起点。
@@ -75,11 +75,11 @@ Rsync 通常用于访问 FreeBSD FTP 区域的内容，这样其他镜像站点�
 如果你希望提供 FreeBSD 网页，你需要安装一台 Web 服务器。你也可以选择通过 HTTP 提供 FTP 文件集。Web 服务器软件的选择由镜像管理员决定。一些最流行的选择包括：
 
 - [www/apache24](https://cgit.freebsd.org/ports/tree/www/apache24/)：Apache 仍然是互联网中最广泛部署的 Web 服务器之一。FreeBSD 项目广泛使用它。
-- [www/boa](https://cgit.freebsd.org/ports/tree/www/boa/)：Boa 是款单任务 HTTP 服务器。与传统 Web 服务器不同，它不会为每个传入连接创建新的进程，也不会为处理多个连接创建多个进程。尽管如此，它对于纯静态内容提供了相当好的性能。
+- [www/boa](https://cgit.freebsd.org/ports/tree/www/boa/)：Boa 是一款单任务 HTTP 服务器。与传统 Web 服务器不同，它不会为每个传入连接创建新的进程，也不会为处理多个连接创建多个进程。尽管如此，它对于纯静态内容提供了相当好的性能。
 - [www/cherokee](https://cgit.freebsd.org/ports/tree/www/cherokee/)：Cherokee 是一款非常快速、灵活且易于配置的 Web 服务器。它支持当前广泛使用的技术：FastCGI、SCGI、PHP、CGI、SSL/TLS 加密连接、虚拟主机、用户认证、动态编码和负载均衡。它还生成与 Apache 兼容的日志文件。
-- [www/lighttpd](https://cgit.freebsd.org/ports/tree/www/lighttpd/)：lighttpd 是一款安全、快速、符合规范并且非常灵活的 Web 服务器，已针对高性能环境进行了优化。与其他 Web 服务器相比，它具有非常低的内存占用。
+- [www/lighttpd](https://cgit.freebsd.org/ports/tree/www/lighttpd/)：lighttpd 是一款安全、快速、符合规范并且非常灵活的 Web 服务器，已针对高性能环境进行了优化。与其他 Web 服务器相比，它具有非常低的内存占用，并注重 CPU 负载。
 - [www/nginx](https://cgit.freebsd.org/ports/tree/www/nginx/)：nginx 是一款高性能的边缘 Web 服务器，具有低内存占用和构建现代高效 Web 基础设施所需的关键特性。包括 HTTP 服务器、HTTP 和邮件反向代理、缓存、负载均衡、压缩、请求限速、连接复用和重用、SSL 卸载以及 HTTP 媒体流。
-- [www/thttpd](https://cgit.freebsd.org/ports/tree/www/thttpd/)：如果你将提供大量静态内容，你可能会发现使用 thttpd 这样的应用程序比其他服务器更高效。它还针对 FreeBSD 的优秀性能进行了优化。
+- [www/thttpd](https://cgit.freebsd.org/ports/tree/www/thttpd/)：如果你将提供大量静态内容，你可能会发现使用 thttpd 这样的应用程序比其他服务器更高效。它还针对在 FreeBSD 上的卓越性能进行了优化。
 
 ## 3. 如何镜像 FreeBSD
 
@@ -87,9 +87,9 @@ Rsync 通常用于访问 FreeBSD FTP 区域的内容，这样其他镜像站点�
 
 ### 3.1. 镜像 FTP 站点
 
-FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *分发集*、实际检出的源树快照的 *分支*、用于写入安装分发的 *ISO 镜像*、一个实时文件系统以及 Ports 树的快照。所有这些内容涵盖不同版本的 FreeBSD，以及不同架构。
+FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *分发集*、实际检出的源树快照的 *分支*、用于将安装分发写入 CD-ROM 的 *ISO 镜像*、一个实时文件系统以及 Ports 树的快照。所有这些内容涵盖不同版本的 FreeBSD，以及不同架构。
 
-镜像 FTP 区域的最佳方式是使用 rsync。你可以安装 Port [net/rsync](https://cgit.freebsd.org/ports/tree/net/rsync/) 并使用 rsync 与上游主机进行同步。如 [Rsync (可选的 FTP 文件集)](https://docs.freebsd.org/en/articles/hubs/#mirror-serv-rsync) 中所提到的，rsync 是一个非常高效的工具。由于 rsync 访问不是必须的，你的首选上游站点可能不允许它。你可能需要稍微搜索一下，找一个允许 rsync 访问的站点。
+镜像 FTP 区域的最佳方式是使用 rsync。你可以安装 Port [net/rsync](https://cgit.freebsd.org/ports/tree/net/rsync/) 并使用 rsync 与上游主机进行同步。rsync 在 [Rsync（FTP 文件集的可选服务）](https://docs.freebsd.org/en/articles/hubs/#mirror-serv-rsync) 中介绍过。由于 rsync 访问不是必须的，你的首选上游站点可能不允许它。你可能需要稍微搜索一下，找一个允许 rsync 访问的站点。
 
 >**注意**
 >
@@ -101,7 +101,7 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 % rsync -vaHz --delete rsync://ftp4.de.FreeBSD.org/FreeBSD/ /pub/FreeBSD/
 ```
 
-查阅 rsync 的文档，文档也可以在 [http://rsync.samba.org/](http://rsync.samba.org/) 找到，了解可以与 rsync 一起使用的各种选项。如果你同步整个模块（不同于子目录），请注意模块目录（此处为 "FreeBSD"）不会被创建，因此你不能省略目标目录。此外，你可能希望设置一个脚本框架，通过 [cron(8)](https://man.freebsd.org/cgi/man.cgi?query=cron&sektion=8&format=html) 来调用此命令。
+查阅 rsync 的文档，文档也可以在 [http://rsync.samba.org/](http://rsync.samba.org/) 找到，了解可以与 rsync 一起使用的各种选项。如果你同步整个模块（不同于子目录），请注意模块目录（此处为“FreeBSD”）不会被创建，因此你不能省略目标目录。此外，你可能希望设置一个脚本框架，通过 [cron(8)](https://man.freebsd.org/cgi/man.cgi?query=cron&sektion=8&format=html) 来调用此命令。
 
 ### 3.2. 镜像 WWW 页面
 
@@ -111,7 +111,7 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 
 目前正在研究如何使用 [官方基础设施](https://docs.freebsd.org/en/books/handbook/mirrors/) 实现网站镜像。
 
-对于以前的网站镜像，今天实现网站镜像的一种方法是使用相应的地址在本地构建网站，并使其可托管。
+对于以前的网站镜像，今天实现网站镜像的一种方法是使用相应的托管地址在本地构建网站。
 
 ```sh
 % cd website && env HUGO_baseURL="https://www.XX.freebsd.org/" make
@@ -121,7 +121,7 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 
 >**注意**
 >
->请注意，网站已拆分为 [www.FreeBSD.org](http://www.FreeBSD.org) 和 docs.FreeBSD.org，并且它们之间有链接；此外，目前 `HUGO_baseURL` 变量无法涵盖所有链接，因此不建议镜像该网站。
+>请注意，网站拆分为 [www.FreeBSD.org](http://www.FreeBSD.org) 和 docs.FreeBSD.org，并且它们之间有链接；此外，目前 `HUGO_baseURL` 变量无法涵盖所有链接，因此不建议镜像该网站。
 
 ### 3.3. 镜像包
 
@@ -133,7 +133,7 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 
 这些包被获取后，必须通过运行以下命令来生成仓库元数据：
 
-```
+```sh
 % pkg repo /usr/local/mirror
 ```
 
@@ -146,7 +146,7 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 1. 将镜像应用程序的命令放入一个脚本中。建议使用纯粹的 `/bin/sh` 脚本。
 2. 添加一些输出重定向，以便将诊断信息记录到文件中。
 3. 测试脚本是否有效，检查日志。
-4. 使用 [crontab(1)](https://man.freebsd.org/cgi/man.cgi?query=crontab&sektion=1&format=html) 将脚本添加到适当用户的 [crontab(5)](https://man.freebsd.org/cgi/man.cgi?query=crontab&sektion=5&format=html) 中。此用户应与运行 FTP 守护进程的用户不同，这样，如果 FTP 区域中的文件权限不是全球可读的，匿名 FTP 就无法访问这些文件。此步骤用于“暂存”版本，确保所有官方镜像站在发布日都有必要的发布文件。
+4. 使用 [crontab(1)](https://man.freebsd.org/cgi/man.cgi?query=crontab&sektion=1&format=html) 将脚本添加到适当用户的 [crontab(5)](https://man.freebsd.org/cgi/man.cgi?query=crontab&sektion=5&format=html) 中。此用户应与运行 FTP 守护进程的用户不同，这样，如果 FTP 区域中的文件权限不是所有用户可读的，匿名 FTP 就无法访问这些文件。此步骤用于“暂存”版本，确保所有官方镜像站在发布日都有必要的发布文件。
 
 以下是一些推荐的更新频率：
 
@@ -159,9 +159,9 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 
 ### 4.1. 关于组织的一些话
 
-镜像按国家组织。所有官方镜像都有类似 `ftpN.CC.FreeBSD.org` 的 DNS 条目。*CC*（即国家代码）是该镜像所在国家的 *顶级域名*（TLD）。*N* 是一个数字，表示该主机在该国家的 *第 N* 个镜像。（同样适用于 `wwwN.CC.FreeBSD.org` 等）。也有没有 *CC* 部分的镜像站。这些镜像站连接非常好，能大量并发用户。`ftp.FreeBSD.org` 实际上是两台机器，一台位于丹麦，另一台位于美国。它并不是主站，绝不能用来作为镜像源。许多在线文档将“交互式”用户引导到 `ftp.FreeBSD.org`，因此自动化的镜像系统应从其他机器获取镜像。
+镜像按国家组织。所有官方镜像都有类似 `ftpN.CC.FreeBSD.org` 的 DNS 条目。*CC*（即国家代码）是该镜像所在国家的 *顶级域名*（TLD）。*N* 是一个数字，表示该主机在该国家的 *第 N* 个镜像。（同样适用于 `wwwN.CC.FreeBSD.org` 等）。也有没有 *CC* 部分的镜像站。这些镜像站连接非常好，能容纳大量并发用户。`ftp.FreeBSD.org` 实际上是两台机器，一台位于丹麦，另一台位于美国。它并不是主站，绝不能用来作为镜像源。许多在线文档将“交互式”用户引导到 `ftp.FreeBSD.org`，因此自动化的镜像系统应从其他机器获取镜像。
 
-此外，还存在一个镜像层次结构，通常称为 *层级*。主站不常被提及，但可以描述为 *Tier-0*。从这些主站镜像的镜像站可以被视为 *Tier-1*，而从 *Tier-1* 镜像站镜像的镜像站则是 *Tier-2*，以此类推。官方站点鼓励镜像站点的 *层级* 较低，但层级越低，对镜像站点的要求也越高，如 [FreeBSD 镜像要求](https://docs.freebsd.org/en/articles/hubs/#mirror-requirements) 所述。低层级的镜像站点访问可能会受到限制，且主站点的访问肯定是受限制的。层级结构不会通过 DNS 反映，通常也没有地方文档化，除非是主站点。然而，具有较低数字（如 1-4）的官方镜像通常是 *Tier-1*（这只是一个大致的提示，并没有严格的规则）。
+此外，还存在一个镜像层次结构，通常称为 *层级*。主站不常被提及，但可以描述为 *Tier-0*。从这些主站镜像的镜像站可以被视为 *Tier-1*，而从 *Tier-1* 镜像站镜像的镜像站则是 *Tier-2*，以此类推。鼓励官方站点的 *层级* 较低，但层级越低，对镜像站点的要求也越高，如 [FreeBSD 镜像要求](https://docs.freebsd.org/en/articles/hubs/#mirror-requirements) 所述。低层级的镜像站点访问可能会受到限制，且主站点的访问肯定是受限制的。层级结构不会通过 DNS 反映，通常也没有在任何地方文档化，除非是主站点。然而，具有较低数字（如 1-4）的官方镜像通常是 *Tier-1*（这只是一个大致的提示，并没有严格的规则）。
 
 ### 4.2. 好的，那我应该从哪里获取镜像？
 
@@ -181,7 +181,7 @@ FTP 区域是需要镜像的最大数据量。它包括用于网络安装的 *�
 
 #### 4.2.3. 我想访问主站点
 
-如果你有充分的理由和前提条件，你可能希望并能够访问其中一个主站点。对这些站点的访问通常是受限的，并且有专门的访问政策。如果你已经是一个 *官方* 镜像，这肯定有助于你获得访问权限。在其他情况下，请确保你的国家确实需要另一个镜像。如果该国已有三个或更多镜像，请首先联系“区域管理员”([hostmaster@CC.FreeBSD.org](mailto:hostmaster@CC.FreeBSD.org)) 或 [FreeBSD 镜像站点邮件列表](https://lists.freebsd.org/subscription/freebsd-hubs)。
+如果你有充分的理由和前提条件，你可能希望并能够访问其中一个主站点。对这些站点的访问通常是受限的，并且有专门的访问政策。如果你已经是一个 *官方* 镜像，这肯定有助于你获得访问权限。在其他情况下，请确保你的国家确实需要另一个镜像。如果该国有三个或更多镜像，请首先联系“区域管理员”([hostmaster@CC.FreeBSD.org](mailto:hostmaster@CC.FreeBSD.org)) 或 [FreeBSD 镜像站点邮件列表](https://lists.freebsd.org/subscription/freebsd-hubs)。
 
 无论谁帮助你成为 *官方* 镜像，都应帮助你获得适当的上游主机访问权限，可能是某个主站点或合适的 *Tier-1* 站点。如果没有，你可以发送电子邮件到 [mirror-admin@FreeBSD.org](mailto:mirror-admin@FreeBSD.org) 请求帮助。
 
@@ -218,7 +218,7 @@ Tier-1 镜像需要：
 
 >**重要**
 >
->对于集群管理员，尤其是 Tier-1 集群管理员来说，检查 [发布计划](https://www.freebsd.org/releng/) 是 *非常* 重要的。这很重要，因为它会告诉你下一个 FreeBSD 版本的发布日期，从而为你准备迎接随之而来的流量高峰提供时间。同样重要的是，hub 管理员要尽量保持镜像站点尽可能最新（对于 Tier-1 镜像来说尤其如此）。如果 Mirror1 长时间未更新，低层级镜像站点将开始从 Mirror1 镜像旧数据，从而形成恶性循环……保持镜像站点更新！
+>对于集群管理员，尤其是 Tier-1 集群管理员来说，检查 [发布计划](https://www.freebsd.org/releng/) 是 *非常* 重要的。这很重要，因为它会告诉你下一个 FreeBSD 版本的发布日期，从而为你准备迎接随之而来的流量高峰提供时间。同样重要的是，集群管理员要尽量保持镜像站点尽可能最新（对于 Tier-1 镜像来说尤其如此）。如果 Mirror1 长时间未更新，低层级镜像站点将开始从 Mirror1 镜像旧数据，从而形成恶性循环……保持镜像站点更新！
 
 ### 5.2. 如何成为官方镜像？
 

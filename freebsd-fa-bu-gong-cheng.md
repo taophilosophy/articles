@@ -16,9 +16,9 @@ FreeBSD 的开发有一个非常具体的工作流程。一般来说，所有对
 
 虽然合并到 `stable/` 分支前通常需要等待至少三天，但在一些特殊情况下，可能需要立即合并，例如关键的安全修复或直接阻碍发布构建过程的 bug 修复。
 
-经过几个月的开发，`stable/` 分支中的更改数量显著增加时，就到了发布下一个版本的 FreeBSD 的时候。这些发布通常被称为 `点` 版本发布。
+经过几个月的开发，`stable/` 分支中的更改数量显著增加时，就到了发布下一个版本的 FreeBSD 的时候。这些发布历来被称为 `点` 版本发布。
 
-在 `stable/` 分支发布之间，大约每两（2）年一次，发布将直接从主分支切出。这些发布通常被称为 `点零` 版本发布。
+在 `stable/` 分支发布之间，大约每两（2）年一次，发布将直接从主分支切出。这些发布历来被称为 `点零` 版本发布。
 
 本文将重点介绍 FreeBSD 发布工程团队在 `点零` 和 `点` 发布中的工作流程和责任。
 
@@ -31,7 +31,7 @@ FreeBSD 的开发有一个非常具体的工作流程。一般来说，所有对
 发布周期中的网站更改。
 
 [发布工程术语](https://docs.freebsd.org/en/articles/freebsd-releng/#releng-terms)
-本文中使用的术语和一般信息，如 "代码冻结" 和 "代码冻结期"。
+本文中使用的术语和一般信息，如"代码冻结前的准备阶段"和"代码冻结"。
 
 [从主分支发布](https://docs.freebsd.org/en/articles/freebsd-releng/#releng-head)
 `点零` 版本发布的发布工程过程。
@@ -57,7 +57,7 @@ FreeBSD 的开发有一个非常具体的工作流程。一般来说，所有对
 | 主分支代码冻结前的准备阶段 (main slush) | 2016 年 5 月 27 日 |
 | 主分支冻结 (main freeze)                | 2016 年 6 月 10 日 |
 | 主分支 KBI 冻结 (main KBI freeze)       | 2016 年 6 月 24 日 |
-| `doc/` 树冻结 \[1]                      | 2016 年 6 月 24 日 |
+| `doc/` 树冻结前的准备阶段 \[1]             | 2016 年 6 月 24 日 |
 | Ports 季度分支 \[2]                     | 2016 年 7 月 1 日  |
 | stable/13 分支                          | 2016 年 7 月 8 日  |
 | `doc/` 树标签 \[3]                      | 2016 年 7 月 8 日  |
@@ -91,15 +91,15 @@ FreeBSD 的开发有一个非常具体的工作流程。一般来说，所有对
 
 在编写发布周期的时间表时，需要考虑一些因素，特别是那些目标日期依赖于已定义的里程碑节点的情况。例如，Ports 的发布标签来自于在最后一个 `RC` 时的活跃季度分支。这部分决定了使用哪个季度分支，何时可以进行发布标签，以及用于最终 `RELEASE` 构建的 ports 树的修订版本。
 
-在时间表达成一般共识后，FreeBSD 发布工程团队会将该时间表通过电子邮件发送给 FreeBSD 开发人员。
+在时间表达成共识后，FreeBSD 发布工程团队会将该时间表通过电子邮件发送给 FreeBSD 开发人员。
 
 许多开发人员通常会通知 FreeBSD 发布工程团队他们正在进行的各种工作。在某些情况下，可能会请求延长正在进行的工作的时间，而在其他情况下，可能会请求对特定子树的 `blanket approval`（通行许可）。
 
-在这些请求中，重要的是确保讨论时间表（即使是估算的）。对于 blanket approval，应该明确许可的时间范围。例如，FreeBSD 开发人员可能会请求从代码冻结开始到 `RC` 构建开始期间对 **release/doc/** 提供 blanket approval 以便更新发布说明和其他与发布相关的文档。
+在这些请求中，重要的是确保讨论时间表（即使是估算的）。对于 blanket approval，应该明确许可的时间范围。例如，FreeBSD 开发人员可能会请求从代码冻结前的准备阶段开始到 `RC` 构建开始期间对 **release/doc/** 的 blanket approval。
 
 >**注意**
 >
-> 为了跟踪 blanket approval，FreeBSD 发布工程团队使用内部仓库来记录这些请求，记录内容包括：授予 blanket approval 的区域、作者、批准过期时间以及批准原因。一个例子是，在最终的 `RC` 构建之前，授予 FreeBSD 发布工程团队所有成员对 **release/doc/** 的 blanket approval，以便更新发布说明和其他与发布相关的文档。
+> 为了跟踪 blanket approval，FreeBSD 发布工程团队使用内部仓库来记录这些请求，记录内容包括：授予 blanket approval 的区域、作者、批准过期时间以及批准原因。一个例子是，直到最终的 `RC` 构建，授予 FreeBSD 发布工程团队所有成员对 **release/doc/** 的 blanket approval，以便更新发布说明和其他与发布相关的文档。
 
 >**注意**
 >
@@ -107,7 +107,7 @@ FreeBSD 的开发有一个非常具体的工作流程。一般来说，所有对
 
 根据所涉及的底层代码集及其对 FreeBSD 整体的影响，FreeBSD 发布工程团队可能会批准或拒绝这些请求。
 
-同样适用于正在进行的扩展。例如，对于一个新设备驱动的正在进行的工作，若该工作与树中的其他部分没有直接关联，可能会获得延期。然而，一个新的调度程序可能无法实现，尤其是当这种剧烈的变化在其他分支中不存在时。
+同样适用于正在进行的扩展。例如，对于新设备驱动进行中的工作，如果该工作与树中其他部分没有直接关联，可能会获得延期。然而，新调度程序可能不可行，尤其是当这种剧烈的变化在其他分支中不存在时。
 
 该时间表还会添加到项目网站的 `doc/` 仓库中的 **\~/website/content/en/releases/13.0R/schedule.adoc** 文件中。随着发布周期的进展，此文件会不断更新。
 
@@ -119,7 +119,7 @@ FreeBSD 的开发有一个非常具体的工作流程。一般来说，所有对
 
 该时间表还会链接到 **\~/website/content/en/releng/\_index.adoc**。
 
-大约在计划的“代码冻结”前一个月，FreeBSD 发布工程团队会向 FreeBSD 开发人员发送提醒邮件。
+大约在计划的“代码冻结前的准备阶段”前一个月，FreeBSD 发布工程团队会向 FreeBSD 开发人员发送提醒邮件。
 
 ## 3. 发布工程术语
 
@@ -145,7 +145,7 @@ FreeBSD Git 仓库包含多个钩子，以在提交到树之前执行有效性�
 
 ### 3.3. KBI/KPI 冻结（KBI/KPI Freeze）
 
-KBI/KPI 的稳定性意味着在两个不同版本的软件中调用实现相同功能的函数时，调用方（无论是进程、线程还是函数）都期望该函数以某种方式运行，否则分支上的 KBI/KPI 稳定性将被破坏。
+KBI/KPI 稳定性意味着，在实现同一函数的两个不同版本的软件中调用该函数时，会产生相同的最终状态。调用方（无论是进程、线程还是函数）都期望该函数以特定方式运行，否则分支上的 KBI/KPI 稳定性就会被破坏。
 
 ## 4. 发布周期中的网站更改
 
@@ -175,7 +175,7 @@ KBI/KPI 的稳定性意味着在两个不同版本的软件中调用实现相同
 | **\~/website/static/security/advisory-template.txt** | 将新的 `BETA`、`RC` 或最终 `RELEASE` 添加到模板中 |
 | **\~/website/static/security/errata-template.txt**   | 将新的 `BETA`、`RC` 或最终 `RELEASE` 添加到模板中 |
 
-创建了 releng/13.0 分支之后，相关的发布文档需要添加到 `doc/` 仓库中。
+创建了 `releng/13.0` 分支之后，相关的发布文档需要添加到 `doc/` 仓库中。
 
 >**注意**
 >
@@ -183,7 +183,7 @@ KBI/KPI 的稳定性意味着在两个不同版本的软件中调用实现相同
 
 ### 4.3. 在 `BETA`、`RC` 和最终 `RELEASE` 期间的 Ports 更改
 
-在发布周期中的每个构建过程中，包含各种分发集的 `SHA256` 值的 `MANIFEST` 文件（如 `base.txz`、`kernel.txz` 等）将被添加到 Port [misc/freebsd-release-manifests](https://cgit.freebsd.org/ports/tree/misc/freebsd-release-manifests/) 中。这使得除了，像 [ports-mgmt/poudriere](https://cgit.freebsd.org/ports/tree/ports-mgmt/poudriere/) 等工具能够安全地使用这些分发集，通过提供一个机制来验证校验和。
+在发布周期中的每个构建过程中，包含各种分发集的 `SHA256` 值的 `MANIFEST` 文件（如 `base.txz`、`kernel.txz` 等）将被添加到 Port [misc/freebsd-release-manifests](https://cgit.freebsd.org/ports/tree/misc/freebsd-release-manifests/) 中。这使得除了 `bsdinstall[8]` 之外的工具，如 [ports-mgmt/poudriere](https://cgit.freebsd.org/ports/tree/ports-mgmt/poudriere/)，能够安全地使用这些分发集，通过提供一个机制来验证校验和。
 
 ## 5. 从 main 发布
 
@@ -193,7 +193,7 @@ KBI/KPI 的稳定性意味着在两个不同版本的软件中调用实现相同
 
 从 FreeBSD 10.0-RELEASE 开始，引入了“ALPHA”构建的概念。与 `BETA` 和 `RC` 构建不同，`ALPHA` 构建不包含在 FreeBSD 发布计划中。
 
-`ALPHA` 构建的目的是在创建 `stable/` 分支之前提供定期的 FreeBSD 提供的构建版本。
+`ALPHA` 构建的目的是在创建 `stable/` 分支之前提供定期的 FreeBSD 提供的构建。
 
 FreeBSD `ALPHA` 快照应该大约每周构建一次。
 
@@ -201,13 +201,13 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 
 有关构建 `ALPHA` 镜像的信息，请参阅 [构建 FreeBSD 安装介质](https://docs.freebsd.org/en/articles/freebsd-releng/#releng-building)。
 
-### 5.2. 创建 stable/13 分支
+### 5.2. 创建 `stable/13` 分支
 
-在创建 `stable/` 分支时，既需要对新的 `stable/` 分支进行更改，也需要对 main 分支进行更改。以下列出的文件是相对于仓库根目录的。要在 Git 中创建新的 stable/13 分支：
+在创建 `stable/` 分支时，既需要对新的 `stable/` 分支进行更改，也需要对 `main` 分支进行更改。以下列出的文件是相对于仓库根目录的。要在 Git 中创建新的 `stable/13` 分支：
 
 >**注意**
 >
->确保你在 main 分支中
+>确保你在 `main` 分支中
 
 ```sh
 % git checkout -b stable/13
@@ -231,7 +231,7 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 | **libexec/rc/rc.conf**                                    | 将 `dumpdev` 设置为 `NO`，而不是 `AUTO`（对于那些希望默认启用的用户，可以通过配置来启用）                    |
 | **release/Makefile**                                      | 移除 `debug.witness.trace` 条目                                                 |
 
-然后，在现在将成为新主版本的 main 分支中：
+然后，在现在将成为新主版本的 `main` 分支中：
 
 | 文件待编辑                                         | 需要更改的内容                                   |
 | --------------------------------------------- | ----------------------------------------- |
@@ -250,7 +250,7 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 
 本节介绍了 FreeBSD 发布周期的基本流程，从一个已建立的 `stable/` 分支开始。
 
-### 6.1. FreeBSD `stable` 分支代码冻结准备
+### 6.1. FreeBSD `stable` 分支代码冻结前的准备阶段
 
 在 `stable` 分支的代码冻结之前，需要更新几个文件，以反映发布周期的正式开始。这些文件都位于 stable 分支的最顶层：
 
@@ -263,7 +263,7 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 
 ### 6.2. FreeBSD `BETA` 构建
 
-在代码冻结后，发布周期的下一阶段是代码冻结阶段。这时，所有对 stable 分支的提交都需要 FreeBSD 发布工程团队的明确批准。此过程由 [gitadm@FreeBSD.org](mailto:gitadm@FreeBSD.org) 执行，负责管理仓库。
+在代码冻结前的准备阶段之后，发布周期的下一阶段是代码冻结。这时，所有对 stable 分支的提交都需要 FreeBSD 发布工程团队的明确批准。此过程由 [gitadm@FreeBSD.org](mailto:gitadm@FreeBSD.org) 执行，负责管理仓库。
 
 >**注意**
 >
@@ -273,7 +273,7 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 
 完成此操作后，第一组 `BETA` 构建开始。随后的 `BETA` 构建只需更新 **sys/conf/newvers.sh** 中的 `BETA` 构建编号，不需要更新其他文件。
 
-### 6.3. 创建 releng/13.0 分支
+### 6.3. 创建 `releng/13.0` 分支
 
 当第一个 `RC`（发布候选版）构建准备好开始时，releng/ 分支将被创建。这是一个多步骤的过程，必须按特定顺序进行，以避免例如与 `__FreeBSD_version` 值重叠等异常情况。以下路径相对于仓库根目录。提交的顺序和需要更改的内容如下：
 
@@ -289,7 +289,7 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 | --------------------------------------- | ---------------------------------------------------------------------- |
 | **sys/conf/newvers.sh**                 | 将 `BETAX` 更改为 `RC1`                                                    |
 | **sys/sys/param.h**                     | 更新 `__FreeBSD_version`                                                 |
-| **sys/conf/kern.opts.mk**               | 将 `REPRODUCIBLE_BUILD` 从 `DEFAULT_NO_OPTIONS` 移到 `DEFAULT_YES_OPTIONS` |
+| **sys/conf/kern.opts.mk**               | 将 `REPRODUCIBLE_BUILD` 从 `__DEFAULT_NO_OPTIONS` 移到 `__DEFAULT_YES_OPTIONS` |
 | **etc/pkg/FreeBSD.conf**                | 将 `latest` 替换为 `quarterly` 作为默认的包仓库位置                                  |
 | **release/pkg\_repos/release-dvd.conf** | 将 `latest` 替换为 `quarterly` 作为默认的包仓库位置                                  |
 | **sys/conf/newvers.sh**                 | 更新 `BETAX` 为 `PRERELEASE`                                              |
@@ -314,9 +314,9 @@ FreeBSD `ALPHA` 快照应该大约每周构建一次。
 
 ### 7.1. 发布构建脚本
 
-在 FreeBSD 9.0-RELEASE 之前，**src/release/Makefile** 已更新以支持，并且引入了 **src/release/generate-release.sh** 脚本，作为自动调用目标的包装器。
+在 FreeBSD 9.0-RELEASE 之前，**src/release/Makefile** 已更新以支持 `bsdinstall[8]`，并且引入了 **src/release/generate-release.sh** 脚本，作为自动调用 `release[7]` 目标的包装器。
 
-在 FreeBSD 9.2-RELEASE 之前，**src/release/release.sh** 被引入，该脚本基于 **src/release/generate-release.sh**，并包括支持指定配置文件以覆盖各种选项和环境变量的功能。配置文件的支持使得通过为每次调用指定一个单独的配置文件来支持交叉构建每个架构的发布版本。
+在 FreeBSD 9.2-RELEASE 之前，**src/release/release.sh** 被引入，该脚本在很大程度上基于 **src/release/generate-release.sh**，并包括支持指定配置文件以覆盖各种选项和环境变量的功能。配置文件的支持使得通过为每次调用指定一个单独的配置文件来支持交叉构建每个架构的发布版本。
 
 以下是使用 **src/release/release.sh** 构建单个发布版本并放置于 **/scratch** 的简短示例：
 
@@ -340,7 +340,7 @@ KERNEL="GENERIC64"
 # /bin/sh /usr/src/release/release.sh -c $HOME/release.conf
 ```
 
-有关更多详细信息和示例用法，请参见 **src/release/release.conf.sample**。
+有关更多详细信息和示例用法，请参见 `release[7]` 和 **src/release/release.conf.sample**。
 
 ### 7.2. 构建 FreeBSD 发布版本
 
@@ -354,11 +354,11 @@ KERNEL="GENERIC64"
 | **UPDATING**                  | 添加预期的公告日期                                         |
 | **lib/csu/common/crtbrand.S** | 将 `__FreeBSD_version` 替换为 **sys/sys/param.h** 中的值 |
 
-在构建完成最终的 `RELEASE` 后，releng/13.0 分支会被标记为 release/13.0.0，使用构建 `RELEASE` 时的修订版本。与创建 stable/13 和 releng/13.0 分支类似，使用 `git tag` 来完成此操作。从仓库根目录执行：
+在构建完成最终的 `RELEASE` 后，`releng/13.0` 分支会被标记为 `release/13.0.0`，使用构建 `RELEASE` 时的修订版本。与创建 `stable/13` 和 `releng/13.0` 分支类似，使用 `git tag` 来完成此操作。从仓库根目录执行：
 
   >**注意**
   >
-  >确保你处于 releng/13.0 分支
+  >确保你处于 `releng/13.0` 分支
 
 ```sh
 % git tag release/13.0.0
@@ -373,7 +373,7 @@ KERNEL="GENERIC64"
 临时存储 FreeBSD 快照和发布版本是一个两步过程：
 
 - 创建目录结构以匹配 `ftp-master` 上的层次结构
-  如果在构建配置文件中定义了 `EVERYTHINGISFINE`，例如在上面提到的构建脚本的 **main.conf** 中，这将在构建完成后自动发生，创建一个路径结构匹配 `ftp-master` 上预期的目录结构，存放在 **\${DESTDIR}/R/ftp-stage**。这相当于在该目录下运行：
+  如果在构建配置文件中定义了 `EVERYTHINGISFINE`，例如在上面提到的构建脚本的 **main.conf** 中，这将在构建完成后在 `chroot[8]` 中自动发生，创建一个路径结构匹配 `ftp-master` 上预期的目录结构，存放在 **\${DESTDIR}/R/ftp-stage**。这相当于在 `chroot[8]` 中直接运行以下命令：
 
   ```sh
   # make -C /usr/src/release -f Makefile.mirrors EVERYTHINGISFINE=1 ftp-stage
@@ -387,17 +387,16 @@ KERNEL="GENERIC64"
   >**注意**
   >
   >在 FreeBSD 项目基础设施中的 `ftp-master` 上，这一步需要 `root` 级别的访问权限，因为此步骤必须以 `archive` 用户身份执行。
-  
 
-  ### 8.2. 发布 FreeBSD 安装介质
+### 8.2. 发布 FreeBSD 安装介质
 
-镜像在 **/archive/tmp/** 中暂存后，它们就准备好通过将其放入 **/archive/pub/FreeBSD** 来公开发布。为了减少传播时间，使用硬链接将 **/archive/tmp** 中的文件链接到 **/archive/pub/FreeBSD**。
+镜像在 **/archive/tmp/** 中暂存后，它们就准备好通过将其放入 **/archive/pub/FreeBSD** 来公开发布。为了减少传播时间，使用 `pax[1]` 创建从 **/archive/tmp** 到 **/archive/pub/FreeBSD** 的硬链接。
 
 >**注意**
 >
 >为了有效执行此操作，**/archive/tmp** 和 **/archive/pub** 必须位于同一逻辑文件系统上。
 
-然而有一个注意事项，必须在此后使用 rsync 来修正 **pub/FreeBSD/snapshots/ISO-IMAGES** 中的符号链接，这将被硬链接替换，从而增加传播时间。
+然而有一个注意事项，必须在 `pax[1]` 之后使用 rsync 来修正 **pub/FreeBSD/snapshots/ISO-IMAGES** 中的符号链接，`pax[1]` 会将这些符号链接替换为硬链接，从而增加传播时间。
 
 >**注意**
 >
@@ -433,13 +432,13 @@ KERNEL="GENERIC64"
 
 ### 9.2. 交接到 FreeBSD 安全团队
 
-在发布后的大约两周，发布工程师更新 Git 仓库，将 releng/13.0 分支的审批人从发布工程团队更改为安全官。
+在发布后的大约两周，发布工程师更新 Git 仓库，将 `releng/13.0` 分支的审批人从发布工程团队更改为安全官。
 
 ## 10. 发布生命周期结束
 
 本节描述当发布版本达到生命周期结束（EoL）时，需要更新的与网站相关的文件。
 
-### 10.1. 生命周期结束的 Website 更新
+### 10.1. 生命周期结束的网站更新
 
 当一个发布版本达到生命周期结束时，应该在网站上删除和/或更新对该发布版本的引用：
 

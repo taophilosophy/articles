@@ -16,7 +16,7 @@
 
 在没有干净且设计良好的框架的情况下，启动脚本不得不竭尽全力满足快速发展的基于 BSD 的操作系统的需求。最终，越来越明显的是，要实现一个细粒度且可扩展的 **rc** 系统，还需要更多的步骤。于是，BSD **rc.d** 应运而生。它的公认创始人是 Luke Mewburn 和 NetBSD 社区。后来它被引入到 FreeBSD。它的名称来源于系统脚本的位置，这些脚本用于单独的服务，位于 **/etc/rc.d**。很快我们将了解 **rc.d** 系统的更多组件，并查看如何调用单个脚本。
 
-BSD **rc.d** 背后的基本思想是 *细粒度模块化* 和 *代码重用*。*细粒度模块化* 意味着每个基本的“服务”如系统守护进程或基本启动任务都有自己的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 脚本，能够启动服务、停止它、重新加载它、检查其状态。特定的操作通过脚本的命令行参数来选择。**/etc/rc** 脚本仍然负责系统启动，但它现在只是依次调用这些小脚本，并传递 `start` 参数。通过用 `stop` 参数运行同一组脚本，执行关闭任务变得也很容易，这由 **/etc/rc.shutdown** 完成。请注意，这与 Unix 系统的方式非常接近，Unix 系统有一组小型的专用工具，每个工具尽可能地完成其任务。*代码重用* 意味着常见操作通过 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 函数实现，并集中在 **/etc/rc.subr** 中。现在，典型的脚本可能只是几行 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 代码。最后，**rc.d** 框架的一个重要部分是 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html)，它帮助 **/etc/rc** 按照它们之间的依赖关系有序地运行这些小脚本。它也可以帮助 **/etc/rc.shutdown**，因为关闭顺序的正确顺序与启动顺序相反。
+BSD **rc.d** 背后的基本思想是 *细粒度模块化* 和 *代码重用*。*细粒度模块化* 意味着每个基本的“服务”如系统守护进程或基本启动任务都有自己的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 脚本，能够启动服务、停止它、重新加载它、检查其状态。特定的操作通过脚本的命令行参数来选择。**/etc/rc** 脚本仍然负责系统启动，但它现在只是依次调用这些小脚本，并传递 `start` 参数。通过用 `stop` 参数运行同一组脚本，执行关闭任务变得也很容易，这由 **/etc/rc.shutdown** 完成。请注意，这与 Unix 系统的方式非常接近，Unix 系统有一组小型的专用工具，每个工具尽可能地完成其任务。*代码重用* 意味着常见操作通过 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 函数实现，并集中在 **/etc/rc.subr** 中。现在，典型的脚本可能只是几行 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 代码。最后，**rc.d** 框架的一个重要部分是 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html)，它帮助 **/etc/rc** 按照它们之间的依赖关系有序地运行这些小脚本。它也可以帮助 **/etc/rc.shutdown**，因为关闭序列的正确顺序与启动顺序相反。
 
 BSD **rc.d** 的设计在 [Luke Mewburn 的原始文章](https://docs.freebsd.org/en/articles/rc-scripting/#lukem) 中有所描述，**rc.d** 组件在 [相关手册页](https://docs.freebsd.org/en/articles/rc-scripting/#manpages) 中得到了详细的文档说明。然而，对于一个 **rc.d** 新手来说，如何将众多的片段和组件结合起来，创建一个风格良好的特定任务脚本，可能并不显而易见。因此，本文将采用一种不同的方法来描述 **rc.d**。它将展示在一些典型情况下应该使用哪些特性，以及为什么。请注意，这不是一份操作指南，因为我们的目标不是提供现成的配方，而是展示一些进入 **rc.d** 领域的简单入口。这篇文章也不是相关手册页的替代品。在阅读本文时，遇到需要正式和完整文档的部分，应该随时参考手册页。
 
@@ -35,7 +35,7 @@ BSD **rc.d** 的设计在 [Luke Mewburn 的原始文章](https://docs.freebsd.or
 
 从以下的示例中，我们将看到为什么了解这些问题的答案如此重要。
 
-## 3. 示范脚本
+## 3. 虚拟脚本
 
 下面的脚本在系统每次启动时都会发出一条消息：
 
@@ -59,7 +59,7 @@ run_rc_command "$1" ⑧
 
 需要注意的事项如下：
 
-① 一个解释型脚本应该以魔法的“shebang”行开始。该行指定脚本的解释器程序。由于 shebang 行，脚本可以像二进制程序一样被调用，只要设置了执行位。例如，系统管理员可以从命令行手动运行我们的脚本：
+① 解释型脚本应该以魔法的“shebang”行开始。该行指定脚本的解释器程序。由于 shebang 行，脚本可以像二进制程序一样被调用，只要设置了执行位。例如，系统管理员可以从命令行手动运行我们的脚本：
 
 ```sh
 # /etc/rc.d/dummy start
@@ -75,7 +75,7 @@ run_rc_command "$1" ⑧
 
 ② 在 **/etc/rc.subr** 中定义了多个供 **rc.d** 脚本使用的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 函数。这些函数在 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 中有文档说明。虽然理论上可以编写不使用 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 的 **rc.d** 脚本，但它的函数非常方便，使工作变得容易得多。所以，毫不奇怪，大家都在 **rc.d** 脚本中使用 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html)，我们也不例外。
 
-一个 **rc.d** 脚本必须在调用 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 函数之前“source”**/etc/rc.subr**（通过“.”包含它），以便 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 可以了解这些函数。推荐的写法是首先包含 **/etc/rc.subr**。
+**rc.d** 脚本必须在调用 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 函数之前“source”**/etc/rc.subr**（通过“.”包含它），以便 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 可以了解这些函数。推荐的写法是首先包含 **/etc/rc.subr**。
 
 >**注意**
 >
@@ -97,7 +97,7 @@ run_rc_command "$1" ⑧
 
 ⑤ 我们应该记住， [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 提供了标准参数的默认方法。因此，如果我们希望某个标准方法什么也不做，我们必须使用一个无操作的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 表达式来重载该方法。
 
-⑥ 一个复杂方法的主体可以作为函数来实现。为函数命名时最好有意义。
+⑥ 复杂方法的主体可以作为函数来实现。为函数命名时最好有意义。
 
 >**重要**
 >
@@ -172,7 +172,7 @@ start_cmd="echo \"$dummy_msg\""
 
 ## 5. 简单守护进程的启动与关闭
 
-我们之前提到过，[rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 可以提供默认方法。显然，这些默认方法不能过于通用，它们适用于启动和关闭一个简单的守护进程。现在假设我们需要为一个名为 `mumbled` 的守护进程编写 **rc.d** 脚本。下面是该脚本：
+我们之前提到过，[rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 可以提供默认方法。显然，这些默认方法不能过于通用，它们适用于启动和关闭简单守护进程。现在假设我们需要为一个名为 `mumbled` 的守护进程编写 **rc.d** 脚本。下面是该脚本：
 
 ```sh
 #!/bin/sh
@@ -204,7 +204,7 @@ run_rc_command "$1"
 
 有关默认方法的更多详细信息，请参阅 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html)。
 
-## 6. 启动和关闭一个高级守护进程
+## 6. 启动和关闭高级守护进程
 
 让我们为之前的脚本增加一些内容，使其变得更加复杂和功能丰富。默认方法对我们来说已经足够好，但有时我们可能需要调整它们的一些方面。现在我们将学习如何根据我们的需求来调整默认方法。
 
@@ -269,7 +269,7 @@ run_rc_command "$1"
 >
 > *永远不要* 在 `command_args` 中包含以破折号开头的选项，如 `-X` 或 `--foo`。`command_args` 的内容会出现在最终命令行的末尾，因此它们可能会跟在 `${name}_flags` 中的参数后面，而大多数命令在普通参数后不会识别这些带破折号的选项。传递额外的选项给 `$command` 的更好方法是将它们放在 `${name}_flags` 的前面，或者修改 `rc_flags` [如后文所示](https://docs.freebsd.org/en/articles/rc-scripting/#rc-flags)。
 
-② 一个良好设计的守护进程应该创建一个 *pidfile*，这样可以更容易且更可靠地找到它的进程。设置 `pidfile` 变量后，[rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 会在默认方法中使用该 pidfile。
+② 良好设计的守护进程应该创建一个 *pidfile*，这样可以更容易且更可靠地找到它的进程。设置 `pidfile` 变量后，[rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 会在默认方法中使用该 pidfile。
 
 >**注意**
 >
@@ -349,24 +349,24 @@ Usage: /etc/rc.d/mumbled [fast|force|one](start|stop|restart|rcvar|reload|plugh|
 
 >**注意**
 >
-> 不过，可以通过在命令行参数前加上 `force`，如 `forcestart`，来指示 \[rc.subr(8)] 忽略这些退出码并无论如何执行所有命令。
+> 不过，可以通过在命令行参数前加上 `force`，如 `forcestart`，来指示 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 忽略这些退出码并无论如何执行所有命令。
 
 ## 7. 将脚本接入 rc.d 框架
 
 写好脚本之后，就需要将它整合进 **rc.d**。关键的一步是将脚本安装到 **/etc/rc.d**（用于基础系统）或 **/usr/local/etc/rc.d**（用于 Port）。**bsd.prog.mk** 和 **bsd.port.mk** 都提供了方便的安装钩子，通常无需担心文件的所有权和权限。系统脚本应通过 **src/libexec/rc/rc.d** 下的 **Makefile** 进行安装；Port 的脚本则可以使用 `USE_RC_SUBR` 来安装，具体做法见 [Porter’s Handbook](https://docs.freebsd.org/en/books/porters-handbook/#rc-scripts)。
 
-不过，在此之前，我们应该先考虑脚本在系统启动序列中的位置。脚本所管理的服务很可能依赖于其他服务。例如，一个网络守护进程在网络接口和路由尚未启动之前是无法工作的。即使某个服务看似不依赖其他内容，它也不可能在基本文件系统被检查和挂载之前启动。
+不过，在此之前，我们应该先考虑脚本在系统启动序列中的位置。脚本所管理的服务很可能依赖于其他服务。例如，网络守护进程在网络接口和路由尚未启动之前是无法工作的。即使某个服务看似不依赖其他内容，它也不可能在基本文件系统被检查和挂载之前启动。
 
-我们之前提到过 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html)。现在是时候仔细了解一下它了。简而言之，\[rcorder(8)] 会读取一组文件，分析其内容，然后按依赖顺序将这些文件输出到 `stdout`。关键点在于将依赖信息保存在文件*内部*，让每个文件只描述自身。一个文件可以指定以下信息：
+我们之前提到过 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html)。现在是时候仔细了解一下它了。简而言之，[rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 会读取一组文件，分析其内容，然后按依赖顺序将这些文件输出到 `stdout`。关键点在于将依赖信息保存在文件*内部*，让每个文件只描述自身。一个文件可以指定以下信息：
 
 - 它所 *提供* 的“条件”（即我们所说的服务）；
 - 它所 *需要* 的“条件”；
 - 它应该在其前运行的“条件”；
-- 额外的 *关键字*，这些关键字可用于从整个文件集中选择子集（可以通过参数告知 \[rcorder(8)] 包括或排除含特定关键字的文件）。
+- 额外的 *关键字*，这些关键字可用于从整个文件集中选择子集（可以通过参数告知 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 包括或排除含特定关键字的文件）。
 
-不出意外，\[rcorder(8)] 只能处理语法类似 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 的文本文件。也就是说，\[rcorder(8)] 所能识别的特殊行看起来像 \[sh(1)] 的注释。这些特殊行的语法相当严格，以便于程序处理。详见 \[rcorder(8)]。
+不出意外，[rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 只能处理语法类似 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 的文本文件。也就是说，[rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 所能识别的特殊行看起来像 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 的注释。这些特殊行的语法相当严格，以便于程序处理。详见 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html)。
 
-除了使用 \[rcorder(8)] 的特殊行之外，一个脚本还可以通过强制启动另一个服务来表达其依赖关系。这在所依赖服务是可选的情况下尤其有用——如果系统管理员在 [rc.conf(5)](https://man.freebsd.org/cgi/man.cgi?query=rc.conf&sektion=5&format=html) 中禁用了该服务，它本不会自动启动。
+除了使用 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 的特殊行之外，一个脚本还可以通过强制启动另一个服务来表达其依赖关系。这在所依赖服务是可选的情况下尤其有用——如果系统管理员在 [rc.conf(5)](https://man.freebsd.org/cgi/man.cgi?query=rc.conf&sektion=5&format=html) 中禁用了该服务，它本不会自动启动。
 
 了解了以上这些基础知识之后，我们来看一个添加了依赖信息的简单守护进程脚本示例：
 
@@ -424,7 +424,7 @@ run_rc_command "$1"
 在 FreeBSD 中，[rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 被 **/etc/rc** 和 **/etc/rc.shutdown** 所使用。这两个脚本定义了 FreeBSD **rc.d** 关键字的标准列表及其含义如下：
 
 **nojail**
-该服务不适用于 [jail(8)](https://man.freebsd.org/cgi/man.cgi?query=jail&sektion=8&format=html) 环境。如果在 jail 中，自动启动和关闭流程将忽略此脚本。
+该服务不适用于 [jail(8)](https://man.freebsd.org/cgi/man.cgi?query=jail&sektion=8&format=html) 环境。如果在 Jail 中，自动启动和关闭流程将忽略此脚本。
 
 **nostart**
 该服务应由手动启动，或根本不启动。自动启动流程将忽略此脚本。若与 **shutdown** 关键字同时使用，可用于编写仅在系统关机时执行操作的脚本。
@@ -519,7 +519,7 @@ A ghost gives you a kiss and whispers: Once I was Etaoin Shrdlu...
 
 >**重要**
 >
-> 一个 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 程序员应当理解 `$*` 和 `$@` 之间的微妙区别，因为它们表示所有位置参数。有关详细讨论，请参考一本好的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 脚本手册。\*在完全理解之前不要使用这些表达式，因为它们的误用会导致脚本有漏洞并不安全。
+> [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 程序员应当理解 `$*` 和 `$@` 之间的微妙区别，因为它们表示所有位置参数。有关详细讨论，请参考一本好的 [sh(1)](https://man.freebsd.org/cgi/man.cgi?query=sh&sektion=1&format=html) 脚本手册。在完全理解之前*不要*使用这些表达式，因为它们的误用会导致脚本有漏洞并不安全。
 
 >**注意**
 >
@@ -563,9 +563,9 @@ load_rc_config $name
 run_rc_command "$1"
 ```
 
-① 如果脚本需要在 Jail 中运行，它必须具有可覆盖的服务 Jail 配置。如果它不需要网络访问或访问 Jail 中受限的任何其他资源，则像显示的那样使用空配置即可。
+① 如果脚本在 Jail 中运行是有意义的，它必须具有可覆盖的服务 Jail 配置。如果它不需要网络访问或访问 Jail 中受限的任何其他资源，则像显示的那样使用空配置即可。
 
-严格来说，空配置并不是必需的，但它明确介绍了该脚本已准备好用于服务 Jail，并且不需要额外的 Jail 权限。因此，在这种情况下，强烈建议添加这样的空配置。最常用的选项是 "net\_basic"，它启用对主机 IPv4 和 IPv6 地址的使用。所有可能的选项在 [rc.conf(5)](https://man.freebsd.org/cgi/man.cgi?query=rc.conf&sektion=5&format=html) 中都有解释。
+严格来说，空配置并不是必需的，但它明确说明了该脚本已准备好用于服务 Jail，并且不需要额外的 Jail 权限。因此，在这种情况下，强烈建议添加这样的空配置。最常用的选项是 `net_basic`，它启用对主机 IPv4 和 IPv6 地址的使用。所有可能的选项在 [rc.conf(5)](https://man.freebsd.org/cgi/man.cgi?query=rc.conf&sektion=5&format=html) 中都有解释。
 
 如果 `start`/`stop` 设置依赖于来自 rc 框架的变量（例如，在 [rc.conf(5)](https://man.freebsd.org/cgi/man.cgi?query=rc.conf&sektion=5&format=html) 中设置的变量），则需要通过 `load_rc_config` 和 `run_rc_command` 来处理，而不是在 `precommand` 中处理。
 
@@ -654,7 +654,7 @@ run_rc_command "$1"
 
 ④ 确保 `_enable` 变量的默认值为 NO。
 
-⑤ 是为服务特定的框架变量提供一些默认值的示例，在此示例中是服务监狱选项。
+⑤ 是为服务特定的框架变量提供一些默认值的示例，在此示例中是服务 Jail 选项。
 
 ⑥ 和 ⑦ 设置脚本内部的变量（注意在 `_dummy_user` 前的下划线，它使其与可以在 **rc.conf** 中设置的 `dummy_user` 区分开）。
 
@@ -668,9 +668,9 @@ run_rc_command "$1"
 # service dummy_foo start
 ```
 
-上述命令创建了一个名为 `dummy_foo` 的 dummy 服务实例。它不会使用配置文件 **/usr/local/etc/dummy.cfg**，而是使用配置文件 **/usr/local/etc/dummy\_foo.cfg**（⑦），并且它使用 **/var/run/dummy/dummy\_foo.pid** 作为 PID 文件，而不是 **/var/run/dummy/dummy.pid**。
+上述命令创建了一个名为 `dummy_foo` 的 dummy 服务实例。它不会使用配置文件 **/usr/local/etc/dummy.cfg**，而是使用配置文件 **/usr/local/etc/dummy_foo.cfg**（⑦），并且它使用 **/var/run/dummy/dummy_foo.pid** 作为 PID 文件，而不是 **/var/run/dummy/dummy.pid**。
 
-`dummy` 和 `dummy_foo` 服务可以独立管理，而启动脚本会在包更新时自动更新（由于符号链接）。这不会更新 `REQUIRE` 行，因此没有简单的方法依赖特定的实例。为了在启动顺序中依赖特定实例，必须进行复制，而不是使用符号链接。这将防止在安装更新时自动拾取启动脚本的更改。
+`dummy` 和 `dummy_foo` 服务可以独立管理，而启动脚本会在包更新时自动更新（由于符号链接）。这不会更新 `REQUIRE` 行，因此没有简单的方法依赖特定的实例。为了在启动顺序中依赖特定实例，必须进行复制，而不是使用符号链接。这将防止在安装更新时自动获取启动脚本的更改。
 
 
 ## 11. 深入阅读
@@ -679,4 +679,4 @@ run_rc_command "$1"
 
 手册页 [rc(8)](https://man.freebsd.org/cgi/man.cgi?query=rc&sektion=8&format=html)、[rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 和 [rcorder(8)](https://man.freebsd.org/cgi/man.cgi?query=rcorder&sektion=8&format=html) 详细记录了 **rc.d** 组件。要充分利用 **rc.d** 的强大功能，必须阅读这些手册页，并在编写自己的脚本时参考它们。
 
-**/etc/rc.d** 中的内容是工作中的真实示例，来自一个正在运行的系统，是最主要的学习资源。其内容简单易读，因为大多数棘手问题都隐藏在 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 中。然而请记住，**/etc/rc.d** 脚本并非由天使编写，因此它们可能存在缺陷和不理想的设计决策。现在，你可以改进它们！
+**/etc/rc.d** 中的内容是工作中的真实示例，来自正在运行的系统，是最主要的学习资源。其内容简单易读，因为大多数棘手问题都隐藏在 [rc.subr(8)](https://man.freebsd.org/cgi/man.cgi?query=rc.subr&sektion=8&format=html) 中。然而请记住，**/etc/rc.d** 脚本并非由天使编写，因此它们可能存在缺陷和不理想的设计决策。现在，你可以改进它们！
