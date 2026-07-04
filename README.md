@@ -1,6 +1,8 @@
-# FreeBSD 中文文章翻译项目
+# FreeBSD 文章
 
 所有文章均经过了校对与审阅。
+
+英语原文发布在 <https://docs.freebsd.org.cn/articles/>。
 
 当前翻译 git 版本：93d98e91f6bfaacd7fae40dd398efe47d44f085b
 
