@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 仓库概览
 
-这是 FreeBSD 官方文章（FreeBSD Articles）的中文翻译项目。基于 GitBook 格式，发布在 <https://docs.freebsd.org.cn/articles/>。
+这是 FreeBSD 官方文章（FreeBSD Articles）的中文翻译项目。
 
 源内容为 Markdown 文件，由 GitBook 平台自动构建和部署，无需本地构建步骤。
 
@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 同步更新方法
 
-流程：拉取 git 项目（注意，因为部分文件存在英文冒号，在 Windows 下无法拉取，需要下载 zip 压缩包）：https://github.com/freebsd/freebsd-doc
+流程：拉取 git 项目（注意，因为部分文件存在英文冒号，在 Windows 下无法拉取，需要下载 zip 压缩包）：<https://github.com/freebsd/freebsd-doc>
 
 当前翻译 git 版本：93d98e91f6bfaacd7fae40dd398efe47d44f085b
 
