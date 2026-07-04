@@ -1,6 +1,6 @@
 # FreeBSD 中文文章翻译项目
 
-所有文章均经过了校对与审阅。
+所有文章均经过了校对与审阅。“vm-bhyve Wiki”为笔者附加篇目。
 
 英语原文发布在 <https://docs.freebsd.org.cn/articles/>。
 
