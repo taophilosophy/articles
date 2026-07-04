@@ -1,4 +1,4 @@
-# 在台机上实现 UFS 日志功能
+# 在个人计算机上实现 UFS 日志功能
 
 - 原文：[Implementing UFS Journaling on a Desktop PC](https://docs.freebsd.org/en/articles/gjournal-desktop/)
 
