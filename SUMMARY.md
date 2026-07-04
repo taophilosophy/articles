@@ -28,7 +28,7 @@
 * [FreeBSD 对闰秒的支持](freebsd-dui-run-miao-de-zhi-chi.md)
 * [FreeBSD 邮件列表常见问题](freebsd-you-jian-lie-biao-chang-jian-wen-ti.md)
 * [如何从 FreeBSD-questions 邮件列表中获得最佳结果](ru-he-cong-freebsdquestions-you-jian-lie-biao-zhong-huo-de-zui-jia-jie-guo.md)
-* [在台机上实现 UFS 日志功能](zai-tai-ji-shang-shi-xian-ufs-ri-zhi-gong-neng.md)
+* [在个人计算机上实现 UFS 日志功能](zai-tai-ji-shang-shi-xian-ufs-ri-zhi-gong-neng.md)
 * [对 FreeBSD 中 IPsec 功能的独立验证](dui-freebsd-zhong-ipsec-gong-neng-de-du-li-yan-zheng.md)
 * [NanoBSD 简介](nanobsd-jian-jie.md)
 * [LDAP 身份验证](ldap-shen-fen-yan-zheng.md)
