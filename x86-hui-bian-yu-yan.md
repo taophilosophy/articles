@@ -2,10 +2,11 @@
 
 - 原文：[x86 Assembly Language Programming](https://docs.freebsd.org/en/articles/x86-assembly/)
 
-_本文由 G. Adam Stanislav（2001）撰写，由 mhorne（2026）调整。_
+**本文由 G. Adam Stanislav（2001）撰写，由 mhorne（2026）调整。**
 
 > **注意**
-> 本文内容具有历史参考价值。
+> 
+> 本文内容为历史存档，仅供参考。
 
 ## 1. 概要
 
@@ -17,7 +18,7 @@ _本文由 G. Adam Stanislav（2001）撰写，由 mhorne（2026）调整。_
 
 在本文中，我将尝试向你展示如何使用汇编语言编写 UNIX 程序，特别是在 FreeBSD 下。
 
-本文不讲解汇编语言的基础知识。这方面的资源已经足够多了（关于汇编语言的完整在线课程，可参阅 Randall Hyde 的 [The Art of Assembly Language](http://webster.cs.ucr.edu/)；如果你更喜欢印刷书籍，可以看看 Jeff Duntemann 的《Assembly Language Step-by-Step》（ISBN: 0471375233）。不过，在阅读完本文后，任何汇编语言程序员都能快速高效地为 FreeBSD 编写程序。
+本文不讲解汇编语言的基础知识。这方面的资源已经足够多了（关于汇编语言的完整在线课程，可参阅 Randall Hyde 的 [The Art of Assembly Language](http://webster.cs.ucr.edu/)（《汇编语言编程艺术》）；如果你更喜欢印刷书籍，可以看看 Jeff Duntemann 的《Assembly Language Step-by-Step》（ISBN: 0471375233）（《Linux x64 汇编语言编程》）。不过，在阅读完本文后，任何汇编语言程序员都能快速高效地为 FreeBSD 编写程序。
 
 版权所有 © 2000-2001 G. Adam Stanislav。保留所有权利。
 
@@ -83,9 +84,9 @@ open:
 
 ### 备用调用约定
 
-FreeBSD 是一个极其灵活的系统。它还提供了其他调用内核的方式。不过，要使其生效，系统必须安装 Linux® 模拟。
+FreeBSD 是极其灵活的系统。它还提供了其他调用内核的方式。不过，要使其生效，系统必须安装 Linux® 兼容层。
 
-Linux 是一个类 UNIX 系统。然而，它的内核使用与 MS-DOS 相同的寄存器传参的系统调用约定。与 UNIX 约定一样，函数编号放在 `EAX` 中。但参数不是在栈上传递，而是在 `EBX, ECX, EDX, ESI, EDI, EBP` 中：
+Linux 是类 UNIX 系统。然而，它的内核使用与 MS-DOS 相同的寄存器传参的系统调用约定。与 UNIX 约定一样，函数编号放在 `EAX` 中。但参数不是在栈上传递，而是在 `EBX, ECX, EDX, ESI, EDI, EBP` 中：
 
 ```asm
 open:
