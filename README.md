@@ -2,7 +2,7 @@
 
 所有文章均经过了校对与审阅。“vm-bhyve Wiki”为笔者附加篇目。
 
-英语原文发布在 <https://docs.freebsd.org.cn/articles/>。
+英语原文发布在 <https://docs.freebsd.org/articles/>。
 
 当前翻译 git 版本：93d98e91f6bfaacd7fae40dd398efe47d44f085b
 
